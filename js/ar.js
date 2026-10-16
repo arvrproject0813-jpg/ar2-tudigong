@@ -3,6 +3,7 @@ import { AR_SCRIPTS, ASSETS } from './config.js';
 
 let loading = null;
 let session = null;   // { wrap, scene, target }
+let gen = 0;          // bumps on every start/stop so a start that is still loading can tell it was cancelled
 
 function loadScript(src) {
   return new Promise((resolve, reject) => {
@@ -46,11 +47,14 @@ async function targetExists() {
  */
 export async function startAR(container, { onReady, onFound, onLost, onError } = {}) {
   stopAR();
+  const my = ++gen;
+  const cancelled = () => my !== gen || !container.isConnected;   // the page was left while loading
   const blocker = arBlocker();
   if (blocker) { onError?.(blocker); return null; }
-  if (!(await targetExists())) { onError?.('TARGET_MISSING'); return null; }
+  if (!(await targetExists())) { if (!cancelled()) onError?.('TARGET_MISSING'); return null; }
   try { await loadARLibraries(); }
-  catch (e) { onError?.(String(e.message).startsWith('SCRIPT_TIMEOUT') ? 'SCRIPT_TIMEOUT' : 'SCRIPT_FAIL'); return null; }
+  catch (e) { if (!cancelled()) onError?.(String(e.message).startsWith('SCRIPT_TIMEOUT') ? 'SCRIPT_TIMEOUT' : 'SCRIPT_FAIL'); return null; }
+  if (cancelled()) return null;
   patchMindAR();
 
   // MindAR puts its <video> into the scene's parent at z-index -2, so the wrapper must be
@@ -94,7 +98,15 @@ function patchMindAR() {
 export const getTarget = () => session?.target || null;
 
 /** Stop camera + tracking and remove the scene. Safe to call any time. */
+// If the page is left while MindAR is still starting the camera, its own startup promise fails later
+// (the scene is already gone). That is harmless, so keep it out of the console.
+window.addEventListener('unhandledrejection', (e) => {
+  const st = String(e.reason?.stack || '');
+  if (!session && st.includes('mindar-image')) e.preventDefault();
+});
+
 export function stopAR() {
+  gen++;
   if (!session) return;
   const { wrap, scene } = session;
   session = null;

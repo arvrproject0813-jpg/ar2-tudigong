@@ -118,6 +118,6 @@ assets/targets/     printable scan card + compiled .mind target
 
 ## Notes
 
-- Chinese narration slots show 【待補：請貼上原始中文旁白】 until the original Chinese script is pasted into `content/content.js`.
+- The Traditional Chinese narration in `content/content.js` is a draft translation of the storyboard's English narration. Please proofread it, or replace it with the original Chinese script if you have one.
 - Icons are inline SVG in `js/icons.js`, so the app has no icon-font dependency.
 - Progress is saved on the device (localStorage). `#reset` or "Experience Again" clears it.

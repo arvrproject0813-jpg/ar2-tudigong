@@ -552,7 +552,7 @@ Completion: reaching P12 completes it.
 
 ```js
 // content/content.js — single source of all visible text (EN + Traditional Chinese)
-// Owner: Person A. 【待補】 = paste the original Chinese narration.
+// Owner: Person A. Chinese narration = draft translation, please proofread.
 const CONTENT = {
   "meta": {
     "title": {
@@ -666,6 +666,10 @@ const CONTENT = {
     "showPanel": {
       "en": "Show panel",
       "zh": "顯示面板"
+    },
+    "skip": {
+      "en": "Skip",
+      "zh": "略過"
     }
   },
   "p01": {
@@ -751,7 +755,7 @@ const CONTENT = {
     },
     "narration": {
       "en": "Welcome to Tudigong's Neighborhood: Local Guardian and Community Life. This AR bilingual experience begins with one question: Why do we often find Tudigong near street corners, fields, markets, and settlements in Taiwan? Starting from Kaohsiung's local living spaces, we will explore the connections among land, community, and local memory.",
-      "zh": "【待補：請貼上原始中文旁白】"
+      "zh": "歡迎來到「土地公的街坊：地方守護與社區生活」。這個雙語 AR 體驗從一個問題開始：為什麼在臺灣，我們常在街角、田邊、市場與聚落附近看到土地公？我們將從高雄在地的生活空間出發，探索土地、社區與地方記憶之間的連結。"
     }
   },
   "p02": {
@@ -819,7 +823,7 @@ const CONTENT = {
     },
     "narration": {
       "en": "Please scan the Tudigong culture card. After a successful scan, stories of Kaohsiung neighborhoods, farming life, markets, local cultural objects, and community life will appear in AR.",
-      "zh": "【待補：請貼上原始中文旁白】"
+      "zh": "請掃描土地公文化卡。掃描成功後，高雄街坊、農業生活、市場、在地文化物件與社區生活的故事，將以 AR 的方式出現在你眼前。"
     }
   },
   "p03": {
@@ -913,7 +917,7 @@ const CONTENT = {
     },
     "narration": {
       "en": "You can tap cultural objects, explore a community map, drag daily-life cards, compare past and present land use, and complete cultural matching and bilingual vocabulary tasks. Each task will help you answer the core inquiry question.",
-      "zh": "【待補：請貼上原始中文旁白】"
+      "zh": "你可以點選文化物件、探索社區地圖、拖曳日常生活卡片、比較過去與現在的土地利用，並完成文化配對與雙語詞彙任務。每一項任務都能幫助你回答核心提問。"
     }
   },
   "p04": {
@@ -991,7 +995,7 @@ const CONTENT = {
     ],
     "narration": {
       "en": "Starting from Kaohsiung's neighborhoods, fields, markets, and settlements, we can find many cultural traces of Tudigong. Tudigong, also known as Fude Zhengshen, is a common local guardian in Taiwanese folk belief. Small temples and cultural landscapes also record how people use land, build communities, and create local memory.",
-      "zh": "【待補：請貼上原始中文旁白】"
+      "zh": "從高雄的街坊、田野、市場與聚落出發，我們可以找到許多土地公的文化痕跡。土地公又稱福德正神，是臺灣民間信仰中常見的地方守護神。小廟與文化地景，也記錄了人們如何利用土地、建立社區，並創造地方記憶。"
     }
   },
   "p05": {
@@ -1065,7 +1069,7 @@ const CONTENT = {
     },
     "narration": {
       "en": "In Kaohsiung and many places in Taiwan, a Tudigong temple does not have to be large. Some are found at street corners, beside roads, or inside neighborhoods. Besides being places of belief, these small temples can also become local landmarks and cultural points connected with community memory.",
-      "zh": "【待補：請貼上原始中文旁白】"
+      "zh": "在高雄與臺灣許多地方，土地公廟不一定很大。有些位在街角、路旁，或就在社區之中。這些小廟除了是信仰的場所，也可能成為地方地標，以及與社區記憶相連的文化據點。"
     }
   },
   "p06": {
@@ -1129,7 +1133,7 @@ const CONTENT = {
     },
     "narration": {
       "en": "Tudigong culture has long been connected with fields, settlements, and life on the land. As parts of Kaohsiung have changed, some fields have become roads, homes, or business areas, while some small temples have remained in or near their earlier locations. Comparing past and present maps can help us read local change and cultural memory.",
-      "zh": "【待補：請貼上原始中文旁白】"
+      "zh": "土地公文化長久以來與田野、聚落以及土地上的生活緊密相連。隨著高雄部分地區的變遷，有些田地變成了道路、住家或商業區，而有些小廟仍留在原本的位置或附近。比較過去與現在的地圖，可以幫助我們解讀地方的變化與文化記憶。"
     }
   },
   "p07": {
@@ -1217,7 +1221,7 @@ const CONTENT = {
     },
     "narration": {
       "en": "When we observe a Tudigong temple, we can look beyond the deity image and study the building and its surroundings. The small temple, offering table, stone lions, and—where the local context supports it—old trees may all become part of a cultural landscape.",
-      "zh": "【待補：請貼上原始中文旁白】"
+      "zh": "觀察土地公廟時，我們可以把目光放到神像以外，看看建築本身與周圍的環境。小廟、供桌、石獅，以及在地方脈絡相符時的老樹，都可能成為文化地景的一部分。"
     }
   },
   "p08": {
@@ -1281,7 +1285,7 @@ const CONTENT = {
     },
     "narration": {
       "en": "Local culture does not exist in only one building. Starting with a simplified community culture map of Kaohsiung, we can see how schools, homes, markets, parks, old trees, and local temples form everyday living spaces. Then think about your own neighborhood: which places belong on a community culture map?",
-      "zh": "【待補：請貼上原始中文旁白】"
+      "zh": "地方文化並不只存在於一棟建築之中。從一張簡化的高雄社區文化地圖開始，我們可以看到學校、住家、市場、公園、老樹與地方廟宇如何構成日常生活的空間。接著想一想你自己的社區：哪些地方應該出現在社區文化地圖上？"
     }
   },
   "p09": {
@@ -1361,7 +1365,7 @@ const CONTENT = {
     },
     "narration": {
       "en": "Traditionally, Taiwanese folk culture includes zuoya observances on the second and sixteenth days of each lunar month. The second day of the second lunar month is called Touya, while the sixteenth day of the twelfth lunar month is called Weiya. Over time, Weiya also became a common term for year-end company meals.",
-      "zh": "【待補：請貼上原始中文旁白】"
+      "zh": "傳統上，臺灣民間文化有在每個農曆月初二與十六「做牙」的習俗。農曆二月初二稱為「頭牙」，農曆十二月十六日則稱為「尾牙」。隨著時間演變，「尾牙」也成為公司年終聚餐的常見說法。"
     }
   },
   "p10": {
@@ -1431,7 +1435,7 @@ const CONTENT = {
     },
     "narration": {
       "en": "In Hakka communities such as Meinong in Kaohsiung, Tudigong is often called Bogong. Local language, history, and community life have shaped distinctive Bogong traditions. In Meinong's Yong'an area, a fuchang is a culture-specific festival space or structure; it is not simply another name for every Tudigong temple.",
-      "zh": "【待補：請貼上原始中文旁白】"
+      "zh": "在高雄美濃等客家社區，土地公常被稱為「伯公」。在地的語言、歷史與社區生活，形塑出獨特的伯公傳統。在美濃永安地區，「福廠」是具有特定文化意義的節慶空間或結構，並不是所有土地公廟的另一個名稱。"
     }
   },
   "p11": {
@@ -1566,7 +1570,7 @@ const CONTENT = {
     },
     "narration": {
       "en": "In this journey, we started from local living spaces in Kaohsiung and learned how Tudigong culture connects land, fields, street corners, markets, communities, and cultural memory. We also explored the local expression of Bogong culture in Meinong. Now, answer the core question in one English sentence.",
-      "zh": "【待補：請貼上原始中文旁白】"
+      "zh": "在這段旅程中，我們從高雄在地的生活空間出發，認識土地公文化如何連結土地、田野、街角、市場、社區與文化記憶，也探索了美濃伯公文化的在地表現。現在，請用一句英文回答核心提問。"
     }
   },
   "p12": {
@@ -1664,7 +1668,7 @@ const CONTENT = {
     },
     "narration": {
       "en": "You have completed a bilingual AR journey about Tudigong belief, life on the land, local communities, cultural landscapes, zuoya culture, and Bogong culture in Meinong. Return to the first question: why is Tudigong often found close to everyday life? One answer is that belief becomes connected with land use, community relationships, and local memory.",
-      "zh": "【待補：請貼上原始中文旁白】"
+      "zh": "你已完成一段雙語 AR 旅程，認識了土地公信仰、土地上的生活、地方社區、文化地景、做牙文化，以及美濃的伯公文化。回到最初的問題：為什麼土地公常出現在日常生活附近？其中一個答案是：信仰逐漸與土地利用、社區關係以及地方記憶連結在一起。"
     }
   },
   "vocab": [
@@ -1988,7 +1992,7 @@ A peaceful rural landscape inspired by Meinong, Kaohsiung, a Hakka farming commu
 
 ## 10. To confirm
 
-- **Chinese narration:** The storyboard only contains the English translation of each narration. Paste the original Chinese narration into the zh fields of content.js (they are marked 【待補】).
+- **Chinese narration:** The storyboard only contains the English narration. The Traditional Chinese narration in content.js is a draft translation written for this app; please proofread it (and replace it with the original Chinese script if one exists).
 - **P05 card name:** The Storyboard sheet says 'Residential Area', the Interaction Spec sheet says 'Homes'. This guide uses Residential Area 住宅區 on P05 and Homes 住家 on P06/P08. Confirm with your supervisor.
 - **Draft Chinese UI text:** All Traditional Chinese UI labels and the short culture notes (P01 info, P04 notes, P07 meanings) are drafts written for this guide. Please proofread them before they go into content.js.
 - **Feedback storage:** P12 feedback is saved only on the device. If the team needs to collect responses, link to a Google Form instead.
