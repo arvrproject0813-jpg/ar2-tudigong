@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#F6EEDF">
+  <title>Tudigong's Neighborhood · 土地公的街坊</title>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+  <div id="app">
+    <header class="topbar" id="topbar"></header>
+    <main class="layout">
+      <section id="stage" aria-label="Activity area"></section>
+      <aside id="panel" class="panel" aria-label="Page information"></aside>
+    </main>
+  </div>
+  <div id="toast-layer" aria-live="polite"></div>
+  <div id="modal-layer"></div>
+  <div id="rotate-overlay" role="alert">
+    <svg viewBox="0 0 64 64" width="72" height="72" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="22" y="6" width="20" height="34" rx="4"/><path d="M29 35h6"/>
+      <rect x="10" y="40" width="44" height="18" rx="4" stroke-dasharray="4 4"/>
+      <path d="M50 14a14 14 0 0 1 0 20M50 34l-5-1M50 34l1-5"/>
+    </svg>
+    <p class="rotate-en">Please rotate your device</p>
+    <p class="rotate-zh">請將裝置橫放</p>
+  </div>
+  <!-- A-Frame + MindAR are loaded on demand by js/ar.js (only when the scan page opens). -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

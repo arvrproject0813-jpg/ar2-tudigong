@@ -1,0 +1,101 @@
+/* base.css — reset, app frame, landscape layout, rotate overlay. Colors only via tokens.css. */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--tex-paper), var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-ui);
+  font-weight: var(--fw-en-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-en);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+[hidden] { display: none !important; }
+button { font: inherit; color: inherit; }
+img { max-width: 100%; display: block; }
+:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+
+#app { height: 100%; display: flex; flex-direction: column; }
+
+/* ---------- top bar: lacquered teal band with a gold meander strip ---------- */
+.topbar {
+  height: calc(var(--topbar-h) + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: max(var(--space-4), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--space-4), env(safe-area-inset-right, 0px));
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--tex-paper), var(--grad-lacquer);
+  color: var(--color-on-lacquer);
+  position: relative;
+  z-index: var(--z-panel);
+  box-shadow: 0 6px 14px rgba(18, 63, 60, .25);
+}
+.topbar::after {           /* gold rule + meander strip under the bar */
+  content: ""; position: absolute; left: 0; right: 0; bottom: -10px; height: 10px; pointer-events: none;
+  background: var(--tex-meander) repeat-x 0 50% / 20px 10px, var(--red-700);
+  border-top: 2px solid var(--gold-300); border-bottom: 1.5px solid var(--gold-700);
+}
+.topbar .tb-left, .topbar .tb-right { flex: 0 0 150px; display: flex; align-items: center; gap: var(--space-2); }
+.topbar .tb-right { justify-content: flex-end; }
+.topbar .tb-mid { flex: 1; display: flex; justify-content: center; min-width: 0; }
+.topbar .tb-count {
+  font-family: var(--font-display); font-size: var(--fs-small); font-weight: 700; color: var(--color-on-lacquer);
+  letter-spacing: .08em; font-variant-numeric: tabular-nums;
+}
+
+/* ---------- stage + panel ---------- */
+.layout { flex: 1; min-height: 0; display: flex; }
+#stage {
+  flex: 1;
+  margin-top: 10px;          /* room for the meander strip */
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;          /* keeps MindAR's z-index:-2 video inside the stage */
+  container-type: size;
+  background: var(--color-bg);
+}
+#panel {
+  width: var(--panel-w);
+  flex: none;
+  margin-top: 10px;
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Elements placed inside the stage keep clear of the notch on the left */
+.stage-pad { padding-left: max(var(--space-3), env(safe-area-inset-left, 0px)); }
+
+/* ---------- rotate overlay (portrait) ---------- */
+#rotate-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  z-index: var(--z-rotate);
+  background: var(--tex-paper), var(--color-bg);
+  color: var(--teal-600);
+  flex-direction: column; align-items: center; justify-content: center; gap: var(--space-2);
+  text-align: center; padding: var(--space-5);
+}
+#rotate-overlay p { margin: 0; color: var(--color-text); }
+#rotate-overlay .rotate-en { font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--color-heading); }
+#rotate-overlay .rotate-zh { font-family: var(--font-display-zh); font-size: 17px; color: var(--color-text-2); }
+@media (orientation: portrait) {
+  #rotate-overlay { display: flex; }
+}
+
+/* ---------- layers ---------- */
+#toast-layer { position: fixed; z-index: var(--z-toast); inset: 0; pointer-events: none; }
+#modal-layer { position: fixed; z-index: var(--z-modal); inset: 0; pointer-events: none; }
+#modal-layer:not(:empty) { pointer-events: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}

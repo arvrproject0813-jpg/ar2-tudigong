@@ -1,0 +1,113 @@
+/* tokens.css — AR-2 Tudigong's Neighborhood · v2 "Temple craft"
+   The ONLY place colors, fonts, sizes, radii, ornaments and motion are defined.
+   Components use the semantic --color-* roles, never raw hex.
+   Look: glazed-teal lacquer + vermilion + gold trim on warm paper, like a temple museum exhibit.
+   Gold is for trim, frames, ornaments and achievements only: never large black-and-gold areas, never text below 18px bold. */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif:wght@600;700;800&family=Noto+Serif+TC:wght@600;700;900&display=swap');
+
+:root{
+  /* ---------- Raw palette ---------- */
+  /* Glazed teal (temple roof glaze, lacquer): brand, buttons, top bar */
+  --teal-50:#E6F2F1; --teal-100:#CDE8E5; --teal-300:#7FBDB8; --teal-500:#2F8C88; --teal-600:#1F6B66; --teal-800:#123F3C;
+  /* Plant green: fields, trees, success */
+  --green-100:#DCEBCB; --green-300:#A9C98C; --green-500:#6E9F4E; --green-700:#3F6A2B;
+  /* Warm paper */
+  --beige-50:#FFFBF3; --beige-100:#F6EEDF; --beige-200:#EADCC2; --beige-300:#D9CBB2;
+  /* Wood: text, carved frames */
+  --wood-400:#9A7A5E; --wood-600:#6B4A32; --wood-900:#3A2A1E;
+  /* Temple gold: trim, ornaments, medallions, achievements */
+  --gold-100:#F5E3B3; --gold-300:#F0CF7A; --gold-500:#C9952E; --gold-700:#8A6416;
+  /* Vermilion (temple pillars, seals, lanterns) */
+  --red-100:#F4D9D0; --red-500:#B23A27; --red-700:#7E2418;
+  /* Brick (temple node) — kept as aliases */
+  --brick-100:var(--red-100); --brick-500:var(--red-500); --brick-700:var(--red-700);
+
+  /* ---------- Gradients & textures ---------- */
+  --grad-gold: linear-gradient(180deg, #F0CF7A 0%, #C9952E 55%, #8A6416 100%);
+  --grad-gold-h: linear-gradient(90deg, #8A6416 0%, #F0CF7A 30%, #C9952E 60%, #8A6416 100%);
+  --grad-lacquer: linear-gradient(180deg, #2A7D77 0%, #1F6B66 45%, #123F3C 100%);
+  --grad-vermilion: linear-gradient(180deg, #D2593F 0%, #B23A27 55%, #7E2418 100%);
+  --grad-wood: linear-gradient(135deg, #9A7A5E 0%, #6B4A32 45%, #3A2A1E 100%);
+  --tex-paper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .36 0 0 0 0 .26 0 0 0 0 .17 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* 回紋 meander strip (gold), tile horizontally */
+  --tex-meander: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12'%3E%3Cpath d='M1 11V1h10v8H5V5h3' fill='none' stroke='%23E2B655' stroke-width='1.4'/%3E%3Cpath d='M13 11V1h10v8h-6V5h3' fill='none' stroke='%23E2B655' stroke-width='1.4'/%3E%3C/svg%3E");
+  /* 祥雲 cloud scroll ornament (gold outline) */
+  --orn-cloud: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -6 74 46'%3E%3Cpath d='M0 20C0 8 12 2 20 8c2-12 20-12 22 0 8-6 20 0 18 12 10 2 10 16-2 16H6C-6 36-8 22 0 20Zm18 2a6 6 0 1 1 10 0m6-4a7 7 0 1 1 12 2' fill='none' stroke='%23C9952E' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  /* ---------- Semantic roles ---------- */
+  --color-bg:var(--beige-100);
+  --color-surface:var(--beige-50);
+  --color-surface-2:var(--beige-200);
+  --color-line:var(--beige-300);
+  --color-trim:var(--gold-500);           /* gold hairlines and frames */
+  --color-text:var(--wood-900);
+  --color-text-2:var(--wood-600);
+  --color-text-muted:var(--wood-400);     /* >=18px only */
+  --color-heading:var(--teal-800);
+  --color-eyebrow:var(--gold-700);
+  --color-primary:var(--teal-600);
+  --color-primary-hover:var(--teal-800);
+  --color-on-primary:var(--beige-50);
+  --color-on-lacquer:var(--beige-50);
+  --color-success-bg:var(--green-100); --color-success:var(--green-700);
+  --color-hint-bg:var(--gold-100);     --color-hint-icon:var(--gold-500);
+  --color-highlight:var(--gold-500);
+  --color-temple:var(--red-500);
+  --color-temple-text:var(--red-700);
+  --color-seal:var(--red-500);
+  --color-focus:var(--gold-500);
+  --color-scrim:rgba(18,63,60,.55);       /* teal-800 @ 55% — never pure black */
+
+  /* ---------- Type ---------- */
+  --font-ui:'Nunito','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
+  --font-zh:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;
+  --font-display:'Noto Serif','Noto Serif TC','Songti TC',Georgia,serif;   /* titles, culture-note heads */
+  --font-display-zh:'Noto Serif TC','Songti TC','PMingLiU',serif;
+  /* Regular = tablets (height >= 500px). EN line / ZH support line */
+  --fs-display:40px; --fs-zh-display:27px;
+  --fs-h1:28px;      --fs-zh-h1:19px;
+  --fs-h2:20px;      --fs-zh-h2:15px;
+  --fs-body:18px;    --fs-zh-body:16px;
+  --fs-label:17px;   --fs-zh-label:13px;
+  --fs-small:14px;   --fs-zh-small:12px;
+  --lh-en:1.4; --lh-zh:1.6;
+  --fw-en-heading:800; --fw-en-label:700; --fw-en-body:500;
+  --fw-zh-heading:700; --fw-zh-body:400;
+
+  /* ---------- Space, shape, depth ---------- */
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:24px; --space-6:32px; --space-7:48px;
+  --radius-sm:6px; --radius-md:12px; --radius-lg:16px; --radius-pill:999px;
+  --border:2px solid var(--color-line);
+  --border-trim:1.5px solid var(--color-trim);
+  --shadow-card:0 1px 0 rgba(255,255,255,.7) inset, 0 2px 0 var(--beige-300), 0 8px 18px rgba(58,42,30,.14);
+  --shadow-lift:0 14px 30px rgba(58,42,30,.28);
+  --shadow-medallion:0 3px 0 rgba(58,42,30,.25), 0 6px 14px rgba(58,42,30,.28);
+
+  /* ---------- Layout ---------- */
+  --topbar-h:60px;
+  --panel-w:clamp(290px, 34vw, 410px);
+  --tap-min:44px;
+
+  /* ---------- Motion ---------- */
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --dur-fast:150ms; --dur:250ms; --dur-slow:400ms;
+
+  /* ---------- Layers ---------- */
+  --z-stage:1; --z-panel:2; --z-popover:10; --z-toast:20; --z-modal:30; --z-rotate:100;
+}
+
+/* Compact = phones in landscape */
+@media (max-height:500px){
+  :root{
+    --fs-display:28px; --fs-zh-display:19px;
+    --fs-h1:20px;      --fs-zh-h1:15px;
+    --fs-h2:17px;      --fs-zh-h2:13px;
+    --fs-body:15px;    --fs-zh-body:14px;
+    --fs-label:15px;   --fs-zh-label:12px;
+    --fs-small:12px;   --fs-zh-small:12px;
+    --topbar-h:48px;
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  :root{ --dur-fast:0ms; --dur:0ms; --dur-slow:0ms; }
+}

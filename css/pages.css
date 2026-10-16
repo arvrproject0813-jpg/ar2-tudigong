@@ -1,0 +1,157 @@
+/* pages.css — page-specific layout, v2 "Temple craft". One block per page. Colors only via tokens.css. */
+
+/* ---------- shared ---------- */
+.chip-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.subtitle { font-family: var(--font-display); font-size: var(--fs-label); font-weight: 700; color: var(--teal-800); }
+.subtitle .zh { font-family: var(--font-display-zh); font-size: var(--fs-zh-label); color: var(--red-700); }
+/* paper stage background with faint cloud ornaments (pages without full art) */
+.stage-paper {
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    var(--orn-cloud) no-repeat 4% 92% / 120px auto,
+    var(--orn-cloud) no-repeat 96% 8% / 90px auto,
+    var(--tex-paper),
+    radial-gradient(ellipse at 50% 40%, var(--beige-50), var(--beige-100) 60%, var(--beige-200));
+}
+
+/* map in a carved wood frame with a gold fillet — like a museum exhibit panel */
+.map-area { position: absolute; inset: 0; display: grid; place-items: center; padding: var(--space-3); }
+.map-carved {
+  --frame: 12px;
+  position: relative; padding: var(--frame); border-radius: 10px;
+  background: var(--tex-paper), var(--grad-wood);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .15), 0 14px 30px rgba(58, 42, 30, .35);
+}
+.map-carved::before {           /* gold fillet */
+  content: ""; position: absolute; inset: calc(var(--frame) - 4px); border-radius: 6px; pointer-events: none;
+  box-shadow: 0 0 0 2px var(--gold-300), 0 0 0 3px var(--gold-700);
+}
+.map-frame {
+  position: relative;
+  width: min(calc(100cqw - 2 * var(--space-3) - 24px), calc((100cqh - 2 * var(--space-3) - 24px) * 1.5));
+  aspect-ratio: 3 / 2;
+  border-radius: 4px;
+  container-type: inline-size;
+}
+.map-frame { overflow: hidden; }
+.map-frame > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.pin-tag.is-above { margin-top: 0; transform: translate(-50%, calc(-100% - 28px)); }
+
+/* ---------- P01 home ---------- */
+#stage:has(.p01-art) { background: var(--teal-800); }
+.p01-art {            /* behaves like object-fit: cover; object-position: left center — pins stay on the art */
+  position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: max(100cqw, 150cqh); aspect-ratio: 3 / 2;
+}
+.p01-hero { position: absolute; inset: 0; width: 100%; height: 100%; }
+.p01-shade {          /* soft paper fade at the bottom so the menu reads on the art */
+  position: absolute; left: 0; right: 0; bottom: 0; height: 34%; pointer-events: none; z-index: 2;
+  background: linear-gradient(180deg, rgba(246, 238, 223, 0), rgba(246, 238, 223, .85));
+}
+.p01-tags { position: absolute; top: var(--space-4); left: 0; right: var(--space-3); display: flex; flex-wrap: wrap; gap: 6px; z-index: 3; }
+.p01-menu { position: absolute; bottom: var(--space-3); left: 0; right: var(--space-3); display: flex; flex-wrap: wrap; gap: var(--space-2); z-index: 3; }
+.p01-menu .chip { min-height: 40px; }
+
+/* ---------- P02 scan ---------- */
+.scan-bg { position: absolute; inset: 0; z-index: -3; background: var(--tex-paper), var(--grad-wood); }
+.ar-wrap { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
+.ar-wrap a-scene { position: absolute !important; inset: 0; width: 100% !important; height: 100% !important; }
+.ar-wrap video { object-fit: cover; }
+.scan-overlay { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.scan-frame { position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%); height: 62%; aspect-ratio: 3 / 2; max-width: 86%; }
+.scan-frame .corner { position: absolute; width: 44px; height: 44px; border: 6px solid var(--gold-300); border-radius: 10px; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .35)); }
+.scan-frame .tl { top: 0; left: 0; border-right-color: transparent; border-bottom-color: transparent; }
+.scan-frame .tr { top: 0; right: 0; border-left-color: transparent; border-bottom-color: transparent; }
+.scan-frame .bl { bottom: 0; left: 0; border-right-color: transparent; border-top-color: transparent; }
+.scan-frame .br { bottom: 0; right: 0; border-left-color: transparent; border-top-color: transparent; }
+.scan-frame .sweep { position: absolute; left: 6%; right: 6%; height: 3px; border-radius: 2px; background: var(--grad-gold-h); top: 0; animation: sweep 2.2s linear infinite; }
+@keyframes sweep { from { top: 4%; } to { top: 96%; } }
+.scan-overlay:has(.is-found) .sweep { display: none; }
+.scan-status {
+  position: absolute; left: 50%; bottom: var(--space-4); transform: translateX(-50%);
+  display: flex; gap: var(--space-2); align-items: center; white-space: nowrap;
+  background: var(--tex-paper), var(--color-surface); border-radius: var(--radius-pill); padding: 8px 18px;
+  font-size: var(--fs-label); font-weight: 800; box-shadow: inset 0 0 0 1.5px var(--gold-500), var(--shadow-lift);
+}
+.scan-status .zh { font-size: var(--fs-zh-label); font-weight: 500; }
+.scan-status .dot { width: 10px; height: 10px; border-radius: 2px; transform: rotate(45deg); background: var(--gold-500); }
+.scan-status.is-loading .dot, .scan-status.is-idle .dot { background: var(--beige-300); }
+.scan-status.is-found { background: var(--color-success-bg); color: var(--color-success); }
+.scan-status.is-found .zh { color: var(--color-success); }
+.scan-status.is-found .dot { background: var(--green-500); }
+.scan-error { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; padding: var(--space-4); background: var(--tex-paper), var(--color-bg); }
+.scan-error-card {
+  max-width: 540px; background: var(--tex-paper), var(--color-surface); border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 0 2px var(--gold-500), inset 0 0 0 6px var(--beige-50), inset 0 0 0 7px rgba(201, 149, 46, .5), var(--shadow-card);
+  padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3);
+}
+.scan-error-card p { margin: 0; }
+.scan-error-card .zh { margin-top: 4px; }
+.scan-error-card .code { font-size: var(--fs-zh-small); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+
+/* ---------- P03 how to use ---------- */
+.howto-wrap { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: var(--space-3); padding: var(--space-4); }
+.howto-hint { margin: 0; text-align: center; font-size: var(--fs-small); color: var(--color-text-2); font-weight: 700; }
+.howto-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); width: 100%; max-width: 780px; margin: 0 auto; }
+.howto-tile {
+  position: relative; overflow: hidden; cursor: pointer; border: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center;
+  padding: var(--space-4) var(--space-3) var(--space-3); border-radius: var(--radius-lg);
+  background: var(--tex-paper), linear-gradient(180deg, var(--beige-50), var(--beige-100));
+  box-shadow: inset 0 0 0 1.5px var(--gold-500), inset 0 0 0 5px var(--beige-50), inset 0 0 0 6px rgba(201, 149, 46, .35), var(--shadow-card);
+  transition: transform var(--dur-fast) var(--ease);
+}
+.howto-tile:hover { transform: translateY(-2px); }
+.howto-tile .ic {
+  width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--grad-lacquer); color: var(--beige-50);
+  box-shadow: 0 0 0 3px var(--gold-300), 0 0 0 5px var(--gold-700), var(--shadow-medallion);
+  margin-bottom: 4px;
+}
+.howto-tile .ic svg { width: 26px; height: 26px; }
+.howto-tile .label .en { font-family: var(--font-display); font-size: var(--fs-label); font-weight: 800; line-height: 1.15; color: var(--color-heading); }
+.howto-tile .label .zh { font-family: var(--font-display-zh); font-size: var(--fs-zh-label); color: var(--red-700); }
+.howto-tile .desc { margin: 0; font-size: var(--fs-zh-small); color: var(--color-text-2); }
+.howto-tile .desc .zh { font-size: var(--fs-zh-small); }
+.demo-hand { position: absolute; width: 30px; height: 30px; color: var(--wood-600); opacity: 0; left: 50%; top: 22%; pointer-events: none; }
+.demo-hand svg { width: 100%; height: 100%; }
+.howto-tile.is-playing .demo-hand { opacity: 1; }
+.howto-tile.is-playing.demo-tap .demo-hand { animation: demo-tap 1.5s var(--ease); }
+.howto-tile.is-playing.demo-map .demo-hand { animation: demo-map 1.5s var(--ease); }
+.howto-tile.is-playing.demo-drag .demo-hand { animation: demo-drag 1.5s var(--ease); }
+.howto-tile.is-playing.demo-slide .demo-hand { animation: demo-slide 1.5s var(--ease); }
+.howto-tile.is-playing.demo-match .demo-hand { animation: demo-match 1.5s var(--ease); }
+@keyframes demo-tap { 0%, 100% { transform: translate(-50%, 0) scale(1); } 30%, 60% { transform: translate(-50%, 6px) scale(.85); } }
+@keyframes demo-map { 0% { transform: translate(-90%, 0); } 50% { transform: translate(-10%, 10px); } 100% { transform: translate(-60%, 0); } }
+@keyframes demo-drag { 0% { transform: translate(-120%, 0); } 100% { transform: translate(40%, 10px); } }
+@keyframes demo-slide { 0% { transform: translate(-150%, 14px); } 100% { transform: translate(60%, 14px); } }
+@keyframes demo-match { 0% { transform: translate(-130%, 20px); } 60%, 100% { transform: translate(30%, 0); } }
+
+/* ---------- P04 introduction ---------- */
+#stage:has(.map-area) { background: var(--tex-paper), radial-gradient(ellipse at 50% 40%, var(--teal-50), var(--beige-100) 70%); }
+.p04-question { position: absolute; bottom: var(--space-3); left: max(var(--space-3), env(safe-area-inset-left, 0px)); z-index: 5; display: flex; flex-direction: column-reverse; align-items: flex-start; gap: 6px; max-width: min(420px, 80%); }
+.p04-question-text { background: var(--tex-paper), var(--color-surface); border-radius: var(--radius-md); box-shadow: inset 0 0 0 1px var(--gold-500), var(--shadow-lift); padding: 10px 14px; font-size: var(--fs-small); }
+.p04-question-text .zh { margin-top: 3px; }
+
+/* ---------- stub pages ---------- */
+.stub { position: absolute; inset: 0; display: grid; place-items: center; padding: var(--space-5); }
+.stub-card { max-width: 540px; background: var(--tex-paper), var(--color-surface); border-radius: var(--radius-lg); box-shadow: inset 0 0 0 1.5px var(--gold-500), inset 0 0 0 5px var(--beige-50), inset 0 0 0 6px rgba(201, 149, 46, .4), var(--shadow-card); padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-2); }
+.stub-card h2 { margin: 0; }
+.stub-card h2 .en { font-family: var(--font-display); font-size: var(--fs-h2); font-weight: 800; color: var(--color-heading); }
+.stub-card h2 .zh { font-family: var(--font-display-zh); color: var(--red-700); }
+.stub-card p { margin: 0; font-size: var(--fs-small); }
+.stub-tag { font-family: var(--font-display); font-size: var(--fs-zh-small); font-weight: 700; color: var(--gold-700); letter-spacing: .08em; }
+
+/* ---------- compact (phones) ---------- */
+@media (max-height: 500px) {
+  .howto-grid { gap: var(--space-2); }
+  .howto-tile { padding: var(--space-2); gap: 2px; }
+  .howto-tile .ic { width: 36px; height: 36px; margin-bottom: 2px; }
+  .howto-tile .ic svg { width: 19px; height: 19px; }
+  .howto-tile .desc { display: none; }
+  .howto-wrap { gap: var(--space-2); padding: var(--space-3); }
+  .scan-frame { height: 58%; }
+  .scan-frame .corner { width: 34px; height: 34px; }
+  .p01-menu .chip { min-height: 34px; }
+  .map-carved { --frame: 8px; }
+}
