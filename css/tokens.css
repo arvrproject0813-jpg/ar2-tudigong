@@ -36,6 +36,8 @@
 
   /* painted temple-wall mural (auspicious clouds, hills, fields) for stage backgrounds */
   --img-mural: url("../assets/img/bg_mural.webp");
+  --img-clouds-near: url("../assets/img/bg_clouds_near.webp");   /* transparent, tiles horizontally */
+  --img-clouds-far: url("../assets/img/bg_clouds_far.webp");
   /* faint gold cloud watermark tile for the side panel */
   --tex-clouds: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='190'%3E%3Cg fill='none' stroke='%23C9952E' stroke-opacity='.16' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M20 60c0-12 12-18 20-12 2-12 20-12 22 0 8-6 20 0 18 12 10 2 10 16-2 16H26c-12 0-14-14-6-16Zm18 2a6 6 0 1 1 10 0m6-4a7 7 0 1 1 12 2'/%3E%3Cpath d='M150 150c0-10 10-15 17-10 2-10 17-10 18 0 7-5 17 0 15 10 8 2 8 13-2 13h-43c-10 0-12-11-5-13Zm15 2a5 5 0 1 1 8 0m5-3a6 6 0 1 1 10 2'/%3E%3Cpath d='M200 40c18-2 30 6 46 2M110 100c-18 2-30-6-46-2'/%3E%3C/g%3E%3C/svg%3E");
 

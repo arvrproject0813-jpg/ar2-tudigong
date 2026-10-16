@@ -26,6 +26,7 @@ export function render(stage, ctx) {
   stage.append(
     el('div', { class: 'p01-art' },
       el('img', { class: 'p01-hero', src: ASSETS.p01Hero, alt: '' }),
+      el('div', { class: 'p01-sky', 'aria-hidden': 'true' }),
       ...HERO_PINS.map((p) => el('span', {
         class: `map-pin is-pulse ${p.temple ? 'is-temple' : ''}`,
         style: { left: `${p.x}%`, top: `${p.y}%`, cursor: 'default' },

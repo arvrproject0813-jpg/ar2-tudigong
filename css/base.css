@@ -52,7 +52,7 @@ img { max-width: 100%; display: block; }
 }
 
 /* ---------- stage + panel ---------- */
-.layout { flex: 1; min-height: 0; display: flex; }
+.layout { flex: 1; min-height: 0; display: flex; position: relative; }
 #stage {
   flex: 1;
   margin-top: 10px;          /* room for the meander strip */
@@ -63,6 +63,18 @@ img { max-width: 100%; display: block; }
   container-type: size;
   background: var(--img-mural) center / cover no-repeat, var(--color-bg);
 }
+/* Clouds drifting in the wind: two seamless layers behind the page content.
+   Sized to the screen height so phones and tablets look alike. Each layer is one tile wider than the stage and slides left by exactly one tile, then loops. */
+#stage::before, #stage::after {
+  content: ""; position: absolute; top: 0; left: 0; height: 100%; z-index: -1; pointer-events: none;
+  background-repeat: repeat-x; background-position: 0 0; will-change: transform;
+}
+#stage::before { width: calc(100% + 200vh); background-image: var(--img-clouds-far); background-size: 200vh auto; opacity: .8; animation: drift-far 150s linear infinite; }
+#stage::after { width: calc(100% + 250vh); background-image: var(--img-clouds-near); background-size: 250vh auto; animation: drift-near 90s linear infinite, bob 9s ease-in-out infinite alternate; }
+@keyframes drift-far { to { transform: translateX(-200vh); } }
+@keyframes drift-near { to { transform: translateX(-250vh); } }
+@keyframes bob { from { translate: 0 0; } to { translate: 0 1.2vh; } }
+
 #panel {
   width: var(--panel-w);
   flex: none;
@@ -72,6 +84,22 @@ img { max-width: 100%; display: block; }
   padding-right: env(safe-area-inset-right, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
+
+/* Edge tab on the panel's left side: arrow right = slide the panel away; at the screen edge, arrow left = bring it back */
+#panel-handle {
+  position: absolute; z-index: calc(var(--z-panel) + 1); top: 50%;
+  right: calc(var(--panel-w) - 1px); transform: translateY(-50%);
+  width: 30px; height: 72px; padding: 0; border: 0; cursor: pointer;
+  border-radius: 14px 0 0 14px;
+  background: var(--tex-paper), var(--grad-lacquer); color: var(--beige-50);
+  box-shadow: inset 0 0 0 1.5px var(--gold-300), inset 0 0 0 3.5px rgba(18, 63, 60, .9), -4px 4px 12px rgba(18, 63, 60, .3);
+  display: grid; place-items: center;
+  transition: right var(--dur-slow) var(--ease), width var(--dur-fast) var(--ease);
+}
+#panel-handle::after { content: ""; position: absolute; inset: -6px -8px -6px -10px; }   /* bigger hit area */
+#panel-handle svg { width: 20px; height: 20px; filter: drop-shadow(0 1px 0 rgba(0, 0, 0, .3)); }
+#panel-handle:hover { width: 34px; }
+body.panel-collapsed #panel-handle { right: env(safe-area-inset-right, 0px); }
 
 /* Full-screen stage: the side panel slides away, a floating dock keeps narration + Next reachable */
 body.panel-collapsed #panel { width: 0; opacity: 0; border-left-width: 0; pointer-events: none; }
@@ -104,6 +132,9 @@ body.panel-collapsed #toast-layer { right: 0; }
 #rotate-overlay .rotate-zh { font-family: var(--font-display-zh); font-size: 17px; color: var(--color-text-2); }
 @media (orientation: portrait) {
   #rotate-overlay { display: flex; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #stage::before, #stage::after, .p01-sky { animation: none !important; }
 }
 
 /* ---------- layers ---------- */

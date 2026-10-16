@@ -29,7 +29,7 @@ Upload one MP3 per page into `assets/audio/`, named `p01.mp3` … `p12.mp3` (opt
 
 ## Full-screen mode
 
-The frame icon in the top bar hides the side panel so the activity uses the whole screen. A floating dock (top-right) keeps narration, "Show panel" and Next within reach. The choice is remembered.
+The gold-framed arrow tab on the panel's left edge (or the frame icon in the top bar) slides the side panel away so the activity uses the whole screen; the same tab, now at the screen edge, brings it back. A floating dock (top-right) keeps narration, "Show panel" and Next within reach. The choice is remembered.
 
 ## Test the scan (P02)
 
@@ -53,6 +53,9 @@ The `.mind` file must be compiled from the exact image you print.
 Glazed-teal lacquer, temple gold trim and vermilion on warm paper, serif titles, gold-ringed medallion pins, a red seal stamp on question boxes and a carved-wood frame around maps. Everything is defined in `css/tokens.css`. Gold is used for trim and ornaments only (no deity close-ups, no black-and-gold, no rays or smoke), so the storyboard's cultural rules still hold.
 
 ## Art
+
+The stage background is a still mural (`bg_mural.webp`) with two transparent cloud layers (`bg_clouds_far.webp`, `bg_clouds_near.webp`) that drift left on a loop, like clouds in the wind. Motion stops automatically when a device has Reduce Motion switched on.
+
 
 `assets/img/p01_home_hero.webp`, `assets/img/p04_culture_map.webp` and `assets/targets/tudigong-card.png` are in-house semi-realistic illustrations. Their editable SVG sources are in `assets/source-art/`. To use other art, change the paths in `js/config.js` → `ASSETS`:
 

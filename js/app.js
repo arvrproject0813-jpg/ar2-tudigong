@@ -55,8 +55,15 @@ const back = () => { const i = indexOf(current.id); if (i > 0) go(PAGES[i - 1].i
 const rerender = () => go(current.id);
 
 /* ---------- full-screen stage: hide / show the side panel ---------- */
+// Edge tab on the panel's left side (created once, lives outside the page content)
+const $handle = el('button', { id: 'panel-handle', type: 'button', onclick: () => setPanelCollapsed(!state.panelCollapsed) });
+document.querySelector('.layout').append($handle);
+
 function applyPanelState() {
   document.body.classList.toggle('panel-collapsed', !!state.panelCollapsed);
+  $handle.innerHTML = icon(state.panelCollapsed ? 'chevLeft' : 'chevRight');
+  const label = plain(state.panelCollapsed ? CONTENT.common.showPanel : CONTENT.common.fullScreen);
+  $handle.setAttribute('aria-label', label); $handle.title = label;
   $dock.hidden = !state.panelCollapsed;
   $panel.setAttribute('aria-hidden', state.panelCollapsed ? 'true' : 'false');
   // let layouts and the AR camera re-measure once the slide animation has finished

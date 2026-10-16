@@ -40,6 +40,13 @@
   width: max(100cqw, 150cqh); aspect-ratio: 3 / 2;
 }
 .p01-hero { position: absolute; inset: 0; width: 100%; height: 100%; }
+.p01-sky {            /* clouds drifting across the sky of the hero illustration */
+  position: absolute; top: 0; left: 0; height: 44%; width: 300%; pointer-events: none;
+  background: var(--img-clouds-far) repeat-x 0 0 / 100% auto; background-size: 33.333% auto; opacity: .85;
+  -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent); mask-image: linear-gradient(180deg, #000 55%, transparent);
+  animation: hero-sky 120s linear infinite;
+}
+@keyframes hero-sky { to { transform: translateX(-33.333%); } }
 .p01-shade {          /* soft paper fade at the bottom so the menu reads on the art */
   position: absolute; left: 0; right: 0; bottom: 0; height: 34%; pointer-events: none; z-index: 2;
   background: linear-gradient(180deg, rgba(246, 238, 223, 0), rgba(246, 238, 223, .85));

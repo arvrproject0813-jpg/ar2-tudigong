@@ -33,6 +33,7 @@ export const ICONS = {
   expand: s('<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>'),
   sidebar: s('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/><path d="M18 9l-1.5 3 1.5 3" stroke-width="1.8"/>'),
   chevLeft: s('<path d="M14 6l-6 6 6 6"/>'),
+  chevRight: s('<path d="M10 6l6 6-6 6"/>'),
   book: s('<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h7"/>'),
 };
 
