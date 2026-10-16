@@ -3,6 +3,7 @@
    Components use the semantic --color-* roles, never raw hex.
    Look: glazed-teal lacquer + vermilion + gold trim on warm paper, like a temple museum exhibit.
    Gold is for trim, frames, ornaments and achievements only: never large black-and-gold areas, never text below 18px bold. */
+@import url('https://fonts.googleapis.com/css2?family=Alegreya:wght@700;800&family=Alegreya+Sans:wght@400;500;700;800&family=Chiron+Sung+HK:wght@400;600;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&text=%E5%9C%9F%E5%9C%B0%E5%85%AC&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif:wght@600;700;800&family=Noto+Serif+TC:wght@600;700;900&display=swap');
 

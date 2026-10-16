@@ -103,7 +103,13 @@ button.chip:hover { background: var(--teal-50); }
 
 /* ---------- panel: paper scroll with a double gold rule and a cloud ornament ---------- */
 .panel {
-  background: var(--tex-paper), linear-gradient(180deg, var(--beige-50), var(--beige-100));
+  /* gold-leaf paper (灑金): faint gold flecks and soft gilded hills along the bottom (assets/img/panel_mural.svg) */
+  background: url('../assets/img/panel_mural.svg') center bottom / cover no-repeat, var(--tex-paper), linear-gradient(180deg, var(--beige-50), var(--beige-100));
+  /* panel typefaces: Alegreya (calligraphic serif) for titles and buttons, Alegreya Sans for text, 昭源宋體 for Chinese */
+  --font-display: 'Alegreya', 'Chiron Sung HK', 'Noto Serif TC', Georgia, serif;
+  --font-display-zh: 'Chiron Sung HK', 'Noto Serif TC', 'Songti TC', serif;
+  --font-ui: 'Alegreya Sans', 'Chiron Sung HK', 'Noto Sans TC', system-ui, sans-serif;
+  --font-zh: 'Chiron Sung HK', 'Noto Serif TC', 'PMingLiU', serif;
   border-left: 3px double var(--gold-500);
   box-shadow: inset 6px 0 12px -8px rgba(58, 42, 30, .35);
   display: flex; flex-direction: column;
@@ -114,13 +120,13 @@ button.chip:hover { background: var(--teal-50); }
 .panel-title { position: relative; padding-bottom: 10px; }
 .panel-title::after { content: ""; position: absolute; left: 0; bottom: 0; width: 44px; height: 2px; background: var(--gold-500); border-radius: 2px; }
 .panel-title .en { font-family: var(--font-display); font-size: var(--fs-h1); font-weight: var(--fw-en-heading); color: var(--color-heading); line-height: 1.18; text-wrap: balance; }
-.panel-title .zh { font-family: var(--font-display-zh); font-size: var(--fs-zh-h1); font-weight: 700; color: var(--red-700); margin-top: 3px; }
+.panel-title .zh { font-family: var(--font-display-zh); font-size: var(--fs-zh-h1); font-weight: 800; color: var(--red-700); margin-top: 3px; }
 .panel-title .zh.solo { color: var(--color-heading); font-size: var(--fs-h1); }
 .panel-title.display .en { font-size: var(--fs-display); }
 .panel-title.display .zh { font-size: var(--fs-zh-display); }
 .panel-title.display .zh.solo { font-size: var(--fs-display); }
 .panel-body { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: var(--space-3); padding-right: 4px; }
-.narration { font-size: var(--fs-body); line-height: 1.5; user-select: text; -webkit-user-select: text; }
+.narration { font-size: calc(var(--fs-body) + 1px); line-height: 1.5; user-select: text; -webkit-user-select: text; }
 .narration .zh { display: block; margin-top: var(--space-2); font-size: var(--fs-zh-body); line-height: var(--lh-zh); }
 .panel-actions { display: flex; flex-direction: column; gap: var(--space-2); }
 
