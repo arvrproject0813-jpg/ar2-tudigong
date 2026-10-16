@@ -30,7 +30,6 @@ export function render(stage, ctx) {
   ctx.panel({
     secondary: [
       button(c.scanAgain, { variant: 'secondary', onClick: () => begin() }),
-      button(CONTENT.common.back, { variant: 'secondary', onClick: () => ctx.back() }),
     ],
   });
   tasks(ctx.isComplete());

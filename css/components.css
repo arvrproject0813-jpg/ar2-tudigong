@@ -18,8 +18,18 @@
   border: 0; cursor: pointer; text-align: center; line-height: 1.2;
   transition: transform var(--dur-fast) var(--ease), filter var(--dur-fast) var(--ease);
 }
-.btn .en { font-size: var(--fs-label); font-weight: var(--fw-en-label); letter-spacing: .01em; }
-.btn .zh { font-size: var(--fs-zh-label); font-weight: 500; }
+/* Button lettering: engraved-plaque style. EN in spaced serif capitals, ZH in spaced Song/Ming serif. */
+.btn .en { font-family: var(--font-display); font-size: calc(var(--fs-label) - 2px); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.btn .zh { font-family: var(--font-display-zh); font-size: var(--fs-zh-label); font-weight: 600; letter-spacing: .32em; margin-right: -.32em; margin-top: 2px; }
+.btn .zh.solo { font-size: calc(var(--fs-label) - 1px); letter-spacing: .4em; margin-right: -.4em; margin-top: 0; }
+/* small gold diamonds flank the English word on primary buttons */
+.btn-primary .en { display: flex; align-items: center; justify-content: center; gap: .7em; }
+.btn-primary .en::before, .btn-primary .en::after {
+  content: ""; flex: none; width: 5px; height: 5px; transform: rotate(45deg);
+  background: var(--gold-300); box-shadow: 0 0 0 1px rgba(18, 63, 60, .5);
+}
+.btn-primary .zh { color: var(--gold-100); }
+.btn-primary:disabled .en::before, .btn-primary:disabled .en::after { background: var(--beige-300); box-shadow: none; }
 .btn:active { transform: translateY(2px); }
 /* glazed lacquer button with a gold inner frame */
 .btn-primary {
@@ -28,7 +38,7 @@
               0 3px 0 var(--teal-800), 0 8px 16px rgba(18, 63, 60, .3);
 }
 .btn-primary::before { content: ""; position: absolute; left: 8px; right: 8px; top: 5px; height: 40%; border-radius: 8px; background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0)); pointer-events: none; }
-.btn-primary .zh { color: var(--color-on-primary); opacity: .9; }
+.btn-primary .zh { opacity: .95; }
 .btn-primary .zh.solo { opacity: 1; }
 .btn-primary:hover { filter: brightness(1.08); }
 .btn-primary:disabled { background: var(--beige-200); color: var(--wood-400); box-shadow: inset 0 0 0 1.5px var(--beige-300); cursor: not-allowed; filter: none; }
@@ -39,6 +49,18 @@
 .btn-secondary:hover { background: var(--teal-50); }
 .btn-row { display: flex; gap: var(--space-2); }
 .btn-row > .btn { flex: 1; min-width: 0; }
+
+/* Panel navigation: round Back (about 15%) + wide Next (the rest) */
+.nav-row { display: flex; align-items: center; gap: var(--space-2); }
+.nav-row > .btn { flex: 1; min-width: 0; }
+.nav-row > .nav-back {
+  flex: none; width: 56px; height: 56px; border: 0; border-radius: 50%; color: var(--teal-800);
+  background: var(--tex-paper), var(--color-surface);
+  box-shadow: inset 0 0 0 1.5px var(--gold-500), inset 0 0 0 4px var(--color-surface), inset 0 0 0 5px rgba(201, 149, 46, .35), 0 2px 0 var(--beige-300);
+}
+.nav-row > .nav-back:hover { background: var(--teal-50); }
+.nav-row > .nav-back:active { transform: translateY(2px); }
+.nav-row > .nav-back svg { width: 22px; height: 22px; stroke-width: 2.4; }
 
 .icon-btn {
   position: relative;
@@ -286,6 +308,8 @@ button.chip:hover { background: var(--teal-50); }
 /* ---------- compact (phone landscape) ---------- */
 @media (max-height: 500px) {
   .btn { min-height: 48px; padding: 6px 14px; border-radius: 10px; }
+  .nav-row > .nav-back { width: 48px; height: 48px; }
+  .nav-row > .nav-back svg { width: 20px; height: 20px; }
   .panel-inner { padding: var(--space-3) var(--space-3) var(--space-3) calc(var(--space-3) + 2px); gap: var(--space-2); }
   .panel::before { width: 40px; height: 26px; top: 8px; right: 8px; }
   .qbox { padding: var(--space-2) var(--space-3); gap: var(--space-2); }

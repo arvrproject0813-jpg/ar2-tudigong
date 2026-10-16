@@ -111,7 +111,6 @@ function renderTopbar() {
   }, langLabel);
   $topbar.replaceChildren(
     el('div', { class: 'tb-left' },
-      i > 0 ? iconButton('back', plain(CONTENT.common.back), back) : null,
       el('button', { class: 'tb-logo', type: 'button', onclick: () => go('p01'), 'aria-label': 'Tudigong — back to the welcome page', title: `P${String(i + 1).padStart(2, '0')} / 12` },
         el('span', { class: 'cal', lang: 'zh-Hant' }, '土地公'),
         el('span', { class: 'lat' }, 'Tudigong'))),
@@ -158,11 +157,15 @@ function makeCtx(id) {
       if (opts.tasks) ctx.setTasks(opts.tasks);
       const actions = el('div', { class: 'panel-actions' });
       if (opts.secondary?.length) actions.append(el('div', { class: 'btn-row' }, opts.secondary));
+      // bottom row: a small round Back button + the wide primary (Next) button
+      const nav = el('div', { class: 'nav-row' });
+      if (indexOf(id) > 0) nav.append(iconButton('back', plain(CONTENT.common.back), back, 'nav-back'));
       if (opts.primary !== false) {
         const p = opts.primary || { text: CONTENT.common.next, onClick: next };
         primaryBtn = button(p.text, { variant: 'primary', onClick: p.onClick, disabled: p.alwaysEnabled ? false : !completed });
-        actions.append(primaryBtn);
+        nav.append(primaryBtn);
       }
+      if (nav.childElementCount) actions.append(nav);
       inner.append(actions);
       $panel.replaceChildren(inner);
     },
