@@ -8,7 +8,7 @@ Built from the team build guide (`TUDIGONG_DESIGN_GUIDE.md`).
 | Page | Status | Owner |
 |---|---|---|
 | P00 shell (router, top bar, panel, tokens, components, drag helper, AR helper) | Done | B |
-| P01 Home | Done (semi-realistic art) | A |
+| P01 Welcome | Done: full-screen opening animation (shrine rises from the earth, gold 土地公 calligraphy) | A |
 | P02 Scan (MindAR) | Done, tested with the placeholder card | B |
 | P03 How to Use | Done | A |
 | P04 Introduction | Done (aerial culture map) | B |
@@ -29,7 +29,13 @@ Upload one MP3 per page into `assets/audio/`, named `p01.mp3` … `p12.mp3` (opt
 
 ## Full-screen mode
 
-The gold-framed arrow tab on the panel's left edge (or the frame icon in the top bar) slides the side panel away so the activity uses the whole screen; the same tab, now at the screen edge, brings it back. A floating dock (top-right) keeps narration, "Show panel" and Next within reach. The choice is remembered.
+The gold-framed arrow tab on the panel's left edge (or the frame icon in the top bar) slides the side panel away so the activity uses the whole screen; the same tab, now at the screen edge, brings it back. The choice is remembered.
+
+## Welcome page (P01) and the 土地公 logo
+
+P01 is a full-screen welcome with no top bar or panel (`export const chrome = false` in `js/pages/p01-home.js`). The ground trembles, soil bursts up, the street-corner shrine rises out of the earth with a banyan beside it, then 土地公 is brushed in gold calligraphy and "Start Experience" appears (about 5 s; tap anywhere to skip). Tudigong is the god of the land, so the shrine rising from the soil carries the idea without showing the deity himself (storyboard rule). Animation lives in `css/welcome.css`.
+
+On every other page the top bar shows the gold 土地公 calligraphy logo; tapping it returns to the welcome page.
 
 ## Test the scan (P02)
 
@@ -54,12 +60,12 @@ Glazed-teal lacquer, temple gold trim and vermilion on warm paper, serif titles,
 
 ## Art
 
-The stage background is a still mural (`bg_mural.webp`) with two transparent cloud layers (`bg_clouds_far.webp`, `bg_clouds_near.webp`) that drift left on a loop, like clouds in the wind. Motion stops automatically when a device has Reduce Motion switched on.
+The stage background is a semi-realistic dawn landscape of misty mountains and terraced rice paddies (`bg_mural.webp`; the welcome page uses `welcome_bg.webp` plus the transparent `sprite_shrine.webp` / `sprite_banyan.webp`) with two transparent cloud layers (`bg_clouds_far.webp`, `bg_clouds_near.webp`) that drift left on a loop, like clouds in the wind. Motion stops automatically when a device has Reduce Motion switched on.
 
 
 `assets/img/p01_home_hero.webp`, `assets/img/p04_culture_map.webp` and `assets/targets/tudigong-card.png` are in-house semi-realistic illustrations. Their editable SVG sources are in `assets/source-art/`. To use other art, change the paths in `js/config.js` → `ASSETS`:
 
-- `p01Hero`: the decorative medallions are placed in `HERO_PINS` at the top of `js/pages/p01-home.js` (% of the 3:2 image).
+- `welcomeBg`, `shrine`, `banyan`: the welcome scene. Shrine/banyan positions are `.w-shrine` / `.w-banyan` in `css/welcome.css` (% of the 16:9 scene).
 - `p04Map`: adjust the pin positions in `NODES` at the top of `js/pages/p04-intro.js` (% of the 3:2 image). The map is shown zoomed (see `ZOOM`).
 
 ## Building the next pages

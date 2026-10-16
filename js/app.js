@@ -21,11 +21,9 @@ setLang(state.lang);
 const $topbar = document.getElementById('topbar');
 const $stage = document.getElementById('stage');
 const $panel = document.getElementById('panel');
-const $dock = document.getElementById('dock');
 const LANG_ORDER = ['bi', 'en', 'zh'];
 
 let current = null;     // { id, mod }
-let dockInfo = { primary: null, completed: false };   // what the floating dock mirrors from the panel
 let navToken = 0;
 
 /* ---------- navigation ---------- */
@@ -46,9 +44,8 @@ async function go(id) {
   renderTopbar();
   $stage.replaceChildren(); $panel.replaceChildren();
   $stage.scrollTop = 0;
-  dockInfo = { primary: null, completed: !!state.done[id] };
+  document.body.classList.toggle('is-fullbleed', mod.chrome === false);
   mod.render($stage, makeCtx(id));
-  renderDock();
 }
 const next = () => { const i = indexOf(current.id); if (i < PAGES.length - 1) go(PAGES[i + 1].id); };
 const back = () => { const i = indexOf(current.id); if (i > 0) go(PAGES[i - 1].id); };
@@ -64,7 +61,6 @@ function applyPanelState() {
   $handle.innerHTML = icon(state.panelCollapsed ? 'chevLeft' : 'chevRight');
   const label = plain(state.panelCollapsed ? CONTENT.common.showPanel : CONTENT.common.fullScreen);
   $handle.setAttribute('aria-label', label); $handle.title = label;
-  $dock.hidden = !state.panelCollapsed;
   $panel.setAttribute('aria-hidden', state.panelCollapsed ? 'true' : 'false');
   // let layouts and the AR camera re-measure once the slide animation has finished
   setTimeout(() => window.dispatchEvent(new Event('resize')), 420);
@@ -72,23 +68,12 @@ function applyPanelState() {
 function setPanelCollapsed(v) {
   state.panelCollapsed = v; save();
   applyPanelState();
-  if (current) { renderTopbar(); renderDock(); }
+  if (current) renderTopbar();
 }
 
-/* floating dock shown in full-screen mode: narration · show panel · next */
-function renderDock() {
-  if (!current) return;
-  const C = CONTENT.common;
-  const p = dockInfo.primary;
-  const kids = [];
-  if (CONTENT[current.id]?.narration) kids.push(narrationControl(current.id, state.lang, 'mini'));
-  kids.push(el('button', { class: 'dock-btn', type: 'button', onclick: () => setPanelCollapsed(false), html: icon('chevLeft') }, bi(C.showPanel, { layout: 'inline' })));
-  if (p) {
-    const b = button(p.text, { variant: 'primary', onClick: p.onClick, disabled: p.alwaysEnabled ? false : !dockInfo.completed });
-    b.classList.add('dock-primary');
-    kids.push(b);
-  }
-  $dock.replaceChildren(...kids);
+function cycleLang() {
+  state.lang = LANG_ORDER[(LANG_ORDER.indexOf(state.lang) + 1) % LANG_ORDER.length];
+  setLang(state.lang); save(); rerender();
 }
 
 /* ---------- top bar ---------- */
@@ -99,15 +84,14 @@ function renderTopbar() {
     class: 'icon-btn lang-btn', type: 'button',
     'aria-label': `${plain(CONTENT.common.language)}: ${langLabel}`,
     html: icon('lang'),
-    onclick: () => {
-      state.lang = LANG_ORDER[(LANG_ORDER.indexOf(state.lang) + 1) % LANG_ORDER.length];
-      setLang(state.lang); save(); rerender();
-    },
+    onclick: cycleLang,
   }, langLabel);
   $topbar.replaceChildren(
     el('div', { class: 'tb-left' },
       i > 0 ? iconButton('back', plain(CONTENT.common.back), back) : null,
-      el('span', { class: 'tb-count' }, `P${String(i + 1).padStart(2, '0')} / 12`)),
+      el('button', { class: 'tb-logo', type: 'button', onclick: () => go('p01'), 'aria-label': 'Tudigong — back to the welcome page', title: `P${String(i + 1).padStart(2, '0')} / 12` },
+        el('span', { class: 'cal', lang: 'zh-Hant' }, '土地公'),
+        el('span', { class: 'lat' }, 'Tudigong'))),
     el('div', { class: 'tb-mid' },
       el('div', { class: 'progress-dots', role: 'progressbar', 'aria-valuemin': '1', 'aria-valuemax': '12', 'aria-valuenow': String(i + 1) },
         PAGES.map((p, j) => el('span', { class: j < i ? 'is-done' : j === i ? 'is-current' : '' })))),
@@ -124,7 +108,7 @@ function makeCtx(id) {
 
   const ctx = {
     id, state, content: CONTENT[id], CONTENT,
-    go, next, back, rerender, save, toast, openVocab, resetAll: () => resetAll(),
+    go, next, back, rerender, save, toast, openVocab, cycleLang, resetAll: () => resetAll(),
 
     /**
      * Build the right-hand panel.
@@ -154,12 +138,10 @@ function makeCtx(id) {
       if (opts.primary !== false) {
         const p = opts.primary || { text: CONTENT.common.next, onClick: next };
         primaryBtn = button(p.text, { variant: 'primary', onClick: p.onClick, disabled: p.alwaysEnabled ? false : !completed });
-        dockInfo.primary = p;
         actions.append(primaryBtn);
       }
       inner.append(actions);
       $panel.replaceChildren(inner);
-      renderDock();
     },
 
     setTasks(items) { if (tasksHost) tasksHost.replaceChildren(checklist(items)); },
@@ -169,7 +151,6 @@ function makeCtx(id) {
       completed = true;
       state.done[id] = true; save();
       if (primaryBtn) primaryBtn.disabled = false;
-      if (!dockInfo.completed) { dockInfo.completed = true; renderDock(); }
     },
     isComplete: () => completed,
 

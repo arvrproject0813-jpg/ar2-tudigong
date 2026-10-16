@@ -1,58 +1,74 @@
-// P01 · Home / Entry Page
-import { el, bi, chip, infoBox, modal, button } from '../ui.js';
+// P01 · Welcome — a full-screen opening.
+// The earth trembles, soil bursts up and the street-corner Tudigong shrine rises out of the ground
+// (Tudigong is the guardian of the land, so his shrine comes from the earth). A banyan grows beside it,
+// then 土地公 is written in gold brush calligraphy and the Start button appears.
+// No deity figure, no rays, no smoke: the shrine and the land carry the meaning (storyboard rules).
+// Tap anywhere during the animation to skip to the end.
+import { el, bi } from '../ui.js';
 import { ASSETS } from '../config.js';
+import { narrationControl } from '../narration.js';
 import { icon } from '../icons.js';
 
-// Decorative medallions on the hero art, in % of the 3:2 image (they follow the image when it is cropped).
-const HERO_PINS = [
-  { x: 43.3, y: 49, temple: true, icon: 'temple' },  // street-corner shrine
-  { x: 22, y: 34, icon: 'tree' },                     // banyan
-  { x: 8, y: 66, icon: 'fields' },                    // rice fields
-  { x: 86, y: 76, icon: 'market' },                   // market stalls
-  { x: 70, y: 38, icon: 'home' },                     // qilou houses
-];
+export const chrome = false;      // no top bar / side panel on this page
+
+let timers = [];
 
 export function render(stage, ctx) {
-  const c = ctx.content;
   const { CONTENT } = ctx;
-  const compact = window.matchMedia('(max-height: 500px)').matches;
+  const c = ctx.content;
+  const lang = ctx.state.lang;
 
-  const openInfo = (key) => {
-    const body = [el('p', {}, bi(c.info[key]))];
-    if (key === 'about') body.push(el('p', { class: 'muted' }, bi(CONTENT.meta.statement)));
-    modal({ title: c.menu[key], body, actions: [button(CONTENT.common.close, { variant: 'secondary', onClick: () => document.getElementById('modal-layer').replaceChildren() })] });
-  };
+  // soil particles: a ring of clods thrown up and falling back
+  const soil = el('div', { class: 'w-soil', 'aria-hidden': 'true' },
+    Array.from({ length: 16 }, (_, i) => {
+      const a = -160 + (i / 15) * 140;             // spread of launch angles (degrees, upward)
+      const dist = 40 + (i % 4) * 22;
+      return el('i', { style: { '--a': `${a}deg`, '--d': `${dist}%`, '--s': `${0.6 + (i % 3) * 0.35}`, '--t': `${(i % 5) * 0.04}s` } });
+    }));
 
-  stage.append(
-    el('div', { class: 'p01-art' },
-      el('img', { class: 'p01-hero', src: ASSETS.p01Hero, alt: '' }),
-      el('div', { class: 'p01-sky', 'aria-hidden': 'true' }),
-      ...HERO_PINS.map((p) => el('span', {
-        class: `map-pin is-pulse ${p.temple ? 'is-temple' : ''}`,
-        style: { left: `${p.x}%`, top: `${p.y}%`, cursor: 'default' },
-        'aria-hidden': 'true',
-        html: icon(p.icon),
-      }))),
-    el('div', { class: 'p01-shade', 'aria-hidden': 'true' }),
-    el('div', { class: 'p01-tags stage-pad' }, c.tags.map((t) => chip(t, { cls: 'on-art' }))),
-    el('nav', { class: 'p01-menu stage-pad', 'aria-label': 'Menu' },
-      // Phones (short screens) get the short labels so the menu stays on one row
-      ...[['about', 'info'], ['map', 'map'], ['objects', 'temple'], ['howTo', 'book']].map(([k, ic]) =>
-        chip(compact ? c.menuShort[k] : c.menu[k], { cls: 'on-art', iconName: ic, onClick: () => (k === 'howTo' ? ctx.go('p03') : openInfo(k)) })),
-    ),
+  const scene = el('div', { class: 'w-art' },
+    el('img', { class: 'w-bg', src: ASSETS.welcomeBg, alt: '' }),
+    el('div', { class: 'w-clouds far', 'aria-hidden': 'true' }),
+    el('div', { class: 'w-clouds near', 'aria-hidden': 'true' }),
+    // everything that rises is clipped at the ground line
+    el('div', { class: 'w-rise', 'aria-hidden': 'true' },
+      el('img', { class: 'w-banyan', src: ASSETS.banyan, alt: '' }),
+      el('img', { class: 'w-shrine', src: ASSETS.shrine, alt: '' })),
+    el('div', { class: 'w-mound', 'aria-hidden': 'true' }),
+    el('div', { class: 'w-dust', 'aria-hidden': 'true' }, el('i'), el('i'), el('i')),
+    soil,
   );
 
-  ctx.panel({
-    title: CONTENT.meta.shortTitle,
-    display: true,
-    narration: false,
-    body: [
-      bi(CONTENT.meta.subtitle, { tag: 'div', cls: 'subtitle', layout: 'inline' }),
-      infoBox(CONTENT.common.coreInquiry, CONTENT.meta.coreQuestion),
-    ],
-    primary: { text: c.start, onClick: () => ctx.go('p02'), alwaysEnabled: true },
-  });
+  const start = el('button', { class: 'btn btn-primary w-start', type: 'button', onclick: (e) => { e.stopPropagation(); ctx.go('p02'); } },
+    bi(c.start));
+
+  const title = el('div', { class: 'w-title' },
+    el('h1', { class: 'w-brush', lang: 'zh-Hant' }, el('span', {}, '土地公')),
+    el('div', { class: 'w-name' }, lang === 'zh' ? CONTENT.meta.shortTitle.zh : CONTENT.meta.shortTitle.en),
+    lang === 'bi' ? el('div', { class: 'w-name-zh', lang: 'zh-Hant' }, CONTENT.meta.title.zh) : null,
+    el('div', { class: 'w-sub' }, bi(CONTENT.meta.subtitle, { layout: 'inline' })),
+    el('div', { class: 'w-question' },
+      el('span', { class: 'seal', 'aria-hidden': 'true', lang: 'zh-Hant' }, '問'),
+      bi(CONTENT.meta.coreQuestion, { layout: 'stack' })),
+    start,
+  );
+
+  const corner = el('div', { class: 'w-corner' },
+    c.narration ? narrationControl('p01', lang, 'mini') : null,
+    el('button', { class: 'w-lang', type: 'button', onclick: (e) => { e.stopPropagation(); ctx.cycleLang(); }, html: icon('lang') },
+      { bi: '雙語', en: 'EN', zh: '中文' }[lang]));
+
+  const skip = el('button', { class: 'w-skip', type: 'button' }, bi(CONTENT.common.skip, { layout: 'inline' }));
+
+  const root = el('div', { class: 'welcome is-playing' }, scene, title, corner, skip);
+  const finish = () => {
+    if (!root.classList.contains('is-playing')) return;
+    root.classList.remove('is-playing'); root.classList.add('is-done');
+  };
+  root.addEventListener('click', (e) => { if (!e.target.closest('.w-start, .w-corner')) finish(); });
+  timers.push(setTimeout(finish, 6500));
+  stage.append(root);
   ctx.complete();
 }
 
-export function destroy() {}
+export function destroy() { timers.forEach(clearTimeout); timers = []; }

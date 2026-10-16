@@ -46,6 +46,19 @@ img { max-width: 100%; display: block; }
 .topbar .tb-left, .topbar .tb-right { flex: 0 0 150px; display: flex; align-items: center; gap: var(--space-2); }
 .topbar .tb-right { justify-content: flex-end; }
 .topbar .tb-mid { flex: 1; display: flex; justify-content: center; min-width: 0; }
+.tb-logo {
+  flex-shrink: 0; white-space: nowrap;
+  display: inline-flex; align-items: baseline; gap: 8px; border: 0; background: none; cursor: pointer; padding: 2px 6px; border-radius: var(--radius-md);
+}
+.tb-logo:hover { background: rgba(255, 251, 243, .1); }
+.tb-logo .cal {
+  font-family: var(--font-brush); font-size: calc(var(--topbar-h) * .62); line-height: 1; white-space: nowrap;
+  background: linear-gradient(100deg, #C9952E 0%, #FFF4D0 35%, #F0CF7A 55%, #C9952E 80%, #8A6416 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(18, 63, 60, .9)) drop-shadow(0 2px 4px rgba(0, 0, 0, .25));
+}
+.tb-logo .lat { font-family: var(--font-display); font-weight: 700; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--gold-300); }
+@media (max-height: 500px) { .tb-logo .lat { display: none; } }
 .topbar .tb-count {
   font-family: var(--font-display); font-size: var(--fs-small); font-weight: 700; color: var(--color-on-lacquer);
   letter-spacing: .08em; font-variant-numeric: tabular-nums;
@@ -101,18 +114,9 @@ img { max-width: 100%; display: block; }
 #panel-handle:hover { width: 34px; }
 body.panel-collapsed #panel-handle { right: env(safe-area-inset-right, 0px); }
 
-/* Full-screen stage: the side panel slides away, a floating dock keeps narration + Next reachable */
+/* Full-screen stage: the side panel slides away; the edge tab brings it back */
 body.panel-collapsed #panel { width: 0; opacity: 0; border-left-width: 0; pointer-events: none; }
 body.panel-collapsed #toast-layer { right: 0; }
-#dock {
-  position: fixed; z-index: var(--z-popover);
-  right: max(var(--space-3), env(safe-area-inset-right, 0px));
-  top: calc(var(--topbar-h) + env(safe-area-inset-top, 0px) + 10px + var(--space-3));
-  display: flex; align-items: center; gap: var(--space-2); padding: 6px;
-  border-radius: var(--radius-pill);
-  background: var(--tex-paper), rgba(255, 251, 243, .94);
-  box-shadow: inset 0 0 0 1.5px var(--gold-500), var(--shadow-lift);
-}
 
 /* Elements placed inside the stage keep clear of the notch on the left */
 .stage-pad { padding-left: max(var(--space-3), env(safe-area-inset-left, 0px)); }

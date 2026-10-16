@@ -113,6 +113,10 @@ const CONTENT = {
     "showPanel": {
       "en": "Show panel",
       "zh": "顯示面板"
+    },
+    "skip": {
+      "en": "Skip",
+      "zh": "略過"
     }
   },
   "p01": {

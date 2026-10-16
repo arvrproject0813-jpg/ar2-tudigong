@@ -19,6 +19,9 @@ export const PAGES = [
 export const ASSETS = {
   // Current art: in-house semi-realistic illustrations (sources in assets/source-art). Replace freely.
   p01Hero: 'assets/img/p01_home_hero.webp',
+  welcomeBg: 'assets/img/welcome_bg.webp',
+  shrine: 'assets/img/sprite_shrine.webp',
+  banyan: 'assets/img/sprite_banyan.webp',
   p04Map: 'assets/img/p04_culture_map.webp',
   // AR image target (compiled from assets/targets/tudigong-card.png with the MindAR compiler)
   target: 'assets/targets/tudigong-card.mind',

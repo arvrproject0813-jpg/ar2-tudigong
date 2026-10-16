@@ -159,5 +159,3 @@
   .map-carved { --frame: 8px; }
 }
 
-/* full-screen mode: keep the top-right corner free for the floating dock */
-body.panel-collapsed .p01-tags { right: min(460px, 55%); }

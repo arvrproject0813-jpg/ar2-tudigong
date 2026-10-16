@@ -138,17 +138,6 @@ button.chip:hover { background: var(--teal-50); }
 .narr-mini { width: 48px; height: 48px; border-radius: 50%; background: transparent; justify-content: center; padding: 0; }
 .narr-mini .narr-ic { width: 42px; height: 42px; }
 
-/* ---------- floating dock (full-screen mode) ---------- */
-.dock-btn {
-  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px 0 10px; border: 0; cursor: pointer;
-  border-radius: var(--radius-pill); background: transparent; color: var(--teal-800); font: inherit; font-size: var(--fs-small); font-weight: 800; white-space: nowrap;
-}
-.dock-btn:hover { background: var(--teal-50); }
-.dock-btn svg { width: 18px; height: 18px; color: var(--gold-700); }
-.dock-btn .zh { font-size: var(--fs-zh-small); font-weight: 500; }
-.btn.dock-primary { min-height: 44px; padding: 4px 22px; border-radius: var(--radius-pill); }
-.btn.dock-primary .zh { font-size: 11px; }
-
 /* ---------- checklist ---------- */
 .checklist { display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-small); }
 .checklist .row { display: flex; gap: 10px; align-items: flex-start; }

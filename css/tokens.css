@@ -3,6 +3,7 @@
    Components use the semantic --color-* roles, never raw hex.
    Look: glazed-teal lacquer + vermilion + gold trim on warm paper, like a temple museum exhibit.
    Gold is for trim, frames, ornaments and achievements only: never large black-and-gold areas, never text below 18px bold. */
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&text=%E5%9C%9F%E5%9C%B0%E5%85%AC&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif:wght@600;700;800&family=Noto+Serif+TC:wght@600;700;900&display=swap');
 
 :root{
@@ -70,6 +71,7 @@
   --font-zh:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;
   --font-display:'Noto Serif','Noto Serif TC','Songti TC',Georgia,serif;   /* titles, culture-note heads */
   --font-display-zh:'Noto Serif TC','Songti TC','PMingLiU',serif;
+  --font-brush:'Ma Shan Zheng','Noto Serif TC','Kaiti TC','STKaiti',serif;   /* brush calligraphy: only for the 土地公 logo/title */
   /* Regular = tablets (height >= 500px). EN line / ZH support line */
   --fs-display:40px; --fs-zh-display:27px;
   --fs-h1:28px;      --fs-zh-h1:19px;
