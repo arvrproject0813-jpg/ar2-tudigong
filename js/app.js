@@ -39,13 +39,36 @@ async function go(id) {
   try { mod = await import(`./pages/${page.file}.js`); }
   catch (e) { console.error('Could not load page', page.file, e); return; }
   if (token !== navToken) return;              // a newer navigation started meanwhile
+  const fromFullbleed = document.body.classList.contains('is-fullbleed');
   current = { id, mod };
-  state.page = id; save();
+  state.page = id;
+  // P02 always opens with the side panel showing: it slides in from the right
+  const slidePanel = id === 'p02' && mod.chrome !== false && (state.panelCollapsed || fromFullbleed || !prevId);
+  if (id === 'p02' && state.panelCollapsed) { state.panelCollapsed = false; applyPanelState(); }
+  prevId = id;
+  save();
   renderTopbar();
   $stage.replaceChildren(); $panel.replaceChildren();
   $stage.scrollTop = 0;
   document.body.classList.toggle('is-fullbleed', mod.chrome === false);
   mod.render($stage, makeCtx(id));
+  if (slidePanel) playPanelEnter();
+}
+let prevId = null;
+
+/** Slide the side panel (and its edge tab) in from the right edge, then let its contents fade in. */
+function playPanelEnter() {
+  const b = document.body;
+  clearTimeout(playPanelEnter.t);
+  b.classList.remove('panel-enter');
+  b.classList.add('panel-pre', 'panel-collapsed');          // start fully closed, without a transition
+  void $panel.offsetWidth;
+  b.classList.remove('panel-pre');
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    b.classList.add('panel-enter');
+    b.classList.toggle('panel-collapsed', !!state.panelCollapsed);   // open -> transitions to full width
+  }));
+  playPanelEnter.t = setTimeout(() => { b.classList.remove('panel-enter'); window.dispatchEvent(new Event('resize')); }, 1500);
 }
 const next = () => { const i = indexOf(current.id); if (i < PAGES.length - 1) go(PAGES[i + 1].id); };
 const back = () => { const i = indexOf(current.id); if (i > 0) go(PAGES[i - 1].id); };

@@ -149,3 +149,21 @@ body.panel-collapsed #toast-layer { right: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
 }
+
+/* Panel entrance (P02): the panel grows out of the right edge (width 0 -> full) while its contents keep their
+   full width, so everything travels right-to-left into place; then the contents fade in one after another. */
+body.panel-pre #panel, body.panel-pre #panel-handle { transition: none !important; }
+body.panel-enter #panel { transition: width .8s cubic-bezier(.2, .8, .2, 1), opacity .4s var(--ease); }
+body.panel-enter #panel-handle { transition: right .8s cubic-bezier(.2, .8, .2, 1); }
+body.panel-pre #panel .panel-inner, body.panel-enter #panel .panel-inner { min-width: calc(var(--panel-w) - 2px); }
+body.panel-enter #panel .panel-inner > * { animation: panel-item-in .5s var(--ease) both; }
+body.panel-enter #panel .panel-inner > :nth-child(1) { animation-delay: .35s; }
+body.panel-enter #panel .panel-inner > :nth-child(2) { animation-delay: .43s; }
+body.panel-enter #panel .panel-inner > :nth-child(3) { animation-delay: .51s; }
+body.panel-enter #panel .panel-inner > :nth-child(4) { animation-delay: .59s; }
+body.panel-enter #panel .panel-inner > :nth-child(5) { animation-delay: .67s; }
+body.panel-enter #panel .panel-inner > :nth-child(n+6) { animation-delay: .75s; }
+@keyframes panel-item-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  body.panel-enter #panel .panel-inner > * { animation: none; }
+}

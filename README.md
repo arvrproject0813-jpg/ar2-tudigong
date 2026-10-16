@@ -29,7 +29,7 @@ Upload one MP3 per page into `assets/audio/`, named `p01.mp3` … `p12.mp3` (opt
 
 ## Full-screen mode
 
-The gold-framed arrow tab on the panel's left edge (or the frame icon in the top bar) slides the side panel away so the activity uses the whole screen; the same tab, now at the screen edge, brings it back. The choice is remembered.
+The gold-framed arrow tab on the panel's left edge (or the frame icon in the top bar) slides the side panel away so the activity uses the whole screen; the same tab, now at the screen edge, brings it back. The choice is remembered, except on P02 (Scan): arriving there always slides the panel in from the right so the scan instructions are seen (`playPanelEnter()` in `js/app.js`).
 
 ## Welcome page (P01) and the 土地公 logo
 
