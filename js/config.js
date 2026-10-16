@@ -24,6 +24,9 @@ export const ASSETS = {
   target: 'assets/targets/tudigong-card.mind',
 };
 
+// Narration audio: assets/audio/p01.mp3 … p12.mp3 (optional p01_zh.mp3 / p01_en.mp3 per language)
+export const AUDIO_DIR = 'assets/audio/';
+
 // Pinned versions — do not change without telling the team.
 export const AR_SCRIPTS = [
   'https://cdn.jsdelivr.net/npm/aframe@1.5.0/dist/aframe-v1.5.0.min.js',

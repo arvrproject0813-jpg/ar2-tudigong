@@ -3,11 +3,12 @@ import CONTENT from '../content/content.js';
 import { PAGES, STORE_KEY } from './config.js';
 import { el, bi, button, iconButton, checklist, toast, clearToasts, closeModal, openVocab, setLang, plain } from './ui.js';
 import { icon } from './icons.js';
+import { narrationControl, stopNarration } from './narration.js';
 
 /* ---------- state ---------- */
 const freshState = () => ({
   lang: 'bi', page: 'p01', done: {}, seen: {},
-  p08Route: [], p11Sentences: [], badges: [], arAvailable: false,
+  p08Route: [], p11Sentences: [], badges: [], arAvailable: false, panelCollapsed: false,
 });
 function load() {
   try { return { ...freshState(), ...JSON.parse(localStorage.getItem(STORE_KEY) || '{}') }; }
@@ -20,9 +21,11 @@ setLang(state.lang);
 const $topbar = document.getElementById('topbar');
 const $stage = document.getElementById('stage');
 const $panel = document.getElementById('panel');
+const $dock = document.getElementById('dock');
 const LANG_ORDER = ['bi', 'en', 'zh'];
 
 let current = null;     // { id, mod }
+let dockInfo = { primary: null, completed: false };   // what the floating dock mirrors from the panel
 let navToken = 0;
 
 /* ---------- navigation ---------- */
@@ -32,7 +35,7 @@ async function go(id) {
   if (indexOf(id) < 0) id = 'p01';
   const token = ++navToken;
   if (current?.mod?.destroy) { try { current.mod.destroy(); } catch (e) { console.error(e); } }
-  clearToasts(); closeModal();
+  clearToasts(); closeModal(); stopNarration();
   const page = PAGES[indexOf(id)];
   let mod;
   try { mod = await import(`./pages/${page.file}.js`); }
@@ -43,11 +46,43 @@ async function go(id) {
   renderTopbar();
   $stage.replaceChildren(); $panel.replaceChildren();
   $stage.scrollTop = 0;
+  dockInfo = { primary: null, completed: !!state.done[id] };
   mod.render($stage, makeCtx(id));
+  renderDock();
 }
 const next = () => { const i = indexOf(current.id); if (i < PAGES.length - 1) go(PAGES[i + 1].id); };
 const back = () => { const i = indexOf(current.id); if (i > 0) go(PAGES[i - 1].id); };
 const rerender = () => go(current.id);
+
+/* ---------- full-screen stage: hide / show the side panel ---------- */
+function applyPanelState() {
+  document.body.classList.toggle('panel-collapsed', !!state.panelCollapsed);
+  $dock.hidden = !state.panelCollapsed;
+  $panel.setAttribute('aria-hidden', state.panelCollapsed ? 'true' : 'false');
+  // let layouts and the AR camera re-measure once the slide animation has finished
+  setTimeout(() => window.dispatchEvent(new Event('resize')), 420);
+}
+function setPanelCollapsed(v) {
+  state.panelCollapsed = v; save();
+  applyPanelState();
+  if (current) { renderTopbar(); renderDock(); }
+}
+
+/* floating dock shown in full-screen mode: narration · show panel · next */
+function renderDock() {
+  if (!current) return;
+  const C = CONTENT.common;
+  const p = dockInfo.primary;
+  const kids = [];
+  if (CONTENT[current.id]?.narration) kids.push(narrationControl(current.id, state.lang, 'mini'));
+  kids.push(el('button', { class: 'dock-btn', type: 'button', onclick: () => setPanelCollapsed(false), html: icon('chevLeft') }, bi(C.showPanel, { layout: 'inline' })));
+  if (p) {
+    const b = button(p.text, { variant: 'primary', onClick: p.onClick, disabled: p.alwaysEnabled ? false : !dockInfo.completed });
+    b.classList.add('dock-primary');
+    kids.push(b);
+  }
+  $dock.replaceChildren(...kids);
+}
 
 /* ---------- top bar ---------- */
 function renderTopbar() {
@@ -69,7 +104,10 @@ function renderTopbar() {
     el('div', { class: 'tb-mid' },
       el('div', { class: 'progress-dots', role: 'progressbar', 'aria-valuemin': '1', 'aria-valuemax': '12', 'aria-valuenow': String(i + 1) },
         PAGES.map((p, j) => el('span', { class: j < i ? 'is-done' : j === i ? 'is-current' : '' })))),
-    el('div', { class: 'tb-right' }, langBtn),
+    el('div', { class: 'tb-right' },
+      iconButton(state.panelCollapsed ? 'sidebar' : 'expand', plain(state.panelCollapsed ? CONTENT.common.showPanel : CONTENT.common.fullScreen),
+        () => setPanelCollapsed(!state.panelCollapsed), 'panel-toggle'),
+      langBtn),
   );
 }
 
@@ -96,6 +134,7 @@ function makeCtx(id) {
         inner.append(el('div', { class: 'panel-eyebrow' }, text));
       }
       if (title) inner.append(el('h1', { class: `panel-title ${opts.display ? 'display' : ''}`, style: { margin: 0 } }, bi(title)));
+      if (c.narration) inner.append(narrationControl(id, state.lang, 'full'));
       const body = el('div', { class: 'panel-body' });
       if (opts.narration !== false && c.narration) body.append(el('div', { class: 'narration' }, bi(c.narration)));
       (opts.body || []).forEach((n) => body.append(n));
@@ -108,10 +147,12 @@ function makeCtx(id) {
       if (opts.primary !== false) {
         const p = opts.primary || { text: CONTENT.common.next, onClick: next };
         primaryBtn = button(p.text, { variant: 'primary', onClick: p.onClick, disabled: p.alwaysEnabled ? false : !completed });
+        dockInfo.primary = p;
         actions.append(primaryBtn);
       }
       inner.append(actions);
       $panel.replaceChildren(inner);
+      renderDock();
     },
 
     setTasks(items) { if (tasksHost) tasksHost.replaceChildren(checklist(items)); },
@@ -121,6 +162,7 @@ function makeCtx(id) {
       completed = true;
       state.done[id] = true; save();
       if (primaryBtn) primaryBtn.disabled = false;
+      if (!dockInfo.completed) { dockInfo.completed = true; renderDock(); }
     },
     isComplete: () => completed,
 
@@ -143,6 +185,7 @@ function fromHash() {
   return indexOf(h) >= 0 ? h : null;
 }
 window.addEventListener('hashchange', () => { const h = fromHash(); if (h) go(h); });
+applyPanelState();
 go(fromHash() || state.page || 'p01');
 
 // Expose for "Experience Again" on later pages

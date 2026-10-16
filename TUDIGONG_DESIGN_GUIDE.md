@@ -48,6 +48,8 @@ LAYOUT (landscape):
 - Under it: STAGE on the left (flex:1) for AR / art / map / interaction; PANEL on the right (width: var(--panel-w)) with eyebrow, title EN then ZH, scrollable narration, task checklist, and the primary button pinned to the bottom.
 - Stage art is 3:2. Maps with pins sit in a wrapper with aspect-ratio:3/2 and object-fit:contain so pin % positions stay correct.
 - Compact type scale when height < 500px (already in tokens.css). Touch targets ≥ 44×44px. Safe-area side padding.
+- The panel already shows a narration button under the title (js/narration.js, files assets/audio/pXX.mp3) and the top bar has a full-screen toggle that hides the panel; a floating dock then shows narration, Show panel and Next. Keep the top-right corner of the stage free for that dock.
+- Stage background is the cloud mural (var(--img-mural)); put a .stage-paper veil behind dense content.
 
 BILINGUAL PATTERN:
 - English is the main line (learning target). Traditional Chinese (Taiwan) is the support line directly below, smaller, color --color-text-2. Never Simplified Chinese.
@@ -644,6 +646,26 @@ const CONTENT = {
     "readMore": {
       "en": "Tap to read",
       "zh": "點一下閱讀"
+    },
+    "listen": {
+      "en": "Listen to narration",
+      "zh": "聆聽旁白"
+    },
+    "pause": {
+      "en": "Pause narration",
+      "zh": "暫停旁白"
+    },
+    "audioSoon": {
+      "en": "Narration coming soon",
+      "zh": "旁白即將上線"
+    },
+    "fullScreen": {
+      "en": "Full screen",
+      "zh": "全螢幕"
+    },
+    "showPanel": {
+      "en": "Show panel",
+      "zh": "顯示面板"
     }
   },
   "p01": {

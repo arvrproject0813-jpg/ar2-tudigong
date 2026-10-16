@@ -5,13 +5,9 @@
 .subtitle { font-family: var(--font-display); font-size: var(--fs-label); font-weight: 700; color: var(--teal-800); }
 .subtitle .zh { font-family: var(--font-display-zh); font-size: var(--fs-zh-label); color: var(--red-700); }
 /* paper stage background with faint cloud ornaments (pages without full art) */
-.stage-paper {
+.stage-paper {      /* soft paper veil over the mural so cards stay readable */
   position: absolute; inset: 0; z-index: -1;
-  background:
-    var(--orn-cloud) no-repeat 4% 92% / 120px auto,
-    var(--orn-cloud) no-repeat 96% 8% / 90px auto,
-    var(--tex-paper),
-    radial-gradient(ellipse at 50% 40%, var(--beige-50), var(--beige-100) 60%, var(--beige-200));
+  background: radial-gradient(ellipse at 50% 55%, rgba(255, 251, 243, .55), rgba(255, 251, 243, .15) 70%);
 }
 
 /* map in a carved wood frame with a gold fillet — like a museum exhibit panel */
@@ -53,7 +49,7 @@
 .p01-menu .chip { min-height: 40px; }
 
 /* ---------- P02 scan ---------- */
-.scan-bg { position: absolute; inset: 0; z-index: -3; background: var(--tex-paper), var(--grad-wood); }
+.scan-bg { position: absolute; inset: 0; z-index: -3; background: var(--img-mural) center / cover, var(--grad-wood); }
 .ar-wrap { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
 .ar-wrap a-scene { position: absolute !important; inset: 0; width: 100% !important; height: 100% !important; }
 .ar-wrap video { object-fit: cover; }
@@ -79,7 +75,7 @@
 .scan-status.is-found { background: var(--color-success-bg); color: var(--color-success); }
 .scan-status.is-found .zh { color: var(--color-success); }
 .scan-status.is-found .dot { background: var(--green-500); }
-.scan-error { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; padding: var(--space-4); background: var(--tex-paper), var(--color-bg); }
+.scan-error { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; padding: var(--space-4); background: var(--img-mural) center / cover, var(--color-bg); }
 .scan-error-card {
   max-width: 540px; background: var(--tex-paper), var(--color-surface); border-radius: var(--radius-lg);
   box-shadow: inset 0 0 0 2px var(--gold-500), inset 0 0 0 6px var(--beige-50), inset 0 0 0 7px rgba(201, 149, 46, .5), var(--shadow-card);
@@ -128,7 +124,7 @@
 @keyframes demo-match { 0% { transform: translate(-130%, 20px); } 60%, 100% { transform: translate(30%, 0); } }
 
 /* ---------- P04 introduction ---------- */
-#stage:has(.map-area) { background: var(--tex-paper), radial-gradient(ellipse at 50% 40%, var(--teal-50), var(--beige-100) 70%); }
+/* P04 stage shows the mural (set on #stage) behind the carved frame */
 .p04-question { position: absolute; bottom: var(--space-3); left: max(var(--space-3), env(safe-area-inset-left, 0px)); z-index: 5; display: flex; flex-direction: column-reverse; align-items: flex-start; gap: 6px; max-width: min(420px, 80%); }
 .p04-question-text { background: var(--tex-paper), var(--color-surface); border-radius: var(--radius-md); box-shadow: inset 0 0 0 1px var(--gold-500), var(--shadow-lift); padding: 10px 14px; font-size: var(--fs-small); }
 .p04-question-text .zh { margin-top: 3px; }
@@ -155,3 +151,6 @@
   .p01-menu .chip { min-height: 34px; }
   .map-carved { --frame: 8px; }
 }
+
+/* full-screen mode: keep the top-right corner free for the floating dock */
+body.panel-collapsed .p01-tags { right: min(460px, 55%); }

@@ -23,11 +23,19 @@ The camera only works over **HTTPS** (or `localhost`).
 
 Developer shortcuts: add `#p04` to the URL to jump to a page, `#reset` to clear saved progress.
 
+## Narration audio
+
+Upload one MP3 per page into `assets/audio/`, named `p01.mp3` … `p12.mp3` (optional `p01_zh.mp3` / `p01_en.mp3` for the 中文 / English modes). The "Listen to narration 聆聽旁白" button under each page title finds them automatically; pages without a file show "Narration coming soon". On GitHub: open the `assets/audio` folder → **Add file → Upload files** → drag the MP3s in → **Commit changes**. See `assets/audio/README.md`.
+
+## Full-screen mode
+
+The frame icon in the top bar hides the side panel so the activity uses the whole screen. A floating dock (top-right) keeps narration, "Show panel" and Next within reach. The choice is remembered.
+
 ## Test the scan (P02)
 
 1. Print `assets/targets/tudigong-card.png` (postcard or A5, **matte**, not glossy), or show it full-screen on a second device.
 2. Open P02, allow the camera, hold the card flat 20–30 cm from the camera in good light.
-3. "Scan Complete 掃描完成" appears, map light points pop up on the card, and Next unlocks.
+3. "Scan Complete 掃描完成" appears, a 3D neighbourhood (shrine, banyan, qilou houses, market, fields) rises out of the card, and Next unlocks. Tilt the phone to look at it from the side.
 
 If the camera is blocked, the page offers **Continue without AR 不使用 AR 繼續** so a demo never gets stuck.
 
@@ -84,6 +92,8 @@ js/ui.js            bi(), button(), chip(), toast(), modal(), openVocab(), noteP
 js/icons.js         inline SVG icons (no icon font needed, works offline)
 js/drag.js          drag + tap-to-place for touch (for P05, P07–P10)
 js/ar.js            loads A-Frame 1.5.0 + MindAR 1.2.5 on demand, startAR() / stopAR()
+js/ar-diorama.js    the 3D pop-up neighbourhood shown on the card (three.js, no model files)
+js/narration.js     narration player + Listen button
 js/config.js        page list, asset paths, library URLs
 js/pages/           one file per page
 assets/img/         placeholder SVG art (replace with final WebP)

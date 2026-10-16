@@ -93,6 +93,26 @@ const CONTENT = {
     "readMore": {
       "en": "Tap to read",
       "zh": "點一下閱讀"
+    },
+    "listen": {
+      "en": "Listen to narration",
+      "zh": "聆聽旁白"
+    },
+    "pause": {
+      "en": "Pause narration",
+      "zh": "暫停旁白"
+    },
+    "audioSoon": {
+      "en": "Narration coming soon",
+      "zh": "旁白即將上線"
+    },
+    "fullScreen": {
+      "en": "Full screen",
+      "zh": "全螢幕"
+    },
+    "showPanel": {
+      "en": "Show panel",
+      "zh": "顯示面板"
     }
   },
   "p01": {
