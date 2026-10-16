@@ -13,10 +13,12 @@ const COL = {
   stone: '#A99E8B', stoneD: '#7F7563', water: '#5FA6A0',
 };
 
-export function registerDiorama() {
-  const A = window.AFRAME;
-  if (!A || A.components['tdg-diorama']) return;
-  const THREE = A.THREE;
+/**
+ * Build the neighbourhood with any three.js build (A-Frame's THREE in AR, the three module on P04).
+ * Returns { root, parts, markers, lanterns, anchors }. +Y is up, the plinth is about 0.94 × 0.62 units.
+ * anchors = points above the four places the P04 pins point at (temple, fields, market, street corner).
+ */
+export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows = false } = {}) {
 
   /* ---------- canvas textures ---------- */
   const canvasTex = (w, h, draw, repeat) => {
@@ -236,80 +238,107 @@ export function registerDiorama() {
     return g;
   }
 
+  const root = new THREE.Group();
+  const parts = [];
+  const add = (obj, x, z, delay, ry = 0) => { obj.position.set(x, 0, z); obj.rotation.y = ry; obj.scale.setScalar(0.0001); root.add(obj); parts.push({ obj, delay }); return obj; };
+
+  // lights (scene default lights are switched off in ar.js)
+  root.add(new THREE.HemisphereLight('#FFF3DC', '#5A4430', 0.55));
+  const sun = new THREE.DirectionalLight('#FFE9C4', 0.95); sun.position.set(0.7, 1.1, 0.9); root.add(sun);
+  if (shadows) {
+    sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.002;
+    Object.assign(sun.shadow.camera, { left: -0.7, right: 0.7, top: 0.7, bottom: -0.7, near: 0.1, far: 3 });
+  }
+  const fill = new THREE.DirectionalLight('#CDE8E5', 0.25); fill.position.set(-0.8, 0.6, -0.4); root.add(fill);
+
+  // museum plinth: paper top, wood sides, gold trim
+  const plinth = new THREE.Group();
+  plinth.add(box(0.94, 0.02, 0.62, M.wood, 0, -0.02, 0));
+  plinth.add(box(0.92, 0.004, 0.6, std('#ffffff', { map: TEX.paper() }), 0, 0, 0));
+  [[0.94, 0.004, 0.006, 0, 0.31], [0.94, 0.004, 0.006, 0, -0.31], [0.006, 0.004, 0.62, 0.47, 0], [0.006, 0.004, 0.62, -0.47, 0]]
+    .forEach(([w, h, d, x, z]) => plinth.add(box(w, h, d, M.gold, x, 0, z)));
+  add(plinth, 0, 0, 0);
+
+  // ground: fields (left), canal, road, grass
+  const ground = new THREE.Group();
+  const fieldMat = std('#ffffff', { map: TEX.field() });
+  for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) {
+    const f = mesh(new THREE.PlaneGeometry(0.085, 0.085), fieldMat, -0.4 + i * 0.09, 0.006, -0.17 + j * 0.09);
+    f.rotation.x = -Math.PI / 2; ground.add(f);
+  }
+  const canal = mesh(new THREE.PlaneGeometry(0.03, 0.56), M.water, -0.12, 0.007, 0); canal.rotation.x = -Math.PI / 2; ground.add(canal);
+  const road1 = mesh(new THREE.PlaneGeometry(0.06, 0.58), M.asphalt, 0.2, 0.0065, 0); road1.rotation.x = -Math.PI / 2; ground.add(road1);
+  const road2 = mesh(new THREE.PlaneGeometry(0.62, 0.05), M.asphalt, 0.16, 0.0066, 0.18); road2.rotation.x = -Math.PI / 2; ground.add(road2);
+  const grass = mesh(new THREE.PlaneGeometry(0.28, 0.2), std('#A9C98C'), 0.0, 0.0062, 0.16); grass.rotation.x = -Math.PI / 2; ground.add(grass);
+  add(ground, 0, 0, 0.1);
+
+  // shrine at the centre (the hero), banyan behind it, houses, market
+  const sh = shrine(); const lanterns = sh.userData.lanterns;
+  add(sh, 0.04, 0.03, 0.35);
+  add(banyan(), -0.2, -0.05, 0.5);
+  // a small street-corner shrine where the two roads meet, facing the street
+  const mini = shrine(); mini.scale.setScalar(0.42);
+  const miniWrap = new THREE.Group(); miniWrap.add(mini);
+  add(miniWrap, 0.285, 0.118, 0.55);
+  // qilou houses in two rows behind the shrine, facades towards the viewer (+z = bottom edge of the card)
+  const H = [[0.22, -0.2, 0.08, 0.17, '#F3EADA', COL.teal], [0.31, -0.2, 0.08, 0.21, '#EAD9C0', COL.red], [0.4, -0.2, 0.08, 0.15, '#F6EFE2', COL.gold],
+             [0.27, -0.08, 0.08, 0.12, '#E9E1CF', COL.green], [0.37, -0.08, 0.09, 0.14, '#F2E2CC', COL.teal], [0.12, -0.22, 0.07, 0.13, '#F3E3CF', COL.red]];
+  H.forEach(([x, z, w, h, wall, acc], i) => add(house(w, h, 0.07, wall, acc), x, z, 0.6 + i * 0.07));
+  [[-0.26, 0.2, COL.teal], [-0.18, 0.2, COL.red], [-0.34, 0.2, COL.red]].forEach(([x, z, c], i) => add(stall(c), x, z, 0.75 + i * 0.06));
+  [[-0.42, -0.24], [0.44, 0.24], [0.13, -0.24], [-0.02, 0.26]].forEach(([x, z], i) => {
+    const t = new THREE.Group();
+    t.add(mesh(new THREE.CylinderGeometry(0.004, 0.006, 0.04, 6), M.wood, 0, 0.02, 0));
+    t.add(mesh(new THREE.IcosahedronGeometry(0.028, 0), M.green, 0, 0.055, 0));
+    add(t, x, z, 0.85 + i * 0.05);
+  });
+
+  // floating markers above the key places (shrine is vermilion, others gold)
+  const markers = [];
+  if (withMarkers) [[0.04, 0.03, 0.3, COL.red], [-0.32, -0.1, 0.09, COL.gold], [-0.26, 0.2, 0.12, COL.gold], [0.31, -0.2, 0.3, COL.gold], [-0.2, -0.05, 0.3, COL.gold]]
+    .forEach(([x, z, y, c], i) => { const m = add(marker(c), x, z, 1.1 + i * 0.08); m.userData.baseY = y; markers.push(m); });
+
+  // the places the P04 pins point at (a little above each one)
+  const anchors = {
+    temple: new THREE.Vector3(0.04, 0.27, 0.03),
+    fields: new THREE.Vector3(-0.32, 0.05, -0.08),
+    market: new THREE.Vector3(-0.26, 0.09, 0.2),
+    corner: new THREE.Vector3(0.285, 0.13, 0.118),
+  };
+  if (shadows) root.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  return { root, parts, markers, lanterns, anchors };
+}
+
+/** Animate a built neighbourhood: pop-up entrance, floating markers, swinging lanterns. t = seconds since start. */
+export function tickNeighborhood(n, t, { entrance = true } = {}) {
+  const ease = (k) => 1 - Math.pow(1 - k, 3) + Math.sin(k * Math.PI) * 0.08;   // pop with a small overshoot
+  n.parts.forEach(({ obj, delay }) => {
+    const k = entrance ? Math.min(Math.max((t - delay) / 0.6, 0), 1) : 1;
+    obj.scale.setScalar(Math.max(0.0001, ease(k)));
+  });
+  n.markers.forEach((m, i) => {
+    m.position.y = m.userData.baseY + Math.sin(t * 2 + i) * 0.01;
+    m.rotation.y = t * 0.8 + i;
+  });
+  (n.lanterns || []).forEach((L, i) => { L.rotation.z = Math.sin(t * 1.6 + i * 1.3) * 0.12; });
+}
+
+/** A-Frame component for the AR view: <a-entity tdg-diorama> inside the mindar-image-target entity. */
+export function registerDiorama() {
+  const A = window.AFRAME;
+  if (!A || A.components['tdg-diorama']) return;
   A.registerComponent('tdg-diorama', {
     init() {
-      const root = new THREE.Group();
+      this.n = buildNeighborhood(A.THREE);
       // MindAR's target plane is XY with +Z towards the camera: rotate so our "up" (+Y) stands out of the card.
-      root.rotation.x = Math.PI / 2;
-      this.el.object3D.add(root);
-      this.root = root;
-      this.parts = [];
-      const add = (obj, x, z, delay, ry = 0) => { obj.position.set(x, 0, z); obj.rotation.y = ry; obj.scale.setScalar(0.0001); root.add(obj); this.parts.push({ obj, delay }); return obj; };
-
-      // lights (scene default lights are switched off in ar.js)
-      root.add(new THREE.HemisphereLight('#FFF3DC', '#5A4430', 0.55));
-      const sun = new THREE.DirectionalLight('#FFE9C4', 0.95); sun.position.set(0.7, 1.1, 0.9); root.add(sun);
-      const fill = new THREE.DirectionalLight('#CDE8E5', 0.25); fill.position.set(-0.8, 0.6, -0.4); root.add(fill);
-
-      // museum plinth: paper top, wood sides, gold trim
-      const plinth = new THREE.Group();
-      plinth.add(box(0.94, 0.02, 0.62, M.wood, 0, -0.02, 0));
-      plinth.add(box(0.92, 0.004, 0.6, std('#ffffff', { map: TEX.paper() }), 0, 0, 0));
-      [[0.94, 0.004, 0.006, 0, 0.31], [0.94, 0.004, 0.006, 0, -0.31], [0.006, 0.004, 0.62, 0.47, 0], [0.006, 0.004, 0.62, -0.47, 0]]
-        .forEach(([w, h, d, x, z]) => plinth.add(box(w, h, d, M.gold, x, 0, z)));
-      add(plinth, 0, 0, 0);
-
-      // ground: fields (left), canal, road, grass
-      const ground = new THREE.Group();
-      const fieldMat = std('#ffffff', { map: TEX.field() });
-      for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) {
-        const f = mesh(new THREE.PlaneGeometry(0.085, 0.085), fieldMat, -0.4 + i * 0.09, 0.006, -0.17 + j * 0.09);
-        f.rotation.x = -Math.PI / 2; ground.add(f);
-      }
-      const canal = mesh(new THREE.PlaneGeometry(0.03, 0.56), M.water, -0.12, 0.007, 0); canal.rotation.x = -Math.PI / 2; ground.add(canal);
-      const road1 = mesh(new THREE.PlaneGeometry(0.06, 0.58), M.asphalt, 0.2, 0.0065, 0); road1.rotation.x = -Math.PI / 2; ground.add(road1);
-      const road2 = mesh(new THREE.PlaneGeometry(0.62, 0.05), M.asphalt, 0.16, 0.0066, 0.18); road2.rotation.x = -Math.PI / 2; ground.add(road2);
-      const grass = mesh(new THREE.PlaneGeometry(0.28, 0.2), std('#A9C98C'), 0.0, 0.0062, 0.16); grass.rotation.x = -Math.PI / 2; ground.add(grass);
-      add(ground, 0, 0, 0.1);
-
-      // shrine at the centre (the hero), banyan behind it, houses, market
-      const sh = shrine(); this.lanterns = sh.userData.lanterns;
-      add(sh, 0.04, 0.03, 0.35);
-      add(banyan(), -0.2, -0.05, 0.5);
-      // qilou houses in two rows behind the shrine, facades towards the viewer (+z = bottom edge of the card)
-      const H = [[0.22, -0.2, 0.08, 0.17, '#F3EADA', COL.teal], [0.31, -0.2, 0.08, 0.21, '#EAD9C0', COL.red], [0.4, -0.2, 0.08, 0.15, '#F6EFE2', COL.gold],
-                 [0.27, -0.08, 0.08, 0.12, '#E9E1CF', COL.green], [0.37, -0.08, 0.09, 0.14, '#F2E2CC', COL.teal], [0.12, -0.22, 0.07, 0.13, '#F3E3CF', COL.red]];
-      H.forEach(([x, z, w, h, wall, acc], i) => add(house(w, h, 0.07, wall, acc), x, z, 0.6 + i * 0.07));
-      [[-0.26, 0.2, COL.teal], [-0.18, 0.2, COL.red], [-0.34, 0.2, COL.red]].forEach(([x, z, c], i) => add(stall(c), x, z, 0.75 + i * 0.06));
-      [[-0.42, -0.24], [0.44, 0.24], [0.13, -0.24], [-0.02, 0.26]].forEach(([x, z], i) => {
-        const t = new THREE.Group();
-        t.add(mesh(new THREE.CylinderGeometry(0.004, 0.006, 0.04, 6), M.wood, 0, 0.02, 0));
-        t.add(mesh(new THREE.IcosahedronGeometry(0.028, 0), M.green, 0, 0.055, 0));
-        add(t, x, z, 0.85 + i * 0.05);
-      });
-
-      // floating markers above the key places (shrine is vermilion, others gold)
-      this.markers = [];
-      [[0.04, 0.03, 0.3, COL.red], [-0.32, -0.1, 0.09, COL.gold], [-0.26, 0.2, 0.12, COL.gold], [0.31, -0.2, 0.3, COL.gold], [-0.2, -0.05, 0.3, COL.gold]]
-        .forEach(([x, z, y, c], i) => { const m = add(marker(c), x, z, 1.1 + i * 0.08); m.userData.baseY = y; this.markers.push(m); });
-
+      this.n.root.rotation.x = Math.PI / 2;
+      this.el.object3D.add(this.n.root);
       this.t0 = null;
     },
     tick(time) {
       if (!this.el.object3D.visible) return;     // card not in view
       if (this.t0 === null) this.t0 = time;
-      const t = (time - this.t0) / 1000;
-      const ease = (k) => 1 - Math.pow(1 - k, 3) + Math.sin(k * Math.PI) * 0.08;   // pop with a small overshoot
-      this.parts.forEach(({ obj, delay }) => {
-        const k = Math.min(Math.max((t - delay) / 0.6, 0), 1);
-        obj.scale.setScalar(Math.max(0.0001, ease(k)));
-      });
-      this.markers.forEach((m, i) => {
-        m.position.y = m.userData.baseY + Math.sin(t * 2 + i) * 0.01;
-        m.rotation.y = t * 0.8 + i;
-      });
-      (this.lanterns || []).forEach((L, i) => { L.rotation.z = Math.sin(t * 1.6 + i * 1.3) * 0.12; });
+      tickNeighborhood(this.n, (time - this.t0) / 1000);
     },
-    remove() { this.el.object3D.remove(this.root); },
+    remove() { this.el.object3D.remove(this.n.root); },
   });
 }

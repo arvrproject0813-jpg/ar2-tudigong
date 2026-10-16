@@ -162,3 +162,19 @@
 
 /* long button labels inside the camera-error box: tighter tracking so they stay on one line */
 .scan-error .btn .en { white-space: nowrap; }
+
+/* ---------- P04 3D neighbourhood ---------- */
+.map-frame.is-loading { background: radial-gradient(ellipse at 50% 45%, #FBF4E6, #E6D6B8); }
+.map-frame.is-3d { background: radial-gradient(ellipse at 50% 38%, #FDF8EE 0%, #F1E6D0 55%, #DCCBA9 100%); }
+.map3d { position: absolute; inset: 0; overflow: hidden; }
+.map3d > canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+.map3d > canvas:active { cursor: grabbing; }
+.map3d-stems { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.map3d-stems line { stroke: var(--gold-500); stroke-width: 1.5; stroke-dasharray: 3 3; stroke-linecap: round; }
+.map3d .map-pin { transition: none; }
+.map3d .map-pin.is-active { z-index: 2000 !important; }
+.map3d-tools { position: absolute; z-index: 1500; right: 10px; bottom: 10px; display: flex; flex-direction: column; gap: 6px; }
+.map3d-tools .icon-btn { width: 38px; height: 38px; background: var(--tex-paper), var(--color-surface); color: var(--teal-800); box-shadow: 0 2px 6px rgba(58, 42, 30, .25); }
+.map3d-tools .icon-btn svg { width: 18px; height: 18px; }
+.map3d .culture-note { z-index: 2100; }
+@media (max-height: 500px) { .map3d-tools .icon-btn { width: 34px; height: 34px; } .map3d-tools { right: 6px; bottom: 6px; gap: 4px; } }

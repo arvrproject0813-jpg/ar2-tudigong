@@ -117,6 +117,18 @@ const CONTENT = {
     "skip": {
       "en": "Skip",
       "zh": "略過"
+    },
+    "zoomIn": {
+      "en": "Zoom in",
+      "zh": "放大"
+    },
+    "zoomOut": {
+      "en": "Zoom out",
+      "zh": "縮小"
+    },
+    "resetView": {
+      "en": "Reset view",
+      "zh": "重設視角"
     }
   },
   "p01": {
@@ -425,6 +437,10 @@ const CONTENT = {
     "tapPins": {
       "en": "Tap the glowing pins on the map.",
       "zh": "點選地圖上閃動的圖釘。"
+    },
+    "spinHint": {
+      "en": "Drag to turn the neighborhood. Pinch or scroll to zoom. Tap the glowing pins.",
+      "zh": "拖曳可旋轉街坊，雙指或滾輪可縮放，點選閃動的圖釘。"
     },
     "complete": {
       "en": "Great observing! You can go on.",

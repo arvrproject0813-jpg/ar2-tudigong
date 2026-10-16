@@ -11,7 +11,7 @@ Built from the team build guide (`TUDIGONG_DESIGN_GUIDE.md`).
 | P01 Welcome | Done: full-screen opening animation (shrine rises from the earth, gold 土地公 calligraphy) | A |
 | P02 Scan (MindAR) | Done, tested with the placeholder card | B |
 | P03 How to Use | Done | A |
-| P04 Introduction | Done (aerial culture map) | B |
+| P04 Introduction | Done: 3D neighborhood (drag to turn 360°, pinch/scroll to zoom) with 4 attached info pins; flat map as fallback | B |
 | P05–P12 | Stubs: show "planned for a later milestone" and let you tap Next | see guide |
 
 ## Run it
@@ -73,7 +73,7 @@ The stage background is a semi-realistic dawn landscape of misty mountains and t
 `assets/img/p01_home_hero.webp`, `assets/img/p04_culture_map.webp` and `assets/targets/tudigong-card.png` are in-house semi-realistic illustrations. Their editable SVG sources are in `assets/source-art/`. To use other art, change the paths in `js/config.js` → `ASSETS`:
 
 - `welcomeBg`, `shrine`, `banyan`: the welcome scene. Shrine/banyan positions are `.w-shrine` / `.w-banyan` in `css/welcome.css` (% of the 16:9 scene).
-- `p04Map`: adjust the pin positions in `NODES` at the top of `js/pages/p04-intro.js` (% of the 3:2 image). The map is shown zoomed (see `ZOOM`).
+- P04 shows the 3D neighborhood from `js/ar-diorama.js` (`buildNeighborhood()`, the same model that rises from the card in AR) using three.js 0.160 from jsDelivr (mapped as `three` in the import map in `index.html`). The pins are attached to `anchors` in `buildNeighborhood()`; the start view and zoom limits are `VIEW` in `js/pages/p04-intro.js`. If WebGL is not available, the flat map `p04Map` is shown instead, with pin positions in `NODES` (% of the 3:2 image).
 
 ## Building the next pages
 

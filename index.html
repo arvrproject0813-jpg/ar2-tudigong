@@ -21,6 +21,9 @@
     var add = function (path) { map.imports[new URL(path, location.href).href] = new URL(path, location.href).href + '?v=' + v; };
     js.forEach(function (f) { add('js/' + f + '.js'); });
     add('content/content.js');
+    // three.js for the 3D neighbourhood on P04 (pinned version)
+    map.imports['three'] = 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+    map.imports['three/addons/'] = 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/';
     document.write('<script type="importmap">' + JSON.stringify(map) + '<\/script>');
     css.forEach(function (f) { document.write('<link rel="stylesheet" href="css/' + f + '.css?v=' + v + '">'); });
     window.__APP_V = v;

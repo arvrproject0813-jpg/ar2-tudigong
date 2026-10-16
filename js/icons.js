@@ -5,6 +5,9 @@ const s = (body, extra = '') =>
 export const ICONS = {
   back: s('<path d="M15 5l-7 7 7 7"/>'),
   close: s('<path d="M6 6l12 12M18 6L6 18"/>'),
+  plus: s('<path d="M12 5v14M5 12h14"/>'),
+  minus: s('<path d="M5 12h14"/>'),
+  recenter: s('<path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4 4v4h4"/>'),
   lang: s('<path d="M3 5h9M7.5 3v2M5 5c0 4 3 7 7 8M10 5c0 4-3 7-7 8"/><path d="M13 21l4-9 4 9M14.5 18h5"/>'),
   pin: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>`,
   temple: s('<path d="M2 5.5Q4 8.5 7 8.5H17Q20 8.5 22 5.5"/><path d="M4 12h16l-2.5-3.5h-11z" fill="currentColor" fill-opacity=".25"/><path d="M6.5 12v8.5h11V12"/><path d="M10 20.5v-3.5a2 2 0 0 1 4 0v3.5"/>'),
