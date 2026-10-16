@@ -161,5 +161,4 @@
 
 
 /* long button labels inside the camera-error box: tighter tracking so they stay on one line */
-.scan-error .btn .en { letter-spacing: .06em; white-space: nowrap; }
-.scan-error .btn .en::before, .scan-error .btn .en::after { display: none; }
+.scan-error .btn .en { white-space: nowrap; }

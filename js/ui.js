@@ -33,12 +33,16 @@ const isTodo = (s) => typeof s === 'string' && s.startsWith('【待補');
 export function bi(text, { tag = 'span', layout = 'stack', cls = '' } = {}) {
   const wrap = el(tag, { class: `bi ${layout} ${cls}`.trim() });
   if (!text) return wrap;
+  if (lang === 'zh' && isTodo(text.zh) && text.en) {      // Chinese not written yet: show the English instead
+    wrap.append(el('span', { class: 'en', lang: 'en' }, text.en));
+    return wrap;
+  }
   if (lang === 'zh') {
     wrap.append(el('span', { class: `zh solo${isTodo(text.zh) ? ' todo' : ''}`, lang: 'zh-Hant' }, text.zh));
     return wrap;
   }
   wrap.append(el('span', { class: 'en', lang: 'en' }, text.en));
-  if (lang === 'bi' && text.zh && text.zh !== text.en) {
+  if (lang === 'bi' && text.zh && text.zh !== text.en && !isTodo(text.zh)) {   // unwritten 【待補】 lines stay hidden
     wrap.append(el('span', { class: `zh${isTodo(text.zh) ? ' todo' : ''}`, lang: 'zh-Hant' }, text.zh));
   }
   return wrap;

@@ -58,6 +58,9 @@ The `.mind` file must be compiled from the exact image you print.
 
 ## Design: v2 "Temple craft"
 
+Buttons are carved wooden plaques (匾額): cut corners, a gold rim, teal lacquer for the main action and plain wood for secondary actions (`.btn` in `css/components.css`). Back is the small round wooden button next to Next at the bottom of the panel. Labels are sentence case, with no spaced capitals. The narration button stays hidden until that page's MP3 exists, and unwritten 【待補】 Chinese lines are hidden (中文 mode shows the English instead).
+
+
 Glazed-teal lacquer, temple gold trim and vermilion on warm paper, serif titles, gold-ringed medallion pins, a red seal stamp on question boxes and a carved-wood frame around maps. Everything is defined in `css/tokens.css`. Gold is used for trim and ornaments only (no deity close-ups, no black-and-gold, no rays or smoke), so the storyboard's cultural rules still hold.
 
 ## Art

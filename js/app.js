@@ -140,12 +140,6 @@ function makeCtx(id) {
       const c = CONTENT[id] || {};
       const title = opts.title || c.heading;
       const inner = el('div', { class: 'panel-inner' });
-      if (c.eyebrow) {
-        // "P04 · Introduction" + "P04 · 導論" → "P04 · INTRODUCTION · 導論" (page number only once)
-        const zhPart = c.eyebrow.zh.split('·').pop().trim();
-        const text = state.lang === 'zh' ? c.eyebrow.zh : state.lang === 'en' ? c.eyebrow.en : `${c.eyebrow.en} · ${zhPart}`;
-        inner.append(el('div', { class: 'panel-eyebrow' }, text));
-      }
       if (title) inner.append(el('h1', { class: `panel-title ${opts.display ? 'display' : ''}`, style: { margin: 0 } }, bi(title)));
       if (c.narration) inner.append(narrationControl(id, state.lang, 'full'));
       const body = el('div', { class: 'panel-body' });

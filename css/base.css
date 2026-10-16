@@ -57,7 +57,7 @@ img { max-width: 100%; display: block; }
   -webkit-background-clip: text; background-clip: text; color: transparent;
   filter: drop-shadow(0 1px 0 rgba(18, 63, 60, .9)) drop-shadow(0 2px 4px rgba(0, 0, 0, .25));
 }
-.tb-logo .lat { font-family: var(--font-display); font-weight: 700; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--gold-300); }
+.tb-logo .lat { display: none; }   /* the calligraphy carries the name on its own */
 @media (max-height: 500px) { .tb-logo .lat { display: none; } }
 .topbar .tb-count {
   font-family: var(--font-display); font-size: var(--fs-small); font-weight: 700; color: var(--color-on-lacquer);
@@ -156,14 +156,4 @@ body.panel-pre #panel, body.panel-pre #panel-handle { transition: none !importan
 body.panel-enter #panel { transition: width .8s cubic-bezier(.2, .8, .2, 1), opacity .4s var(--ease); }
 body.panel-enter #panel-handle { transition: right .8s cubic-bezier(.2, .8, .2, 1); }
 body.panel-pre #panel .panel-inner, body.panel-enter #panel .panel-inner { min-width: calc(var(--panel-w) - 2px); }
-body.panel-enter #panel .panel-inner > * { animation: panel-item-in .5s var(--ease) both; }
-body.panel-enter #panel .panel-inner > :nth-child(1) { animation-delay: .35s; }
-body.panel-enter #panel .panel-inner > :nth-child(2) { animation-delay: .43s; }
-body.panel-enter #panel .panel-inner > :nth-child(3) { animation-delay: .51s; }
-body.panel-enter #panel .panel-inner > :nth-child(4) { animation-delay: .59s; }
-body.panel-enter #panel .panel-inner > :nth-child(5) { animation-delay: .67s; }
-body.panel-enter #panel .panel-inner > :nth-child(n+6) { animation-delay: .75s; }
-@keyframes panel-item-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) {
-  body.panel-enter #panel .panel-inner > * { animation: none; }
-}
+
