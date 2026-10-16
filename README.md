@@ -21,6 +21,8 @@ The camera only works over **HTTPS** (or `localhost`).
 - On your computer: `python3 -m http.server 8000` in this folder, then open `http://localhost:8000`.
 - On a phone/tablet: push the folder to GitHub and turn on **GitHub Pages** (Settings → Pages → deploy from branch), or drag the folder onto **Netlify Drop**. Open the HTTPS link on the device and turn it sideways.
 
+Updates show up within about 2 minutes of a push: `index.html` stamps every CSS/JS file with a `?v=` that changes every 2 minutes, so browsers never keep an old copy. **If you add a new .js or .css file, add its name to the lists at the top of `index.html`.**
+
 Developer shortcuts: add `#p04` to the URL to jump to a page, `#reset` to clear saved progress.
 
 ## Narration audio
