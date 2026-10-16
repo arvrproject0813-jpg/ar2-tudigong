@@ -213,8 +213,8 @@ const CONTENT = {
       }
     },
     "foundToast": {
-      "en": "Card found! Map points appear on the card.",
-      "zh": "找到文化卡了！地圖光點出現在卡片上。"
+      "en": "Card found! A 3D neighborhood rises from the card. Move your device around it.",
+      "zh": "找到文化卡了！立體街坊從卡片上升起，移動裝置從不同角度看看。"
     },
     "noCamera": {
       "en": "This device or browser cannot use the camera here. Open the HTTPS link on a phone or tablet, or continue without AR.",

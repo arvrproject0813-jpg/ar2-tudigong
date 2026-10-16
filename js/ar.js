@@ -62,7 +62,7 @@ export async function startAR(container, { onReady, onFound, onLost, onError } =
       mindar-image="imageTargetSrc: ${ASSETS.target}; maxTrack: 1; uiScanning: no; uiLoading: no; uiError: no; filterMinCF: 0.0001; filterBeta: 0.001"
       color-space="sRGB" renderer="colorManagement: true; alpha: true; antialias: true"
       vr-mode-ui="enabled: false" xr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false"
-      loading-screen="enabled: false">
+      loading-screen="enabled: false" light="defaultLightsEnabled: false">
       <a-camera position="0 0 0" look-controls="enabled: false" cursor="rayOrigin: mouse" raycaster="objects: .clickable"></a-camera>
       <a-entity id="ar-target-0" mindar-image-target="targetIndex: 0"></a-entity>
     </a-scene>`;

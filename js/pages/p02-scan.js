@@ -1,15 +1,10 @@
 // P02 · Scan Activation — MindAR image target, with a "Continue without AR" fallback.
 import { el, bi, button, toast } from '../ui.js';
 import { startAR, stopAR } from '../ar.js';
+import { registerDiorama } from '../ar-diorama.js';
 
 let timers = [];
 let alive = false;
-
-// "Map light points" that pop up on the card when it is found (card = 1 unit wide, 3:2)
-const LIGHT_POINTS = [
-  [-0.32, 0.18, '#2F8C88'], [0.05, 0.22, '#2F8C88'], [0.34, 0.12, '#D9A93F'],
-  [-0.18, -0.14, '#2F8C88'], [0.12, -0.05, '#B5523B'], [0.3, -0.2, '#2F8C88'],
-];
 
 export function render(stage, ctx) {
   alive = true;
@@ -71,18 +66,12 @@ export function render(stage, ctx) {
     if (!alive) return;
     clearTimers();
     setStatus('found');
-    if (!target.querySelector('.light-point')) {
-      LIGHT_POINTS.forEach(([x, y, color], i) => {
-        const p = document.createElement('a-circle');
-        p.setAttribute('class', 'light-point');
-        p.setAttribute('radius', '0.035');
-        p.setAttribute('color', color);
-        p.setAttribute('position', `${x} ${y} 0.01`);
-        p.setAttribute('scale', '0 0 0');
-        p.setAttribute('animation', `property: scale; to: 1 1 1; dur: 300; delay: ${i * 70}; easing: easeOutBack`);
-        p.setAttribute('animation__pulse', `property: scale; from: 1 1 1; to: 1.25 1.25 1; dur: 900; delay: ${600 + i * 70}; dir: alternate; loop: true; easing: easeInOutSine`);
-        target.appendChild(p);
-      });
+    // 3D pop-up neighbourhood rises out of the card (built once, stays while the card is visible)
+    if (!target.querySelector('[tdg-diorama]')) {
+      registerDiorama();
+      const d = document.createElement('a-entity');
+      d.setAttribute('tdg-diorama', '');
+      target.appendChild(d);
     }
     if (!ctx.isComplete()) toast(c.foundToast, 'success');
     ctx.state.arAvailable = true; ctx.save();
