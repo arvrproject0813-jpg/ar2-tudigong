@@ -23,7 +23,8 @@ TECH (do not change without asking me):
 - Touch input with Pointer Events (pointerdown / pointermove / pointerup + setPointerCapture). Never the HTML5 Drag-and-Drop API (it fails on touch screens). Every drag task also supports tap-card-then-tap-target.
 - All visible text comes from content/content.js. Never hard-code UI strings in HTML or page modules.
 - Use only CSS variables from css/tokens.css. Never invent new colors, fonts, sizes or radii.
-- Icons: Phosphor Icons duotone (https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css) + our custom SVGs in assets/icons/.
+- Icons: inline SVG from js/icons.js (icon(name)). No icon fonts.
+- The shell already exists in the repo (js/app.js, js/ui.js, js/drag.js, js/ar.js, js/icons.js, css/*.css). Build pages against it and use js/pages/p04-intro.js as the reference page.
 - No backend, no login, no GPS, no analytics. Only CDN scripts + Google Fonts online.
 
 FILE STRUCTURE:
@@ -43,7 +44,7 @@ PAGE MODULE CONTRACT:
 - The panel's primary "Next 下一步" button stays disabled until the page calls ctx.complete(pageId).
 
 LAYOUT (landscape):
-- Top bar (56px; 44px when height < 500px): Back icon button | progress dots (12) | Language icon button.
+- Top bar (60px lacquered teal band + 10px gold meander strip; 48px when height < 500px): Back icon button | progress dots (12) | Language icon button.
 - Under it: STAGE on the left (flex:1) for AR / art / map / interaction; PANEL on the right (width: var(--panel-w)) with eyebrow, title EN then ZH, scrollable narration, task checklist, and the primary button pinned to the bottom.
 - Stage art is 3:2. Maps with pins sit in a wrapper with aspect-ratio:3/2 and object-fit:contain so pin % positions stay correct.
 - Compact type scale when height < 500px (already in tokens.css). Touch targets ≥ 44×44px. Safe-area side padding.
@@ -76,53 +77,73 @@ HOW TO ANSWER ME:
 ## 2. css/tokens.css
 
 ```css
-/* tokens.css — AR-2 Tudigong's Neighborhood
-   The ONLY place colors, fonts, sizes, radii and motion are defined.
-   Components use the semantic --color-* roles, never raw hex. */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap');
+/* tokens.css — AR-2 Tudigong's Neighborhood · v2 "Temple craft"
+   The ONLY place colors, fonts, sizes, radii, ornaments and motion are defined.
+   Components use the semantic --color-* roles, never raw hex.
+   Look: glazed-teal lacquer + vermilion + gold trim on warm paper, like a temple museum exhibit.
+   Gold is for trim, frames, ornaments and achievements only: never large black-and-gold areas, never text below 18px bold. */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif:wght@600;700;800&family=Noto+Serif+TC:wght@600;700;900&display=swap');
 
 :root{
   /* ---------- Raw palette ---------- */
-  /* Neighborhood Teal: brand, buttons, map water, normal map pins */
-  --teal-50:#E6F2F1; --teal-100:#CDE8E5; --teal-300:#7FBDB8; --teal-500:#2F8C88; --teal-600:#23736F; --teal-800:#174E4B;
-  /* Plant Green: fields, trees, success */
+  /* Glazed teal (temple roof glaze, lacquer): brand, buttons, top bar */
+  --teal-50:#E6F2F1; --teal-100:#CDE8E5; --teal-300:#7FBDB8; --teal-500:#2F8C88; --teal-600:#1F6B66; --teal-800:#123F3C;
+  /* Plant green: fields, trees, success */
   --green-100:#DCEBCB; --green-300:#A9C98C; --green-500:#6E9F4E; --green-700:#3F6A2B;
-  /* Warm Beige: paper, backgrounds, surfaces */
+  /* Warm paper */
   --beige-50:#FFFBF3; --beige-100:#F6EEDF; --beige-200:#EADCC2; --beige-300:#D9CBB2;
-  /* Wood Brown: text, outlines, illustration line color */
+  /* Wood: text, carved frames */
   --wood-400:#9A7A5E; --wood-600:#6B4A32; --wood-900:#3A2A1E;
-  /* Soft Gold: badges, completed rings, timeline fill, hint icon. NEVER text. */
-  --gold-100:#F5E3B3; --gold-500:#D9A93F;
-  /* Brick Red: temple/shrine map node and roof accents only. Small areas. */
-  --brick-100:#F2D3C8; --brick-500:#B5523B; --brick-700:#8C3B28;
+  /* Temple gold: trim, ornaments, medallions, achievements */
+  --gold-100:#F5E3B3; --gold-300:#F0CF7A; --gold-500:#C9952E; --gold-700:#8A6416;
+  /* Vermilion (temple pillars, seals, lanterns) */
+  --red-100:#F4D9D0; --red-500:#B23A27; --red-700:#7E2418;
+  /* Brick (temple node) — kept as aliases */
+  --brick-100:var(--red-100); --brick-500:var(--red-500); --brick-700:var(--red-700);
+
+  /* ---------- Gradients & textures ---------- */
+  --grad-gold: linear-gradient(180deg, #F0CF7A 0%, #C9952E 55%, #8A6416 100%);
+  --grad-gold-h: linear-gradient(90deg, #8A6416 0%, #F0CF7A 30%, #C9952E 60%, #8A6416 100%);
+  --grad-lacquer: linear-gradient(180deg, #2A7D77 0%, #1F6B66 45%, #123F3C 100%);
+  --grad-vermilion: linear-gradient(180deg, #D2593F 0%, #B23A27 55%, #7E2418 100%);
+  --grad-wood: linear-gradient(135deg, #9A7A5E 0%, #6B4A32 45%, #3A2A1E 100%);
+  --tex-paper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .36 0 0 0 0 .26 0 0 0 0 .17 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* 回紋 meander strip (gold), tile horizontally */
+  --tex-meander: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12'%3E%3Cpath d='M1 11V1h10v8H5V5h3' fill='none' stroke='%23E2B655' stroke-width='1.4'/%3E%3Cpath d='M13 11V1h10v8h-6V5h3' fill='none' stroke='%23E2B655' stroke-width='1.4'/%3E%3C/svg%3E");
+  /* 祥雲 cloud scroll ornament (gold outline) */
+  --orn-cloud: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -6 74 46'%3E%3Cpath d='M0 20C0 8 12 2 20 8c2-12 20-12 22 0 8-6 20 0 18 12 10 2 10 16-2 16H6C-6 36-8 22 0 20Zm18 2a6 6 0 1 1 10 0m6-4a7 7 0 1 1 12 2' fill='none' stroke='%23C9952E' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
 
   /* ---------- Semantic roles ---------- */
-  --color-bg:var(--beige-100);           /* app background */
-  --color-surface:var(--beige-50);       /* cards, panel, popovers */
-  --color-surface-2:var(--beige-200);    /* inset boxes, tray, core-question box */
-  --color-line:var(--beige-300);         /* borders, dividers, empty slots */
-  --color-text:var(--wood-900);          /* main text (EN line) */
-  --color-text-2:var(--wood-600);        /* Chinese support line, meta text */
-  --color-text-muted:var(--wood-400);    /* placeholders, >=18px only */
-  --color-heading:var(--teal-800);       /* page titles */
-  --color-primary:var(--teal-600);       /* primary button fill, links, active */
+  --color-bg:var(--beige-100);
+  --color-surface:var(--beige-50);
+  --color-surface-2:var(--beige-200);
+  --color-line:var(--beige-300);
+  --color-trim:var(--gold-500);           /* gold hairlines and frames */
+  --color-text:var(--wood-900);
+  --color-text-2:var(--wood-600);
+  --color-text-muted:var(--wood-400);     /* >=18px only */
+  --color-heading:var(--teal-800);
+  --color-eyebrow:var(--gold-700);
+  --color-primary:var(--teal-600);
   --color-primary-hover:var(--teal-800);
-  --color-on-primary:var(--beige-50);    /* text on primary */
+  --color-on-primary:var(--beige-50);
+  --color-on-lacquer:var(--beige-50);
   --color-success-bg:var(--green-100); --color-success:var(--green-700);
   --color-hint-bg:var(--gold-100);     --color-hint-icon:var(--gold-500);
-  --color-highlight:var(--gold-500);     /* badges, done rings, timeline fill */
-  --color-temple:var(--brick-500);       /* temple node pin only */
-  --color-temple-text:var(--brick-700);
-  --color-map-field:var(--green-100); --color-map-road:var(--beige-200);
-  --color-map-water:var(--teal-100);  --color-map-building:var(--beige-300);
-  --color-focus:var(--teal-500);
-  --color-scrim:rgba(58,42,30,.45);      /* wood-900 @ 45%, modal backdrop. Never pure black. */
+  --color-highlight:var(--gold-500);
+  --color-temple:var(--red-500);
+  --color-temple-text:var(--red-700);
+  --color-seal:var(--red-500);
+  --color-focus:var(--gold-500);
+  --color-scrim:rgba(18,63,60,.55);       /* teal-800 @ 55% — never pure black */
 
   /* ---------- Type ---------- */
   --font-ui:'Nunito','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
   --font-zh:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;
+  --font-display:'Noto Serif','Noto Serif TC','Songti TC',Georgia,serif;   /* titles, culture-note heads */
+  --font-display-zh:'Noto Serif TC','Songti TC','PMingLiU',serif;
   /* Regular = tablets (height >= 500px). EN line / ZH support line */
-  --fs-display:40px; --fs-zh-display:26px;
+  --fs-display:40px; --fs-zh-display:27px;
   --fs-h1:28px;      --fs-zh-h1:19px;
   --fs-h2:20px;      --fs-zh-h2:15px;
   --fs-body:18px;    --fs-zh-body:16px;
@@ -134,14 +155,16 @@ HOW TO ANSWER ME:
 
   /* ---------- Space, shape, depth ---------- */
   --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:24px; --space-6:32px; --space-7:48px;
-  --radius-sm:8px; --radius-md:14px; --radius-lg:20px; --radius-pill:999px;
+  --radius-sm:6px; --radius-md:12px; --radius-lg:16px; --radius-pill:999px;
   --border:2px solid var(--color-line);
-  --shadow-card:0 2px 0 var(--beige-300), 0 6px 14px rgba(107,74,50,.12);
-  --shadow-lift:0 12px 24px rgba(107,74,50,.24);
+  --border-trim:1.5px solid var(--color-trim);
+  --shadow-card:0 1px 0 rgba(255,255,255,.7) inset, 0 2px 0 var(--beige-300), 0 8px 18px rgba(58,42,30,.14);
+  --shadow-lift:0 14px 30px rgba(58,42,30,.28);
+  --shadow-medallion:0 3px 0 rgba(58,42,30,.25), 0 6px 14px rgba(58,42,30,.28);
 
   /* ---------- Layout ---------- */
-  --topbar-h:56px;
-  --panel-w:clamp(280px, 34vw, 400px);
+  --topbar-h:60px;
+  --panel-w:clamp(290px, 34vw, 410px);
   --tap-min:44px;
 
   /* ---------- Motion ---------- */
@@ -161,7 +184,7 @@ HOW TO ANSWER ME:
     --fs-body:15px;    --fs-zh-body:14px;
     --fs-label:15px;   --fs-zh-label:12px;
     --fs-small:12px;   --fs-zh-small:12px;
-    --topbar-h:44px;
+    --topbar-h:48px;
   }
 }
 @media (prefers-reduced-motion:reduce){
@@ -173,6 +196,13 @@ HOW TO ANSWER ME:
 
 ```text
 COMPONENT SPEC (use exactly these; all colors via tokens.css)
+v2 "TEMPLE CRAFT" LOOK — applies to everything below:
+- Paper surfaces use var(--tex-paper) over beige; frames are gold hairlines (inset box-shadow 1–1.5px var(--gold-500)), often doubled (gold line, 4px paper gap, faint gold line).
+- Titles: var(--font-display) (Noto Serif) in --color-heading; Chinese title line in var(--font-display-zh) (Noto Serif TC) colored --red-700.
+- Top bar: var(--grad-lacquer) with a 10px meander strip (var(--tex-meander) on --red-700) under it. Progress dots are small gold diamonds.
+- Primary button: var(--grad-lacquer) + inner gold frame + soft top highlight. Secondary: paper with a gold hairline.
+- Map pins are gold-ringed medallions (teal, or vermilion for the temple). Info boxes carry a red seal stamp (問). Maps sit in a carved wood frame with a gold fillet.
+- Gold is trim, ornament and achievement only. Never large gold or black-and-gold areas, never gold body text.
 
 1. Primary button (.btn-primary)
    - Fill --color-primary, text --color-on-primary, radius --radius-md, min-height 56px (52px compact), padding 10px 24px.
@@ -663,6 +693,24 @@ const CONTENT = {
       "howTo": {
         "en": "How to Use",
         "zh": "使用說明"
+      }
+    },
+    "menuShort": {
+      "about": {
+        "en": "About",
+        "zh": "認識"
+      },
+      "map": {
+        "en": "Map",
+        "zh": "地圖"
+      },
+      "objects": {
+        "en": "Objects",
+        "zh": "物件"
+      },
+      "howTo": {
+        "en": "How to",
+        "zh": "說明"
       }
     },
     "info": {
@@ -1741,7 +1789,7 @@ export default CONTENT;
 
 ```text
 HOW TO USE (one person generates all images so the style stays the same)
-1. Generate IMG-01 (home hero) first. Make 4–8 versions, pick ONE as the style anchor, save it as style_anchor.png.
+1. The app already has in-house semi-realistic art for P01 (hero), P04 (culture map) and the scan card (sources in assets/source-art/). Use assets/img/p01_home_hero.webp as style_anchor.png so new art matches it.
 2. For every other image, give the AI: MASTER STYLE + the asset's SUBJECT + AVOID list, and attach style_anchor.png:
    - Midjourney: [SUBJECT] [MASTER STYLE] --ar 3:2 --style raw --sref <url of style_anchor> --no text, letters, smoke, halo, light rays, deity close-up, worship, black and gold
    - ChatGPT / Gemini / other chat image tools: "Create an image. Match the exact illustration style, line color, texture and palette of the attached image. Style: [MASTER STYLE]. Subject: [SUBJECT]. [AVOID]. Landscape 3:2."
@@ -1754,13 +1802,13 @@ HOW TO USE (one person generates all images so the style stays the same)
 ### Master style
 
 ```text
-Bright local picture-book illustration for a bilingual educational app about everyday neighborhood life in Kaohsiung, southern Taiwan. Hand-made gouache and soft colored-pencil texture on warm paper, clean simple shapes, gentle warm-brown outlines (not black), soft subtropical daylight with short soft shadows, calm and friendly mood. Semi-realistic proportions: not chibi, not anime, not photorealistic. Limited palette: neighborhood teal (#2F8C88), plant green (#6E9F4E), warm beige paper (#F6EEDF), wood brown (#6B4A32), soft gold (#D9A93F) used sparingly, brick red (#B5523B) only for small accents such as roof tiles. Local details: scooters, arcade sidewalks (qilou), potted plants, banyan trees, low concrete houses with metal window grilles, small family shops. No text or letters anywhere in the image.
+Semi-realistic illustrated scene for a bilingual educational app about everyday neighborhood life in Kaohsiung, southern Taiwan. Detailed digital painting with soft realistic lighting (warm morning sun), believable materials (red brick, terracotta roof tiles, glazed teal ridge tiles, carved stone, weathered plaster, wood), gentle depth haze and a subtle paper-grain texture. Realistic proportions and perspective; the style sits between a museum-exhibition illustration and a high-quality picture book: not cartoon, not anime, not photographic. Palette: glazed teal (#1F6B66, #2F8C88), plant green (#6E9F4E), warm paper beige (#F6EEDF), wood brown (#6B4A32), temple-gold accents (#C9952E with #F0CF7A highlights) on trim, ridge ornaments and lanterns, vermilion red (#B23A27) on pillars, lanterns and couplet boards. Cultural details: Taiwanese street-corner Tudigong shrine with a swallowtail ridge and gold ridge ornaments, small red lanterns with gold caps and tassels, stone lions, qilou arcade houses with metal window grilles and rooftop water tanks, scooters, banyan trees with aerial roots, rice paddies with irrigation canals, traditional market awnings. No text or letters anywhere in the image.
 ```
 
 ### Avoid list
 
 ```text
-Avoid: deity statue close-up or any god figure as the subject, glowing light rays, halos, sacred beams, incense smoke, burning incense, people praying or bowing, worship scenes, moon blocks, temple plaques or signboards with writing, firecrackers, fireworks, red-and-gold or black-and-gold festival decoration, dark or mysterious mood, night scenes, anime or chibi style, glossy 3D render look, photorealism, text, letters, numbers, watermark, logo, a copy of any specific real temple.
+Avoid: deity statue close-up or any god figure as the subject, glowing light rays, halos, sacred beams, incense smoke or burning incense, people praying or bowing, worship scenes, moon blocks, readable writing on plaques, signboards or couplet boards, firecrackers, fireworks, large black-and-gold areas or gold as a full background, dark or mysterious mood, night scenes, anime or chibi style, plastic 3D-render look, photorealism, text, letters, numbers, watermark, logo, a copy of any specific real temple.
 ```
 
 ### Assets

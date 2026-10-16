@@ -8,10 +8,10 @@ Built from the team build guide (`TUDIGONG_DESIGN_GUIDE.md`).
 | Page | Status | Owner |
 |---|---|---|
 | P00 shell (router, top bar, panel, tokens, components, drag helper, AR helper) | Done | B |
-| P01 Home | Done (placeholder art) | A |
+| P01 Home | Done (semi-realistic art) | A |
 | P02 Scan (MindAR) | Done, tested with the placeholder card | B |
 | P03 How to Use | Done | A |
-| P04 Introduction | Done (placeholder art) | B |
+| P04 Introduction | Done (aerial culture map) | B |
 | P05–P12 | Stubs: show "planned for a later milestone" and let you tap Next | see guide |
 
 ## Run it
@@ -40,12 +40,16 @@ The `.mind` file must be compiled from the exact image you print.
 3. Download the result as `assets/targets/tudigong-card.mind` (same name, replace the old one).
 4. Check that the compiler shows feature points spread over the whole card. If one area has none, add detail there.
 
-## Swap placeholder art
+## Design: v2 "Temple craft"
 
-All paths are in `js/config.js` → `ASSETS`. Put the final images in `assets/img/` and change the path:
+Glazed-teal lacquer, temple gold trim and vermilion on warm paper, serif titles, gold-ringed medallion pins, a red seal stamp on question boxes and a carved-wood frame around maps. Everything is defined in `css/tokens.css`. Gold is used for trim and ornaments only (no deity close-ups, no black-and-gold, no rays or smoke), so the storyboard's cultural rules still hold.
 
-- `p01Hero`: `assets/img/p01_home_hero.webp` (IMG-01)
-- `p04Map`: `assets/img/p04_culture_map.webp` (IMG-03). Then adjust the pin positions in `NODES` at the top of `js/pages/p04-intro.js` (values are % of the 3:2 image).
+## Art
+
+`assets/img/p01_home_hero.webp`, `assets/img/p04_culture_map.webp` and `assets/targets/tudigong-card.png` are in-house semi-realistic illustrations. Their editable SVG sources are in `assets/source-art/`. To use other art, change the paths in `js/config.js` → `ASSETS`:
+
+- `p01Hero`: the decorative medallions are placed in `HERO_PINS` at the top of `js/pages/p01-home.js` (% of the 3:2 image).
+- `p04Map`: adjust the pin positions in `NODES` at the top of `js/pages/p04-intro.js` (% of the 3:2 image). The map is shown zoomed (see `ZOOM`).
 
 ## Building the next pages
 
@@ -89,5 +93,5 @@ assets/targets/     printable scan card + compiled .mind target
 ## Notes
 
 - Chinese narration slots show 【待補：請貼上原始中文旁白】 until the original Chinese script is pasted into `content/content.js`.
-- Icons are inline SVG in `js/icons.js` instead of the Phosphor icon font, so the app has no extra online dependency.
+- Icons are inline SVG in `js/icons.js`, so the app has no icon-font dependency.
 - Progress is saved on the device (localStorage). `#reset` or "Experience Again" clears it.
