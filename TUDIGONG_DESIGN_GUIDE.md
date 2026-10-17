@@ -690,6 +690,10 @@ const CONTENT = {
     "musicOff": {
       "en": "Music off",
       "zh": "音樂關閉"
+    },
+    "touchEarth": {
+      "en": "Touch the earth",
+      "zh": "輕觸大地"
     }
   },
   "p01": {

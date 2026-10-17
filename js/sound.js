@@ -201,6 +201,107 @@ export function scheduleBar(ctx, out, bar, t) {
   if (k === 0) drone(ctx, out, t, 8 * BAR);
 }
 
+/* ---------- the welcome opening: the shrine rises out of the earth ----------
+   Timed to css/welcome.css (seconds after the start):
+   0.25–3.3 deep earth rumble · 0.35 the ground shakes · 1.0 the soil bursts (thump + falling gravel)
+   1.05–2.3 stone grinding upward as the shrine rises · 2.25 it settles (low thud) · 1.9–3.1 banyan leaves rustle
+   2.7–4.0 a brush stroke writes 土地公 · 4.1 the red seal is stamped · 4.15 a rising zither glissando */
+function noiseSrc(ctx, t, dur) {
+  const n = ctx.createBufferSource(); n.buffer = noiseBuffer(ctx); n.loop = true;
+  n.start(t, Math.random() * 1.5); n.stop(t + dur + 0.05); return n;
+}
+function env(ctx, t, points) {        // points: [[time, value], …] (linear ramps)
+  const g = ctx.createGain(); g.gain.setValueAtTime(0, t);
+  points.forEach(([dt, v]) => g.gain.linearRampToValueAtTime(v, t + dt));
+  return g;
+}
+export function scheduleRise(ctx, out, t0) {
+  const T = (x) => t0 + x;
+  // deep rumble: low-passed noise + a wobbling sub tone
+  {
+    const n = noiseSrc(ctx, T(0.2), 3.4);
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 140; lp.Q.value = 0.7;
+    const lp2 = ctx.createBiquadFilter(); lp2.type = 'lowpass'; lp2.frequency.value = 220;
+    const g = env(ctx, T(0.2), [[0.4, 0.9], [1.0, 1.25], [2.2, 1.0], [3.3, 0]]);
+    n.connect(lp).connect(lp2).connect(g).connect(out);
+    const sub = ctx.createOscillator(); sub.type = 'sine'; sub.frequency.setValueAtTime(38, T(0.2)); sub.frequency.linearRampToValueAtTime(52, T(2.3));
+    const trem = ctx.createOscillator(), tg = ctx.createGain(); trem.frequency.value = 9; tg.gain.value = 0.12;
+    const sg = env(ctx, T(0.2), [[0.5, 0.32], [2.1, 0.3], [3.2, 0]]);
+    trem.connect(tg).connect(sg.gain);
+    sub.connect(sg).connect(out);
+    [sub, trem].forEach((o) => { o.start(T(0.2)); o.stop(T(3.5)); });
+  }
+  // the quake: a few rattles of loose pebbles
+  for (let i = 0; i < 14; i++) grain(ctx, out, T(0.35 + Math.random() * 0.9), 0.05 + Math.random() * 0.08, 1800 + Math.random() * 2500);
+  // the soil bursts open: a soft thump, then gravel falling back down
+  thump(ctx, out, T(1.0), 0.75, 95, 42);
+  for (let i = 0; i < 70; i++) {
+    const k = Math.random() ** 1.6;                      // dense at first, then thinning out
+    grain(ctx, out, T(1.02 + k * 1.5), (0.18 - k * 0.12) * (0.5 + Math.random()), 2200 + Math.random() * 4000);
+  }
+  // stone grinding upward while the shrine rises
+  {
+    const n = noiseSrc(ctx, T(1.05), 1.4);
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 1.4;
+    bp.frequency.setValueAtTime(220, T(1.05)); bp.frequency.exponentialRampToValueAtTime(950, T(2.25));
+    const am = ctx.createOscillator(), ag = ctx.createGain(); am.frequency.value = 23; ag.gain.value = 0.1;   // gritty texture
+    const g = env(ctx, T(1.05), [[0.25, 0.32], [1.0, 0.42], [1.25, 0]]);
+    am.connect(ag).connect(g.gain); am.start(T(1.05)); am.stop(T(2.4));
+    n.connect(bp).connect(g).connect(out);
+  }
+  // it settles into place
+  thump(ctx, out, T(2.25), 0.6, 80, 38);
+  // banyan leaves rustling as the tree grows
+  {
+    const n = noiseSrc(ctx, T(1.9), 1.3);
+    const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 3500;
+    const g = env(ctx, T(1.9), [[0.3, 0.06], [0.9, 0.05], [1.25, 0]]);
+    const fl = ctx.createOscillator(), fg = ctx.createGain(); fl.frequency.value = 13; fg.gain.value = 0.035;
+    fl.connect(fg).connect(g.gain); fl.start(T(1.9)); fl.stop(T(3.2));
+    n.connect(hp).connect(g).connect(out);
+  }
+  // the brush writes 土地公
+  {
+    const n = noiseSrc(ctx, T(2.7), 1.4);
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.9;
+    bp.frequency.setValueAtTime(1400, T(2.7)); bp.frequency.linearRampToValueAtTime(2600, T(3.4)); bp.frequency.linearRampToValueAtTime(1700, T(4.0));
+    const g = env(ctx, T(2.7), [[0.15, 0.05], [0.45, 0.09], [0.55, 0.03], [0.75, 0.08], [1.05, 0.03], [1.2, 0.07], [1.35, 0]]);
+    n.connect(bp).connect(g).connect(out);
+  }
+  // the red seal stamp
+  woodTock(ctx, out, T(4.1), 0.7, 0.5);
+  thump(ctx, out, T(4.1), 0.25, 140, 90);
+  // a rising zither glissando on the pentatonic scale
+  ['D4', 'E4', 'F#4', 'A4', 'B4', 'D5', 'E5', 'F#5', 'A5', 'B5', 'D6'].forEach((n, i) => zither(ctx, out, T(4.15 + i * 0.055), NOTE[n], 0.55 - i * 0.025, 0.55));
+}
+function grain(ctx, out, t, vel, freq) {
+  const n = ctx.createBufferSource(); n.buffer = noiseBuffer(ctx);
+  const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = freq; bp.Q.value = 2.5;
+  const g = ctx.createGain(), d = 0.006 + Math.random() * 0.02;
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vel, t + 0.002); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+  n.connect(bp).connect(g).connect(out); n.start(t, Math.random() * 1.8); n.stop(t + d + 0.01);
+}
+function thump(ctx, out, t, vel, f0, f1) {
+  const o = ctx.createOscillator(); o.type = 'sine';
+  o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + 0.35);
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vel, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
+  o.connect(g).connect(out); o.start(t); o.stop(t + 0.6);
+  const n = noiseSrc(ctx, t, 0.2);
+  const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 400;
+  const ng = ctx.createGain(); ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(vel * 0.5, t + 0.005); ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+  n.connect(lp).connect(ng).connect(out);
+}
+
+/** Render the opening sound offline (preview file). */
+export async function renderRisePreview(sampleRate = 44100) {
+  const c = new OfflineAudioContext(2, sampleRate * 7, sampleRate);
+  const b = makeBus(c); b.output.connect(c.destination);
+  const dry = c.createGain(); dry.gain.value = 0.45; dry.connect(c.destination); dry.connect(b.input);
+  scheduleRise(c, dry, 0.1);
+  return c.startRendering();
+}
+
 /** Render the whole loop offline (used to make a preview file). Returns an AudioBuffer. */
 export async function renderPreview(bars = LOOP_BARS, sampleRate = 44100) {
   const ctx = new OfflineAudioContext(2, Math.ceil(sampleRate * (bars * BAR + 3)), sampleRate);
@@ -326,4 +427,20 @@ export function installClickSounds() {
     if (!b || b.disabled || b.closest('[data-no-click-sound]')) return;
     playClick();
   }, true);
+}
+
+/** True once the browser allows sound (the user has tapped something on this visit). */
+export function soundUnlocked() { return !!ctx && ctx.state === 'running'; }
+
+/** Play the opening sound now. Returns stop(), which fades it out (used by Skip). */
+export function playRise() {
+  if (!ensureCtx()) return () => {};
+  if (ctx.state !== 'running') ctx.resume().catch(() => {});
+  const g = ctx.createGain(); g.gain.value = 0.45;
+  const rb = makeBus(ctx);                      // its own reverb so it works with the music off
+  g.connect(ctx.destination); g.connect(rb.input); rb.output.connect(ctx.destination);
+  scheduleRise(ctx, g, ctx.currentTime + 0.05);
+  duckMusic(true);                              // if the music is already playing, let the earth be heard
+  const unduck = setTimeout(() => duckMusic(false), 5600);
+  return () => { clearTimeout(unduck); duckMusic(false); g.gain.cancelScheduledValues(ctx.currentTime); g.gain.setTargetAtTime(0, ctx.currentTime, 0.12); rb.output.gain.setTargetAtTime(0, ctx.currentTime, 0.12); };
 }

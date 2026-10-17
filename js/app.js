@@ -98,7 +98,13 @@ function setPanelCollapsed(v) {
 /* ---------- background music + button sounds (js/sound.js) ---------- */
 // Browsers only allow sound after the first tap, so the music starts on the first touch anywhere.
 installClickSounds();
-document.addEventListener('pointerdown', () => { if (state.music) startMusic(); }, { capture: true, once: true });
+function firstTouch() {
+  if (document.querySelector('.welcome.is-waiting')) return;     // the welcome page starts the music after its opening
+  document.removeEventListener('pointerdown', firstTouch, true);
+  if (state.music) startMusic();
+}
+document.addEventListener('pointerdown', firstTouch, true);
+const musicIfOn = () => { if (state.music) startMusic(); };
 function toggleMusic() {
   state.music = !state.music; save();
   if (state.music) startMusic(); else stopMusic();
@@ -149,7 +155,7 @@ function makeCtx(id) {
 
   const ctx = {
     id, state, content: CONTENT[id], CONTENT,
-    go, next, back, rerender, save, toast, openVocab, cycleLang, musicButton, resetAll: () => resetAll(),
+    go, next, back, rerender, save, toast, openVocab, cycleLang, musicButton, musicIfOn, resetAll: () => resetAll(),
 
     /**
      * Build the right-hand panel.

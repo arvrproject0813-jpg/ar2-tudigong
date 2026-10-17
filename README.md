@@ -35,7 +35,9 @@ Upload one MP3 per page into `assets/audio/`, named `p01.mp3` … `p12.mp3` (opt
 - **Music:** an original, calm Taiwanese-countryside tune in the Chinese five-note scale: plucked zither (like a 古箏), bamboo flute (笛子), a soft wooden clapper and a low drone. It lasts about 1 min 40 s and loops. Tudigong guards the land and the fields, so it is pastoral, not ceremonial.
 - **Button sound:** a short wooden "tock" like a 拍板/梆子 folk-opera clapper, on every button. It is deliberately not a 木魚 (temple wooden fish), so no worship sounds.
 
-Browsers only allow sound after the first tap, so the music starts on the first touch. The note button (top bar, and the welcome page corner) turns music on and off, and the choice is remembered. Music goes quiet while narration plays.
+- **Opening sound (P01):** when the shrine rises there is a deep earth rumble, the soil bursting and gravel falling back, stone grinding upward, a low thud as it settles, leaves rustling as the banyan grows, a brush stroke for 土地公, the seal stamp and a rising zither run. It is timed to `css/welcome.css` (`scheduleRise()` in `js/sound.js`).
+
+Browsers only allow sound after the first tap. So on the first visit the welcome page waits on a dim landscape with a gold 土 button, "Touch the earth 輕觸大地"; tapping it raises the shrine with its sound, and the music comes in once the title is written. Coming back through the logo, it plays straight away. The note button (top bar, and the welcome page corner) turns music on and off, and the choice is remembered. Music goes quiet while narration plays.
 
 To use your own audio instead, upload `assets/audio/bgm.mp3` (looped background music) and/or `assets/audio/click.mp3` (button sound); the app uses them automatically. Volumes are `MUSIC_LEVEL`, `DUCK_LEVEL` and `CLICK_LEVEL` at the top of `js/sound.js`.
 

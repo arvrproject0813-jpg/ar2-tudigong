@@ -8,6 +8,7 @@ import { el, bi } from '../ui.js';
 import { ASSETS } from '../config.js';
 import { narrationControl } from '../narration.js';
 import { icon } from '../icons.js';
+import { playRise, soundUnlocked } from '../sound.js';
 
 export const chrome = false;      // no top bar / side panel on this page
 
@@ -61,13 +62,40 @@ export function render(stage, ctx) {
 
   const skip = el('button', { class: 'w-skip', type: 'button' }, bi(CONTENT.common.skip, { layout: 'inline' }));
 
-  const root = el('div', { class: 'welcome is-playing' }, scene, title, corner, skip);
+  // First visit: the browser only allows sound after a tap, so the scene waits with a "Touch the earth" button
+  // and the shrine rises (with its sound) when it is tapped. Coming back later (sound already allowed), it plays at once.
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const waitForTouch = !soundUnlocked() && !reduce;
+  const gate = waitForTouch
+    ? el('button', { class: 'w-gate', type: 'button', 'data-no-click-sound': '' },
+        el('span', { class: 'w-gate-ring', 'aria-hidden': 'true', lang: 'zh-Hant' }, '土'),
+        bi(CONTENT.common.touchEarth, { layout: 'stack' }))
+    : null;
+  const root = el('div', { class: `welcome is-playing ${waitForTouch ? 'is-waiting' : ''}` }, scene, title, corner, skip, gate);
+  let stopSound = () => {};
+  const begin = () => {
+    if (!root.classList.contains('is-waiting') && gate) return;
+    root.classList.remove('is-waiting');
+    gate?.remove();
+    stopSound = playRise();
+    timers.push(setTimeout(finish, 6500));
+    timers.push(setTimeout(() => ctx.musicIfOn(), 5600));      // the music comes in once the title is written
+  };
   const finish = () => {
+    if (root.classList.contains('is-waiting')) return;
     if (!root.classList.contains('is-playing')) return;
     root.classList.remove('is-playing'); root.classList.add('is-done');
+    stopSound();
+    ctx.musicIfOn();
   };
-  root.addEventListener('click', (e) => { if (!e.target.closest('.w-start, .w-corner')) finish(); });
-  timers.push(setTimeout(finish, 6500));
+  root.addEventListener('click', (e) => {
+    if (e.target.closest('.w-start, .w-corner')) return;
+    if (root.classList.contains('is-waiting')) begin(); else finish();
+  });
+  if (!waitForTouch) {
+    if (reduce) { root.classList.remove('is-playing'); root.classList.add('is-done'); }
+    else begin();
+  }
   // keep the corner music button in sync when it is toggled
   const syncMusic = () => corner.querySelector('.w-music')?.replaceChildren(ctx.musicButton('w-round'));
   document.addEventListener('music-changed', syncMusic);
