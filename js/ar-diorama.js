@@ -285,7 +285,7 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
              [0.27, -0.08, 0.08, 0.12, '#E9E1CF', COL.green], [0.37, -0.08, 0.09, 0.14, '#F2E2CC', COL.teal], [0.12, -0.22, 0.07, 0.13, '#F3E3CF', COL.red]];
   H.forEach(([x, z, w, h, wall, acc], i) => add(house(w, h, 0.07, wall, acc), x, z, 0.6 + i * 0.07));
   [[-0.26, 0.2, COL.teal], [-0.18, 0.2, COL.red], [-0.34, 0.2, COL.red]].forEach(([x, z, c], i) => add(stall(c), x, z, 0.75 + i * 0.06));
-  [[-0.42, -0.24], [0.44, 0.24], [0.13, -0.24], [-0.02, 0.26]].forEach(([x, z], i) => {
+  [[-0.42, -0.24], [0.44, 0.24], [-0.02, 0.26]].forEach(([x, z], i) => {
     const t = new THREE.Group();
     t.add(mesh(new THREE.CylinderGeometry(0.004, 0.006, 0.04, 6), M.wood, 0, 0.02, 0));
     t.add(mesh(new THREE.IcosahedronGeometry(0.028, 0), M.green, 0, 0.055, 0));
