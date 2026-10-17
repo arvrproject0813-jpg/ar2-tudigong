@@ -129,6 +129,14 @@ const CONTENT = {
     "resetView": {
       "en": "Reset view",
       "zh": "重設視角"
+    },
+    "musicOn": {
+      "en": "Music on",
+      "zh": "音樂開啟"
+    },
+    "musicOff": {
+      "en": "Music off",
+      "zh": "音樂關閉"
     }
   },
   "p01": {

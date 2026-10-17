@@ -5,6 +5,8 @@ const s = (body, extra = '') =>
 export const ICONS = {
   back: s('<path d="M15 5l-7 7 7 7"/>'),
   close: s('<path d="M6 6l12 12M18 6L6 18"/>'),
+  music: s('<path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>'),
+  musicOff: s('<path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/><path d="M3 3l18 18"/>'),
   plus: s('<path d="M12 5v14M5 12h14"/>'),
   minus: s('<path d="M5 12h14"/>'),
   recenter: s('<path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4 4v4h4"/>'),

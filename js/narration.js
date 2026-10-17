@@ -6,6 +6,7 @@ import CONTENT from '../content/content.js';
 import { AUDIO_DIR } from './config.js';
 import { el, bi } from './ui.js';
 import { icon } from './icons.js';
+import { duckMusic } from './sound.js';
 
 const audio = new Audio();
 audio.preload = 'none';
@@ -38,6 +39,9 @@ function sync() {
   views.forEach((v) => v.update());
 }
 ['play', 'pause', 'ended', 'timeupdate', 'loadedmetadata', 'error'].forEach((ev) => audio.addEventListener(ev, sync));
+// background music goes quiet while narration plays
+audio.addEventListener('play', () => duckMusic(true));
+['pause', 'ended', 'error', 'emptied'].forEach((ev) => audio.addEventListener(ev, () => duckMusic(false)));
 
 export function stopNarration() {
   audio.pause();

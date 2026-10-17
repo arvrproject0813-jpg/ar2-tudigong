@@ -4,11 +4,12 @@ import { PAGES, STORE_KEY } from './config.js';
 import { el, bi, button, iconButton, checklist, toast, clearToasts, closeModal, openVocab, setLang, plain } from './ui.js';
 import { icon } from './icons.js';
 import { narrationControl, stopNarration } from './narration.js';
+import { startMusic, stopMusic, installClickSounds } from './sound.js';
 
 /* ---------- state ---------- */
 const freshState = () => ({
   lang: 'bi', page: 'p01', done: {}, seen: {},
-  p08Route: [], p11Sentences: [], badges: [], arAvailable: false, panelCollapsed: false,
+  p08Route: [], p11Sentences: [], badges: [], arAvailable: false, panelCollapsed: false, music: true,
 });
 function load() {
   try { return { ...freshState(), ...JSON.parse(localStorage.getItem(STORE_KEY) || '{}') }; }
@@ -94,6 +95,23 @@ function setPanelCollapsed(v) {
   if (current) renderTopbar();
 }
 
+/* ---------- background music + button sounds (js/sound.js) ---------- */
+// Browsers only allow sound after the first tap, so the music starts on the first touch anywhere.
+installClickSounds();
+document.addEventListener('pointerdown', () => { if (state.music) startMusic(); }, { capture: true, once: true });
+function toggleMusic() {
+  state.music = !state.music; save();
+  if (state.music) startMusic(); else stopMusic();
+  if (current) { renderTopbar(); document.dispatchEvent(new CustomEvent('music-changed')); }
+}
+function musicButton(cls = '') {
+  const on = state.music;
+  const b = iconButton(on ? 'music' : 'musicOff', plain(on ? CONTENT.common.musicOff : CONTENT.common.musicOn), toggleMusic, `music-btn ${on ? '' : 'is-off'} ${cls}`.trim());
+  b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  b.title = plain(on ? CONTENT.common.musicOff : CONTENT.common.musicOn);
+  return b;
+}
+
 function cycleLang() {
   state.lang = LANG_ORDER[(LANG_ORDER.indexOf(state.lang) + 1) % LANG_ORDER.length];
   setLang(state.lang); save(); rerender();
@@ -118,6 +136,7 @@ function renderTopbar() {
       el('div', { class: 'progress-dots', role: 'progressbar', 'aria-valuemin': '1', 'aria-valuemax': '12', 'aria-valuenow': String(i + 1) },
         PAGES.map((p, j) => el('span', { class: j < i ? 'is-done' : j === i ? 'is-current' : '' })))),
     el('div', { class: 'tb-right' },
+      musicButton(),
       iconButton(state.panelCollapsed ? 'sidebar' : 'expand', plain(state.panelCollapsed ? CONTENT.common.showPanel : CONTENT.common.fullScreen),
         () => setPanelCollapsed(!state.panelCollapsed), 'panel-toggle'),
       langBtn),
@@ -130,7 +149,7 @@ function makeCtx(id) {
 
   const ctx = {
     id, state, content: CONTENT[id], CONTENT,
-    go, next, back, rerender, save, toast, openVocab, cycleLang, resetAll: () => resetAll(),
+    go, next, back, rerender, save, toast, openVocab, cycleLang, musicButton, resetAll: () => resetAll(),
 
     /**
      * Build the right-hand panel.

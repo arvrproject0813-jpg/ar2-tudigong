@@ -29,6 +29,16 @@ Developer shortcuts: add `#p04` to the URL to jump to a page, `#reset` to clear 
 
 Upload one MP3 per page into `assets/audio/`, named `p01.mp3` … `p12.mp3` (optional `p01_zh.mp3` / `p01_en.mp3` for the 中文 / English modes). The "Listen to narration 聆聽旁白" button under each page title finds them automatically; pages without a file show "Narration coming soon". On GitHub: open the `assets/audio` folder → **Add file → Upload files** → drag the MP3s in → **Commit changes**. See `assets/audio/README.md`.
 
+## Background music and button sound
+
+`js/sound.js` generates both in the browser, so there are no files to download and no copyright to worry about:
+- **Music:** an original, calm Taiwanese-countryside tune in the Chinese five-note scale: plucked zither (like a 古箏), bamboo flute (笛子), a soft wooden clapper and a low drone. It lasts about 1 min 40 s and loops. Tudigong guards the land and the fields, so it is pastoral, not ceremonial.
+- **Button sound:** a short wooden "tock" like a 拍板/梆子 folk-opera clapper, on every button. It is deliberately not a 木魚 (temple wooden fish), so no worship sounds.
+
+Browsers only allow sound after the first tap, so the music starts on the first touch. The note button (top bar, and the welcome page corner) turns music on and off, and the choice is remembered. Music goes quiet while narration plays.
+
+To use your own audio instead, upload `assets/audio/bgm.mp3` (looped background music) and/or `assets/audio/click.mp3` (button sound); the app uses them automatically. Volumes are `MUSIC_LEVEL`, `DUCK_LEVEL` and `CLICK_LEVEL` at the top of `js/sound.js`.
+
 ## Full-screen mode
 
 The gold-framed arrow tab on the panel's left edge (or the frame icon in the top bar) slides the side panel away so the activity uses the whole screen; the same tab, now at the screen edge, brings it back. The choice is remembered, except on P02 (Scan): arriving there always slides the panel in from the right so the scan instructions are seen (`playPanelEnter()` in `js/app.js`).

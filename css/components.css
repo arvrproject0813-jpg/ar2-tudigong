@@ -323,3 +323,6 @@ button.chip:hover { background: var(--teal-50); }
   .narr-ic { width: 30px; height: 30px; }
   .narr-ic svg { width: 16px; height: 16px; }
 }
+
+/* music toggle: dimmed when the music is off */
+.music-btn.is-off { opacity: .7; }
