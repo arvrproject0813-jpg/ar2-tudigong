@@ -415,10 +415,15 @@ export function registerDiorama() {
   A.registerComponent('tdg-diorama', {
     init() {
       this.holder = new A.THREE.Group();
-      // MindAR's target plane is XY with +Z towards the camera: rotate so our "up" (+Y) stands out of the card.
-      this.holder.rotation.x = Math.PI / 2;
+      // MindAR's card plane is XY (+Y = the card's top edge, +Z = towards the camera).
+      // The model stands upright in front of the card and faces the viewer, like a pop-up book:
+      // its ground sits along the lower part of the card, tipped back 24° so the streets and fields stay visible.
+      this.holder.position.set(0, -0.2, 0.16);
+      this.holder.scale.setScalar(0.78);
+      this.holder.rotation.x = 0.42;
       this.el.object3D.add(this.holder);
       this.n = null; this.t0 = null;
+      this.still = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const use = (n) => { if (!this.holder) return; this.n = n; this.holder.add(n.root); this.t0 = null; };
       customModelExists().then((yes) => (yes
         ? loadNeighborhoodGLB(A.THREE, A.THREE.GLTFLoader, A.THREE.DRACOLoader).catch((e) => { console.warn('Own model failed to load, using the built-in one.', e); return buildNeighborhood(A.THREE); })
@@ -427,7 +432,10 @@ export function registerDiorama() {
     tick(time) {
       if (!this.n || !this.el.object3D.visible) return;     // still loading, or card not in view
       if (this.t0 === null) this.t0 = time;
-      tickNeighborhood(this.n, (time - this.t0) / 1000);
+      const t = (time - this.t0) / 1000;
+      tickNeighborhood(this.n, t);
+      // a slow sway left and right shows that it is 3D (none when Reduce Motion is on)
+      if (!this.still) this.n.root.rotation.y = Math.sin(t * 0.5) * 0.22;
     },
     remove() { this.el.object3D.remove(this.holder); this.holder = null; },
   });
