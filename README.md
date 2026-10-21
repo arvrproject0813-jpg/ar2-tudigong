@@ -59,6 +59,10 @@ On every other page the top bar shows the gold 土地公 calligraphy logo; tappi
 
 If the camera is blocked, the page offers **Continue without AR 不使用 AR 繼續** so a demo never gets stuck.
 
+## Using your own 3D model
+
+Upload `tudigong-neighborhood.glb` to `assets/models/` and it replaces the built-in pop-up on P02 (AR) and the P04 3D view. Specs, the layout plan and the palette are in `assets/models/README.md` and `assets/source-art/tudigong_3d_reference_sheet.png`; `assets/source-art/tudigong-neighborhood-starter.glb` is today's model to start from.
+
 ## When the final scan-card art is ready
 
 The `.mind` file must be compiled from the exact image you print.

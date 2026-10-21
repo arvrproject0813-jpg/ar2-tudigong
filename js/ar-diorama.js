@@ -308,18 +308,104 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
   return { root, parts, markers, lanterns, anchors };
 }
 
+/* ---------- your own model (GLB) ----------
+   If assets/models/tudigong-neighborhood.glb exists it replaces the built-in model on P02 (AR) and P04 (3D view).
+   The file is fitted automatically: centred on the card, scaled to a 0.92 × 0.62 footprint (card = 1 × 0.667),
+   lowest point on the card. Each top-level object pops up in turn (largest first). Optional empties named
+   pin_temple, pin_fields, pin_market, pin_corner place the P04 info pins. Animation clips in the file loop. */
+export const MODEL_URL = 'assets/models/tudigong-neighborhood.glb';
+const FOOTPRINT = { x: 0.92, z: 0.62 };
+let modelCheck = null;
+export function customModelExists() {
+  if (!modelCheck) {
+    modelCheck = fetch(MODEL_URL, { method: 'HEAD', cache: 'no-cache' })
+      .then((r) => r.ok && !(r.headers.get('content-type') || '').includes('text/html'))
+      .catch(() => false);
+  }
+  return modelCheck;
+}
+
+function addLights(THREE, root, shadows) {
+  root.add(new THREE.HemisphereLight('#FFF3DC', '#5A4430', 0.55));
+  const sun = new THREE.DirectionalLight('#FFE9C4', 0.95); sun.position.set(0.7, 1.1, 0.9); root.add(sun);
+  if (shadows) {
+    sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.002;
+    Object.assign(sun.shadow.camera, { left: -0.7, right: 0.7, top: 0.7, bottom: -0.7, near: 0.1, far: 3 });
+  }
+  const fill = new THREE.DirectionalLight('#CDE8E5', 0.25); fill.position.set(-0.8, 0.6, -0.4); root.add(fill);
+}
+
+/**
+ * Load the team's GLB and return the same shape as buildNeighborhood().
+ * GLTFLoader / DRACOLoader = the classes from the three build in use (A-Frame's THREE, or three/addons).
+ */
+export async function loadNeighborhoodGLB(THREE, GLTFLoader, DRACOLoader, { shadows = false } = {}) {
+  const loader = new GLTFLoader();
+  if (DRACOLoader) {
+    const draco = new DRACOLoader();
+    draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');
+    loader.setDRACOLoader(draco);
+  }
+  const gltf = await loader.loadAsync(MODEL_URL);
+  const model = gltf.scene;
+  model.traverse((o) => { if (o.isLight || o.isCamera) o.visible = false; });
+
+  // fit: centre on the card, scale to the footprint, sit on the card
+  const box = new THREE.Box3().setFromObject(model);
+  const size = box.getSize(new THREE.Vector3());
+  const k = Math.min(FOOTPRINT.x / Math.max(size.x, 1e-6), FOOTPRINT.z / Math.max(size.z, 1e-6));
+  const fit = new THREE.Group();
+  fit.add(model);
+  model.position.set(-(box.min.x + box.max.x) / 2, -box.min.y, -(box.min.z + box.max.z) / 2);
+  fit.scale.setScalar(k);
+
+  const root = new THREE.Group();
+  addLights(THREE, root, shadows);
+  root.add(fit);
+  if (shadows) model.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+
+  // pop-up parts: the top-level objects (skip single wrapper nodes), largest footprint first
+  let level = model;
+  while (level.children.length === 1 && !level.children[0].isMesh) level = level.children[0];
+  const items = level.children.filter((o) => !o.name.startsWith('pin_')).map((obj) => {
+    const b = new THREE.Box3().setFromObject(obj), s = b.getSize(new THREE.Vector3());
+    return { obj, area: s.x * s.z, base: obj.scale.clone() };
+  }).sort((a, b) => b.area - a.area);
+  const parts = items.map((it, i) => ({ obj: it.obj, delay: i === 0 ? 0 : Math.min(1.4, 0.15 + i * 0.07), base: it.base }));
+
+  // pins: empties named pin_* (world position inside root), else the built-in defaults
+  root.updateMatrixWorld(true);
+  const anchors = {
+    temple: new THREE.Vector3(0.04, 0.27, 0.03), fields: new THREE.Vector3(-0.32, 0.05, -0.08),
+    market: new THREE.Vector3(-0.26, 0.09, 0.2), corner: new THREE.Vector3(0.285, 0.13, 0.118),
+  };
+  model.traverse((o) => {
+    const m = o.name.match(/^pin_(temple|fields|market|corner)/i);
+    if (m) anchors[m[1].toLowerCase()] = o.getWorldPosition(new THREE.Vector3());
+  });
+
+  let mixer = null;
+  if (gltf.animations?.length) {
+    mixer = new THREE.AnimationMixer(model);
+    gltf.animations.forEach((clip) => mixer.clipAction(clip).play());
+  }
+  return { root, parts, markers: [], lanterns: [], anchors, mixer, custom: true };
+}
+
 /** Animate a built neighbourhood: pop-up entrance, floating markers, swinging lanterns. t = seconds since start. */
 export function tickNeighborhood(n, t, { entrance = true } = {}) {
   const ease = (k) => 1 - Math.pow(1 - k, 3) + Math.sin(k * Math.PI) * 0.08;   // pop with a small overshoot
-  n.parts.forEach(({ obj, delay }) => {
+  n.parts.forEach(({ obj, delay, base }) => {
     const k = entrance ? Math.min(Math.max((t - delay) / 0.6, 0), 1) : 1;
-    obj.scale.setScalar(Math.max(0.0001, ease(k)));
+    const s = Math.max(0.0001, ease(k));
+    if (base) obj.scale.set(base.x * s, base.y * s, base.z * s); else obj.scale.setScalar(s);
   });
   n.markers.forEach((m, i) => {
     m.position.y = m.userData.baseY + Math.sin(t * 2 + i) * 0.01;
     m.rotation.y = t * 0.8 + i;
   });
   (n.lanterns || []).forEach((L, i) => { L.rotation.z = Math.sin(t * 1.6 + i * 1.3) * 0.12; });
+  if (n.mixer) { n.mixer.update(Math.max(0, Math.min(0.1, t - (n.lastT ?? t)))); n.lastT = t; }
 }
 
 /** A-Frame component for the AR view: <a-entity tdg-diorama> inside the mindar-image-target entity. */
@@ -328,17 +414,21 @@ export function registerDiorama() {
   if (!A || A.components['tdg-diorama']) return;
   A.registerComponent('tdg-diorama', {
     init() {
-      this.n = buildNeighborhood(A.THREE);
+      this.holder = new A.THREE.Group();
       // MindAR's target plane is XY with +Z towards the camera: rotate so our "up" (+Y) stands out of the card.
-      this.n.root.rotation.x = Math.PI / 2;
-      this.el.object3D.add(this.n.root);
-      this.t0 = null;
+      this.holder.rotation.x = Math.PI / 2;
+      this.el.object3D.add(this.holder);
+      this.n = null; this.t0 = null;
+      const use = (n) => { if (!this.holder) return; this.n = n; this.holder.add(n.root); this.t0 = null; };
+      customModelExists().then((yes) => (yes
+        ? loadNeighborhoodGLB(A.THREE, A.THREE.GLTFLoader, A.THREE.DRACOLoader).catch((e) => { console.warn('Own model failed to load, using the built-in one.', e); return buildNeighborhood(A.THREE); })
+        : buildNeighborhood(A.THREE))).then(use);
     },
     tick(time) {
-      if (!this.el.object3D.visible) return;     // card not in view
+      if (!this.n || !this.el.object3D.visible) return;     // still loading, or card not in view
       if (this.t0 === null) this.t0 = time;
       tickNeighborhood(this.n, (time - this.t0) / 1000);
     },
-    remove() { this.el.object3D.remove(this.n.root); },
+    remove() { this.el.object3D.remove(this.holder); this.holder = null; },
   });
 }

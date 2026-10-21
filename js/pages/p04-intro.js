@@ -85,7 +85,16 @@ export function render(stage, ctx) {
     if (!(probe.getContext('webgl2') || probe.getContext('webgl'))) throw new Error('NO_WEBGL');
     const THREE = await import('three');
     const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
-    const { buildNeighborhood, tickNeighborhood } = await import('../ar-diorama.js');
+    const { buildNeighborhood, tickNeighborhood, customModelExists, loadNeighborhoodGLB } = await import('../ar-diorama.js');
+    // the team's own model (assets/models/tudigong-neighborhood.glb) replaces the built-in one when it exists
+    let n = null;
+    if (await customModelExists()) {
+      try {
+        const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
+        const { DRACOLoader } = await import('three/addons/loaders/DRACOLoader.js');
+        n = await loadNeighborhoodGLB(THREE, GLTFLoader, DRACOLoader, { shadows: true });
+      } catch (e) { console.warn('P04: own model failed to load, using the built-in one.', e); }
+    }
     if (!alive) return;
 
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -94,7 +103,7 @@ export function render(stage, ctx) {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     const scene = new THREE.Scene();
-    const n = buildNeighborhood(THREE, { markers: false, shadows: true });
+    if (!n) n = buildNeighborhood(THREE, { markers: false, shadows: true });
     // the model's lights were tuned for A-Frame's legacy light units; three r160 uses physical units
     n.root.traverse((o) => { if (o.isLight) o.intensity *= Math.PI; });
     scene.add(n.root);
