@@ -211,10 +211,17 @@ function makeCtx(id) {
 }
 
 /* ---------- start ---------- */
-// Developer shortcuts: open index.html#p04 to jump to a page, #reset to clear progress.
+// Developer shortcuts: open index.html#p04 to jump to a page, #reset to clear progress,
+// #reset-p05 to clear one page's progress and open it again (handy for replaying a game).
 function fromHash() {
   const h = location.hash.replace('#', '');
   if (h === 'reset') { Object.assign(state, freshState()); save(); setLang(state.lang); return 'p01'; }
+  const one = h.match(/^reset-(p\d\d)$/);
+  if (one && indexOf(one[1]) >= 0) {
+    delete state.seen[one[1]]; delete state.done[one[1]]; save();
+    history.replaceState(null, '', `#${one[1]}`);
+    return one[1];
+  }
   return indexOf(h) >= 0 ? h : null;
 }
 window.addEventListener('hashchange', () => { const h = fromHash(); if (h) go(h); });
