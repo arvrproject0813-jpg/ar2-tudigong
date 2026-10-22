@@ -1,121 +1,136 @@
 // P05 · Scene 1 — Street-corner temple: a cultural node in community life.
-// Drag Residential Area, Road, Market and Small Temple onto the map (or tap a card, then a circle).
-// When all four are placed, tap the small temple to mark it as the Community Node: gold lines join it
-// to the homes, the street and the market. Storyboard completion: 4 cards placed + temple selected.
 //
-// The map is the same 3D neighbourhood as P02/P04 in its street-corner layout, rendered from above
-// (assets/img/p05_street_map.webp, 1692×995). Zone centres below are % of that image.
-import { el, bi, chip, toast, notePopover, plain } from '../ui.js';
+// The game (storyboard: place 4 cards in the right zones + select the temple node):
+//   1. Riddle cards, one at a time: an English riddle (Chinese below) describes a place.
+//      Drag the card to its circle on the map (or tap the card, then the circle).
+//   2. The neighbourhood wakes up: the map starts as a misty dawn; each right answer clears the mist
+//      around that place and shows it awake (shops open, people, laundry, lanterns lit). Placing the
+//      road sends a scooter down the street.
+//   3. Neighbourhood passport: each right answer stamps a red seal (住 路 市 廟); a card placed with no
+//      mistakes gets a gold seal. Two wrong tries on a card make its circle glow softly (gentle help).
+//   4. Meeting point: "Where do the homes, the street and the market all meet?" Tapping the small
+//      temple makes it the Community Node: gold lines join it to the other places, neighbours walk along
+//      them, and the whole neighbourhood wakes up.
+//
+// Art: the 3D neighbourhood (js/ar-diorama.js, street layout) rendered from above twice from the same
+// camera: assets/img/p05_dawn.webp and p05_awake.webp (1692 × 995), plus p05_mist.webp and two scooter
+// sprites. Positions below are % of those images.
+import { el, bi, chip, toast, clearToasts, notePopover, plain } from '../ui.js';
 import { icon } from '../icons.js';
 import { createDragGroup } from '../drag.js';
 import { playChime, playMiss, playFlourish } from '../sound.js';
 
-const MAP = 'assets/img/p05_street_map.webp';
+const IMG = { dawn: 'assets/img/p05_dawn.webp', awake: 'assets/img/p05_awake.webp', mist: 'assets/img/p05_mist.webp',
+  scooterDown: 'assets/img/p05_scooter_down.webp', scooterLeft: 'assets/img/p05_scooter_left.webp' };
+const VW = 1692, VH = 995;                       // image size = SVG viewBox
 const ZONES = [
-  { id: 'residential', icon: 'home', x: 82, y: 28 },
-  { id: 'road', icon: 'road', x: 66.5, y: 50 },
-  { id: 'market', icon: 'market', x: 25.3, y: 74 },
-  { id: 'temple', icon: 'temple', x: 79.4, y: 78, temple: true },
+  { id: 'residential', icon: 'home', x: 77.0, y: 28.9, r: 300, seal: '住', tagAbove: true },
+  { id: 'road', icon: 'road', x: 66.5, y: 51.8, r: 220, seal: '路' },
+  { id: 'market', icon: 'market', x: 26.0, y: 73.1, r: 250, seal: '市' },
+  { id: 'temple', icon: 'temple', x: 78.8, y: 77.8, r: 210, seal: '廟', temple: true },
 ];
-const TRAY_ORDER = ['temple', 'residential', 'market', 'road'];   // not the map order, so it is not a give-away
+const DECK = ['market', 'residential', 'temple', 'road'];   // riddle order
+const SVGNS = 'http://www.w3.org/2000/svg';
+const svgEl = (tag, attrs = {}) => { const n = document.createElementNS(SVGNS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); return n; };
 
 let group = null;
 let timers = [];
+let rafs = [];
 
 export function render(stage, ctx) {
   const c = ctx.content;
-  const { CONTENT } = ctx;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const placed = new Set(ctx.seen('placed') || []);
+  const clean = new Set(ctx.seen('clean') || []);
   let nodeDone = !!ctx.seen('node');
+  let goldToastShown = false;
+  const misses = {};
+  const Z = Object.fromEntries(ZONES.map((z) => [z.id, z]));
 
-  /* ---------- map with drop circles ---------- */
-  const frame = el('div', { class: 'map-frame p05-frame' }, el('img', { src: MAP, alt: '' }));
-  const lines = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  // same proportions as the map image, so the lines scale evenly
-  lines.setAttribute('class', 'p05-lines'); lines.setAttribute('viewBox', '0 0 1692 995');
-  lines.setAttribute('aria-hidden', 'true');
-  frame.append(lines);
+  /* ---------- the scene: dawn picture, awake picture revealed through a mask, mist on top ---------- */
+  const uid = `p05${Date.now().toString(36)}`;
+  const scene = svgEl('svg', { class: 'p05-scene', viewBox: `0 0 ${VW} ${VH}`, 'aria-hidden': 'true' });
+  const defs = svgEl('defs');
+  const soft = svgEl('radialGradient', { id: `${uid}-w` });
+  soft.append(svgEl('stop', { offset: '0.55', 'stop-color': '#fff', 'stop-opacity': '1' }), svgEl('stop', { offset: '1', 'stop-color': '#fff', 'stop-opacity': '0' }));
+  const softK = svgEl('radialGradient', { id: `${uid}-k` });
+  softK.append(svgEl('stop', { offset: '0.55', 'stop-color': '#000', 'stop-opacity': '1' }), svgEl('stop', { offset: '1', 'stop-color': '#000', 'stop-opacity': '0' }));
+  const reveal = svgEl('mask', { id: `${uid}-reveal`, maskUnits: 'userSpaceOnUse', x: 0, y: 0, width: VW, height: VH });
+  reveal.append(svgEl('rect', { width: VW, height: VH, fill: '#000' }));
+  const clear = svgEl('mask', { id: `${uid}-clear`, maskUnits: 'userSpaceOnUse', x: 0, y: 0, width: VW, height: VH });
+  clear.append(svgEl('rect', { width: VW, height: VH, fill: '#fff' }));
+  defs.append(soft, softK, reveal, clear);
+  const lines = svgEl('g', { class: 'p05-lines' });
+  scene.append(defs,
+    svgEl('image', { href: IMG.dawn, width: VW, height: VH }),
+    svgEl('image', { href: IMG.awake, width: VW, height: VH, mask: `url(#${uid}-reveal)` }),
+    svgEl('image', { class: 'p05-mist', href: IMG.mist, width: VW, height: VH, preserveAspectRatio: 'none', mask: `url(#${uid}-clear)` }),
+    lines);
 
-  const zones = {};
-  const tags = {};
+  // one pair of circles per opening (white in the reveal mask, black in the mist mask), grown with a tween
+  const openings = [];
+  const openAt = (x, y, r, animate, ms = 900) => {
+    const cx = x / 100 * VW, cy = y / 100 * VH;
+    const a = svgEl('circle', { cx, cy, r: 0, fill: `url(#${uid}-w)` });
+    const b = svgEl('circle', { cx, cy, r: 0, fill: `url(#${uid}-k)` });
+    reveal.append(a); clear.append(b); openings.push(a, b);
+    if (!animate || reduce) { a.setAttribute('r', r); b.setAttribute('r', r); return; }
+    const t0 = performance.now();
+    const step = (now) => {
+      const k = Math.min(1, Math.max(0, (now - t0) / ms)), e = 1 - Math.pow(1 - k, 3);
+      a.setAttribute('r', r * e); b.setAttribute('r', r * e);
+      if (k < 1) rafs.push(requestAnimationFrame(step));
+    };
+    rafs.push(requestAnimationFrame(step));
+  };
+
+  const frame = el('div', { class: 'map-frame p05-frame' }, scene);
+
+  // the scooter that drives down the street once the road is placed
+  const scooters = el('div', { class: 'p05-scooters', 'aria-hidden': 'true', hidden: true },
+    el('img', { class: 'down', src: IMG.scooterDown, alt: '' }),
+    el('img', { class: 'left', src: IMG.scooterLeft, alt: '' }));
+  frame.append(scooters);
+  const startScooter = () => { if (!reduce) scooters.hidden = false; };
+
+  /* ---------- drop circles and pins ---------- */
+  const zones = {}, tags = {};
   ZONES.forEach((z) => {
-    const zone = el('div', { class: 'p05-zone', 'data-id': z.id, style: { left: `${z.x}%`, top: `${z.y}%` }, role: 'button', 'aria-label': `${plain(c.explore)}: ?` },
+    const zone = el('div', { class: 'p05-zone', 'data-id': z.id, style: { left: `${z.x}%`, top: `${z.y}%` }, role: 'button', 'aria-label': '?' },
       el('span', { class: 'q', 'aria-hidden': 'true' }, '?'));
     zones[z.id] = zone;
     frame.append(zone);
   });
-
-  // a placed zone becomes a medallion pin with its label (the same pins as P04)
   const fillZone = (id, animate) => {
-    const z = ZONES.find((x) => x.id === id);
-    const zone = zones[id];
+    const z = Z[id], zone = zones[id];
+    zone.classList.remove('is-glow');
     zone.classList.add('is-filled');
-    zone.replaceChildren();
+    zone.replaceChildren(el('span', { class: `map-pin is-done ${z.temple ? 'is-temple' : ''} ${animate && !reduce ? 'p05-pop' : ''}`, html: icon(z.icon) }));
     zone.setAttribute('aria-label', plain(c.cards[id]));
-    const pin = el('span', { class: `map-pin is-done ${z.temple ? 'is-temple' : ''} ${animate ? 'p05-pop' : ''}`, html: icon(z.icon) });
-    zone.append(pin);
-    const tag = el('div', { class: 'pin-tag', style: { left: `${z.x}%`, top: `${z.y}%` } }, bi(c.cards[id], { layout: 'stack' }));
-    tags[id] = tag;
-    frame.append(tag);
+    const tag = el('div', { class: `pin-tag ${z.tagAbove ? 'is-above' : ''} ${z.temple || z.id === 'road' ? 'p05-tag-left' : ''}`, style: { left: `${z.x}%`, top: `${z.y}%` } }, bi(c.cards[id], { layout: 'stack' }));
+    tags[id] = tag; frame.append(tag);
+    openAt(z.x, z.y, z.r, animate);
+    if (id === 'road') startScooter();
   };
 
-  /* ---------- card tray ---------- */
-  const cards = TRAY_ORDER.map((id) => {
-    const z = ZONES.find((x) => x.id === id);
-    return el('button', { class: `node-card ${placed.has(id) ? 'is-placed' : ''}`, type: 'button', 'data-id': id, 'aria-label': plain(c.cards[id]) },
-      el('span', { class: `ic ${z.temple ? 'is-temple' : ''}`, html: icon(z.icon) }),
-      bi(c.cards[id], { layout: 'stack' }),
-      el('span', { class: 'p05-check', 'aria-hidden': 'true', html: icon('check') }));
-  });
-  const tray = el('div', { class: 'p05-tray' }, cards);
+  /* ---------- tray: riddle deck + passport ---------- */
+  const deckSlot = el('div', { class: 'p05-deckslot' });
+  const deckCount = el('div', { class: 'p05-deckcount', 'aria-hidden': 'true' });
+  const seals = Object.fromEntries(ZONES.map((z) => [z.id, el('span', { class: 'p05-seal', 'data-id': z.id, lang: 'zh-Hant', title: plain(c.cards[z.id]) }, z.seal)]));
+  const passport = el('div', { class: 'p05-passport' },
+    el('div', { class: 'p05-pp-title' }, bi(c.passport, { layout: 'stack' })),
+    el('div', { class: 'p05-seals' }, ZONES.map((z) => seals[z.id])));
+  const stamp = (id, gold, animate) => {
+    const s = seals[id];
+    s.classList.add('is-stamped');
+    if (gold) s.classList.add('is-gold');
+    if (animate && !reduce) { s.classList.remove('p05-stamp'); void s.offsetWidth; s.classList.add('p05-stamp'); }
+  };
+  const tray = el('div', { class: 'p05-tray' }, deckSlot, deckCount, passport);
 
-  stage.append(el('div', { class: 'p05' },
-    tray,
+
+  stage.append(el('div', { class: 'p05' }, tray,
     el('div', { class: 'p05-mapwrap' }, el('div', { class: 'map-carved' }, frame))));
-
-  /* ---------- the Community Node ---------- */
-  const drawLines = (animate) => {
-    const t = ZONES.find((z) => z.temple);
-    lines.replaceChildren();
-    ZONES.filter((z) => !z.temple).forEach((z, i) => {
-      const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      l.setAttribute('x1', t.x * 16.92); l.setAttribute('y1', t.y * 9.95); l.setAttribute('x2', z.x * 16.92); l.setAttribute('y2', z.y * 9.95);
-      l.setAttribute('pathLength', '1');
-      if (animate) l.style.animationDelay = `${i * 0.18}s`; else l.classList.add('is-drawn');
-      lines.append(l);
-    });
-  };
-  const markNode = (animate) => {
-    const zone = zones.temple;
-    zone.classList.add('is-node');
-    zone.querySelector('.map-pin')?.classList.remove('is-pulse-loop');
-    tags.temple?.replaceChildren(bi(c.node, { layout: 'stack' }));
-    tags.temple?.classList.add('is-node');
-    drawLines(animate);
-  };
-  const askForNode = () => {
-    const zone = zones.temple;
-    zone.classList.add('is-ask');
-    zone.querySelector('.map-pin')?.classList.add('is-pulse-loop');
-    zone.addEventListener('click', onTempleTap);
-  };
-  function onTempleTap() {
-    if (nodeDone || placed.size < ZONES.length) return;
-    nodeDone = true;
-    ctx.seen('node', true);
-    zones.temple.removeEventListener('click', onTempleTap);
-    zones.temple.classList.remove('is-ask');
-    markNode(true);
-    playFlourish();
-    // let the gold lines draw first, then explain what they mean
-    timers.push(setTimeout(() => notePopover(frame, { xPct: 79.4, yPct: 78, title: c.node, body: c.nodeNote }), 1400));
-    progress();
-    if (!ctx.isComplete()) {
-      ctx.complete();
-      if (!ctx.state.badges.includes('node')) { ctx.state.badges.push('node'); ctx.save(); }
-      timers.push(setTimeout(() => toast(c.complete, 'success'), 1000));
-    }
-  }
 
   /* ---------- panel ---------- */
   ctx.panel({
@@ -127,42 +142,125 @@ export function render(stage, ctx) {
     { text: c.task2, done: nodeDone },
   ]);
 
-  /* ---------- drag / tap-to-place ---------- */
-  group = createDragGroup({
-    cards: cards.filter((card) => !placed.has(card.dataset.id)),
-    targets: () => Object.values(zones).filter((z) => !z.classList.contains('is-filled')),
-    accept: (card, zone) => card.dataset.id === zone.dataset.id,
-    onCorrect: (card, zone) => {
-      const id = card.dataset.id;
-      card.classList.add('is-placed');
-      card.classList.remove('is-selected');
-      fillZone(id, true);
-      placed.add(id);
-      ctx.seen('placed', [...placed]);
-      playChime(placed.size - 1);
-      progress();
-      group.refreshTargets?.();
-      if (placed.size === ZONES.length) {
-        timers.push(setTimeout(() => { toast(c.tapTemple, 'hint'); askForNode(); }, 500));
-      }
-    },
-    onWrong: (card) => {
-      playMiss();
-      toast(c.hints[card.dataset.id], 'hint');
-    },
-  });
-
-  /* ---------- restore a return visit ---------- */
-  placed.forEach((id) => fillZone(id, false));
-  if (placed.size === ZONES.length) {
-    if (nodeDone) markNode(false); else askForNode();
+  /* ---------- the riddle deck ---------- */
+  const nextId = () => DECK.find((id) => !placed.has(id));
+  function deal() {
+    group?.destroy(); group = null;
+    const id = nextId();
+    const left = DECK.filter((d) => !placed.has(d)).length;
+    deckCount.textContent = left > 1 ? `+${left - 1}` : '';
+    deckCount.hidden = left <= 1;
+    if (!id) { deckSlot.replaceChildren(); deckSlot.classList.add('is-empty'); return; }
+    const card = el('button', { class: 'node-card p05-riddle', type: 'button', 'data-id': id, 'aria-label': plain(c.riddles[id]) },
+      el('span', { class: 'p05-riddle-head' }, el('span', { class: 'q', 'aria-hidden': 'true' }, '?'), bi(c.riddle, { layout: 'inline' })),
+      bi(c.riddles[id], { layout: 'stack', cls: 'p05-riddle-text' }));
+    deckSlot.replaceChildren(card);
+    if (!reduce) card.classList.add('p05-deal');
+    group = createDragGroup({
+      cards: [card],
+      targets: () => ZONES.map((z) => zones[z.id]).filter((zn) => !zn.classList.contains('is-filled')),
+      accept: (cd, zone) => cd.dataset.id === zone.dataset.id,
+      onCorrect: (cd) => place(cd.dataset.id),
+      onWrong: (cd, zone) => {
+        const cid = cd.dataset.id;
+        misses[cid] = (misses[cid] || 0) + 1;
+        playMiss();
+        clearToasts();
+        toast(c.hints[cid], 'hint');
+        if (misses[cid] >= 2) zones[cid].classList.add('is-glow');        // gentle help after two tries
+      },
+    });
   }
+
+  function place(id) {
+    const gold = !misses[id];
+    placed.add(id);
+    if (gold) clean.add(id);
+    ctx.seen('placed', [...placed]);
+    ctx.seen('clean', [...clean]);
+    fillZone(id, true);
+    stamp(id, gold, true);
+    playChime(placed.size - 1);
+    if (gold && !goldToastShown) { goldToastShown = true; toast(c.goldSeal, 'success'); }
+    progress();
+    timers.push(setTimeout(deal, reduce ? 0 : 450));
+    if (placed.size === ZONES.length) timers.push(setTimeout(askMeetingPoint, 900));
+  }
+
+  /* ---------- the meeting point ---------- */
+  function askMeetingPoint() {
+    if (nodeDone) return;
+    // the question takes the place of the riddle deck
+    const card = el('div', { class: 'node-card p05-riddle p05-meetcard', role: 'note' },
+      el('span', { class: 'p05-riddle-head' }, el('span', { class: 'q seal', 'aria-hidden': 'true', lang: 'zh-Hant' }, '問')),
+      bi(c.meetQ, { layout: 'stack', cls: 'p05-riddle-text' }));
+    if (!reduce) card.classList.add('p05-deal');
+    deckSlot.classList.remove('is-empty'); deckSlot.classList.add('is-question');
+    deckSlot.replaceChildren(card);
+    ZONES.forEach((z) => {
+      const zone = zones[z.id];
+      zone.classList.add('is-ask');
+      zone.onclick = () => (z.temple ? makeNode() : (playMiss(), clearToasts(), toast(c.meetWrong, 'hint'), shake(zone)));
+    });
+  }
+  const shake = (zone) => { zone.classList.remove('is-hint'); void zone.offsetWidth; zone.classList.add('is-hint'); };
+
+  function drawNode(animate) {
+    const t = Z.temple, tx = t.x / 100 * VW, ty = t.y / 100 * VH;
+    lines.replaceChildren();
+    ZONES.filter((z) => !z.temple).forEach((z, i) => {
+      const x = z.x / 100 * VW, y = z.y / 100 * VH;
+      const l = svgEl('line', { x1: tx, y1: ty, x2: x, y2: y, pathLength: 1, class: animate && !reduce ? '' : 'is-drawn' });
+      if (animate && !reduce) l.style.animationDelay = `${i * 0.18}s`;
+      lines.append(l);
+      if (!reduce) {                 // neighbours walking from each place to the small temple
+        [0, 1].forEach((k) => {
+          const dur = `${4.2 + i * 0.4}s`, begin = `${1 + k * 2.1 + i * 0.3}s`;
+          const w = svgEl('g', { class: `p05-walker w${(i + k) % 3}`, opacity: 0 });
+          w.append(svgEl('ellipse', { cx: 0, cy: -22, rx: 15, ry: 22 }), svgEl('circle', { cx: 0, cy: -56, r: 12.5 }));
+          w.append(svgEl('animateMotion', { dur, begin, repeatCount: 'indefinite', path: `M${x} ${y} L${tx} ${ty}` }),
+            svgEl('animate', { attributeName: 'opacity', values: '0;1;1;0', keyTimes: '0;0.12;0.85;1', dur, begin, repeatCount: 'indefinite' }));
+          lines.append(w);
+        });
+      }
+    });
+    zones.temple.classList.add('is-node');
+    zones.temple.onclick = () => notePopover(frame, { xPct: Z.temple.x, yPct: Z.temple.y, title: c.node, body: c.nodeNote });
+    tags.temple?.replaceChildren(bi(c.node, { layout: 'stack' }));
+    tags.temple?.classList.add('is-node');
+  }
+
+  function makeNode() {
+    if (nodeDone) return;
+    nodeDone = true;
+    ctx.seen('node', true);
+    deckSlot.replaceChildren(); deckSlot.classList.remove('is-question'); deckSlot.classList.add('is-empty');
+    ZONES.forEach((z) => { zones[z.id].classList.remove('is-ask'); zones[z.id].onclick = null; });
+    drawNode(true);
+    playFlourish();
+    // the whole neighbourhood wakes up from the temple outwards
+    timers.push(setTimeout(() => openAt(Z.temple.x, Z.temple.y, 2400, true, 1800), 500));
+    timers.push(setTimeout(() => notePopover(frame, { xPct: Z.temple.x, yPct: Z.temple.y, title: c.node, body: c.nodeNote }), reduce ? 600 : 3400));
+    progress();
+    if (!ctx.isComplete()) {
+      ctx.complete();
+      if (!ctx.state.badges.includes('node')) { ctx.state.badges.push('node'); ctx.save(); }
+      timers.push(setTimeout(() => toast(c.complete, 'success'), 1100));
+    }
+  }
+
+  /* ---------- start or restore ---------- */
+  placed.forEach((id) => { fillZone(id, false); stamp(id, clean.has(id), false); });
+  deal();
+  if (nodeDone) { drawNode(false); openAt(Z.temple.x, Z.temple.y, 2400, false); }
+  else if (placed.size === ZONES.length) askMeetingPoint();
   progress();
-  if (placed.size === ZONES.length && nodeDone) ctx.complete();
-  if (!placed.size) timers.push(setTimeout(() => toast(c.dragHint, 'hint'), 500));
+  if (nodeDone) ctx.complete();
+  if (!placed.size) timers.push(setTimeout(() => toast(c.dragHint, 'hint'), 600));
 }
 
 export function destroy() {
   timers.forEach(clearTimeout); timers = [];
+  rafs.forEach(cancelAnimationFrame); rafs = [];
   group?.destroy(); group = null;
 }

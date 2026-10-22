@@ -1096,8 +1096,46 @@ const CONTENT = {
       "zh": "社區任務完成"
     },
     "dragHint": {
-      "en": "Drag each card to its place on the map, or tap a card and then a circle.",
-      "zh": "把每張卡片拖到地圖上的位置，或先點卡片再點圓圈。"
+      "en": "Read the riddle, then drag the card to the right place on the map, or tap the card and then a circle.",
+      "zh": "讀一讀謎題，再把卡片拖到地圖上正確的位置，或先點卡片再點圓圈。"
+    },
+    "riddle": {
+      "en": "Riddle",
+      "zh": "謎題"
+    },
+    "riddles": {
+      "residential": {
+        "en": "Rows of windows and laundry on the balconies. Families live here. What am I?",
+        "zh": "一排排窗戶，陽台上曬著衣服，許多家庭住在這裡。我是什麼？"
+      },
+      "road": {
+        "en": "Scooters and cars travel along me every day and link every place. What am I?",
+        "zh": "機車和汽車每天在我身上來來往往，把各個地方連在一起。我是什麼？"
+      },
+      "market": {
+        "en": "Striped awnings, baskets of fruit and busy voices in the morning. What am I?",
+        "zh": "條紋遮陽棚、一籃籃水果，早上人聲熱鬧。我是什麼？"
+      },
+      "temple": {
+        "en": "I am small, with a curved red-tile roof, right by the street corner. What am I?",
+        "zh": "我小小的，有彎彎的紅瓦屋頂，就在街角旁。我是什麼？"
+      }
+    },
+    "passport": {
+      "en": "Neighborhood Passport",
+      "zh": "街坊護照"
+    },
+    "goldSeal": {
+      "en": "No mistakes: a gold seal!",
+      "zh": "零失誤：金色印章！"
+    },
+    "meetQ": {
+      "en": "Where do the homes, the street and the market all meet? Tap that place on the map.",
+      "zh": "住家、街道和市場在哪裡交會？在地圖上點點看。"
+    },
+    "meetWrong": {
+      "en": "Not quite. Look at the small place right on the street corner.",
+      "zh": "還差一點，看看街角上那個小小的地方。"
     },
     "placed": {
       "en": "Placed",

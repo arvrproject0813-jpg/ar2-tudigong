@@ -179,69 +179,140 @@
 .map-frame.is-3d > .culture-note { z-index: 10; }
 @media (max-height: 500px) { .map3d-tools .icon-btn { width: 34px; height: 34px; } .map3d-tools { right: 6px; bottom: 6px; gap: 4px; } }
 
-/* ---------- P05 street corner: card tray + map with drop circles ---------- */
+/* ---------- P05 street corner: riddle deck + passport + a neighbourhood that wakes up ---------- */
 .p05 { position: absolute; inset: 0; display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-3) var(--space-3) max(var(--space-3), env(safe-area-inset-left, 0px)); }
 .p05-tray {
-  flex: none; display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-2);
+  flex: none; width: 196px; display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-2);
   border-radius: var(--radius-lg); background: var(--tex-paper), rgba(255, 251, 243, .82);
-  box-shadow: inset 0 0 0 1.5px var(--gold-500), var(--shadow-card);
+  box-shadow: inset 0 0 0 1.5px var(--gold-500), var(--shadow-card); position: relative;
 }
-.p05-tray .node-card { position: relative; width: 116px; }
-.p05-tray .node-card.is-placed { opacity: .55; }
-.p05-tray .node-card.is-placed .ic { background: var(--green-500); }
-.p05-check { display: none; position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; border-radius: 50%; background: var(--green-500); color: var(--beige-50); place-items: center; box-shadow: 0 0 0 2px var(--beige-50); }
-.p05-check svg { width: 13px; height: 13px; }
-.node-card.is-placed .p05-check { display: grid; }
-.p05-mapwrap { flex: 1; min-width: 0; height: 100%; container-type: size; display: grid; place-items: center; }
+/* the deck: one riddle card on top of a small stack */
+.p05-deckslot { position: relative; min-height: 150px; display: grid; }
+.p05-deckslot::before, .p05-deckslot::after {          /* the cards still waiting underneath */
+  content: ""; position: absolute; inset: 6px -3px -5px 5px; border-radius: var(--radius-md);
+  background: var(--beige-100); box-shadow: inset 0 0 0 1.5px var(--wood-400); transform: rotate(2.5deg); z-index: 0;
+}
+.p05-deckslot::after { inset: 3px 1px -2px 1px; transform: rotate(-1.5deg); background: var(--beige-50); }
+.p05-deckslot.is-empty::before, .p05-deckslot.is-empty::after { display: none; }
+.p05-deckslot.is-empty { min-height: 0; }
+.p05-tray .node-card.p05-riddle {
+  position: relative; z-index: 1; width: 100%; min-height: 150px; padding: 10px 10px 12px; gap: 6px;
+  justify-content: flex-start; align-items: stretch; text-align: left; touch-action: none;
+}
+.p05-riddle-head { display: flex; align-items: center; gap: 6px; font-family: var(--font-display); font-weight: 700; color: var(--teal-600); font-size: 13px; }
+.p05-riddle-head .q, .p05-zone .q {
+  width: 24px; height: 24px; flex: none; border-radius: 50%; display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 15px; color: var(--beige-50);
+  background: var(--grad-lacquer); box-shadow: 0 0 0 2px var(--gold-300);
+}
+.p05-riddle-head .zh { font-size: 12px; }
+.p05-riddle-text { font-size: 14px; line-height: 1.32; }
+.p05-riddle-text .zh { font-size: 12.5px; margin-top: 3px; }
+.p05-deal { animation: p05-deal .5s cubic-bezier(.25, 1.3, .5, 1) both; }
+@keyframes p05-deal { from { transform: translate(-30px, 24px) rotate(-8deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.p05-deckcount {
+  position: absolute; top: 2px; right: 2px; z-index: 2; min-width: 26px; height: 26px; padding: 0 6px; border-radius: 13px;
+  display: grid; place-items: center; font: 700 12px/1 var(--font-ui); color: var(--beige-50);
+  background: var(--grad-vermilion); box-shadow: 0 0 0 2px var(--gold-300), 0 2px 4px rgba(58, 42, 30, .3);
+}
+.p05-deckcount[hidden] { display: none; }
+
+/* the passport: four empty seal squares that fill with red (or gold) stamps */
+.p05-passport { border-top: 1.5px dashed var(--gold-500); padding-top: var(--space-2); }
+.p05-pp-title { font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--wood-600); text-align: center; margin-bottom: 6px; }
+.p05-pp-title .zh { font-size: 12px; }
+.p05-seals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.p05-seal {
+  aspect-ratio: 1; border-radius: 6px; display: grid; place-items: center;
+  font-family: var(--font-zh); font-weight: 800; font-size: 19px; color: rgba(138, 100, 22, .28);
+  border: 1.5px dashed rgba(184, 140, 50, .55); background: rgba(255, 251, 243, .5);
+}
+.p05-seal.is-stamped {
+  color: var(--beige-50); border: 0; background: radial-gradient(circle at 35% 30%, #CC4A35, var(--red-500) 55%, var(--red-700));
+  box-shadow: inset 0 0 0 2px rgba(255, 240, 220, .55), 0 2px 3px rgba(90, 20, 10, .35); transform: rotate(-4deg);
+}
+.p05-seal.is-gold { box-shadow: inset 0 0 0 2px rgba(255, 240, 220, .55), 0 0 0 2.5px var(--gold-300), 0 0 10px rgba(240, 207, 122, .9); }
+.p05-stamp { animation: p05-stamp .5s cubic-bezier(.3, 1.5, .5, 1) both; }
+@keyframes p05-stamp { 0% { transform: scale(2.2) rotate(-14deg); opacity: 0; } 60% { transform: scale(.92) rotate(-4deg); opacity: 1; } 100% { transform: rotate(-4deg); } }
+
+/* the map */
+.p05-mapwrap { flex: 1; min-width: 0; height: 100%; container-type: size; display: grid; place-items: center; position: relative; }
 .p05 .map-frame.p05-frame { width: min(calc(100cqw - 24px), calc((100cqh - 24px) * 1.7)); aspect-ratio: 1692 / 995; background: radial-gradient(ellipse at 50% 40%, #FDF8EE, #EDE1C8); }
-.p05 .map-frame.p05-frame > img { object-fit: contain; }
+.p05-scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.p05-mist { animation: p05-mist 7s ease-in-out infinite alternate; }
+@keyframes p05-mist { from { opacity: .82; } to { opacity: 1; } }
 
 /* drop circle: a dashed gold ring over the place, with a generous invisible touch area */
 .p05-zone {
   position: absolute; z-index: 3; width: 54px; height: 54px; transform: translate(-50%, -50%);
-  border-radius: 50%; border: 2.5px dashed var(--gold-500); background: rgba(255, 251, 243, .28);
+  border-radius: 50%; border: 2.5px dashed var(--gold-500); background: rgba(255, 251, 243, .4);
   display: grid; place-items: center; transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
   animation: p05-breathe 2.4s ease-in-out infinite;
 }
 .p05-zone::after { content: ""; position: absolute; inset: -16px; border-radius: 50%; }
-.p05-zone .q {
-  width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
-  font-family: var(--font-display); font-weight: 800; font-size: 15px; color: var(--beige-50);
-  background: var(--grad-lacquer); box-shadow: 0 0 0 2px var(--gold-300);
-}
-.p05-zone.is-over { border-style: solid; border-color: var(--teal-600); background: rgba(230, 242, 241, .7); transform: translate(-50%, -50%) scale(1.12); }
+.p05-zone.is-over { border-style: solid; border-color: var(--teal-600); background: rgba(230, 242, 241, .75); transform: translate(-50%, -50%) scale(1.12); }
 .p05-zone.is-hint { animation: p05-shake 300ms var(--ease); }
+.p05-zone.is-glow { border-style: solid; border-color: var(--gold-300); background: rgba(255, 236, 180, .7); animation: p05-glow 1.2s ease-in-out infinite; }
 .p05-zone.is-filled { border: 0; background: none; animation: none; width: 44px; height: 44px; }
 .p05-zone.is-filled .map-pin { position: static; transform: none; }
-.p05-zone.is-filled .map-pin.is-pulse-loop { animation: p05-pin-pulse 1.6s var(--ease) infinite; }
 .p05-zone.is-ask { cursor: pointer; }
+.p05-zone.is-ask .map-pin { animation: p05-pin-pulse 1.6s var(--ease) infinite; }
+.p05-zone.is-node .map-pin { box-shadow: 0 0 0 3px var(--gold-300), 0 0 18px rgba(240, 207, 122, .95); }
 .p05 .pin-tag { z-index: 2; }
 .p05 .pin-tag.is-node { background: var(--grad-vermilion); color: var(--beige-50); box-shadow: inset 0 0 0 1px var(--gold-300), 0 3px 8px rgba(58, 42, 30, .25); }
 .p05 .pin-tag.is-node .zh { color: var(--gold-100); }
 .p05-pop { animation: p05-pop .45s cubic-bezier(.3, 1.6, .5, 1) both; }
 @keyframes p05-pop { from { transform: scale(.3); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes p05-breathe { 0%, 100% { box-shadow: 0 0 0 0 rgba(240, 207, 122, 0); } 50% { box-shadow: 0 0 0 6px rgba(240, 207, 122, .35); } }
+@keyframes p05-glow { 0%, 100% { box-shadow: 0 0 0 2px rgba(240, 207, 122, .6), 0 0 10px rgba(240, 207, 122, .5); } 50% { box-shadow: 0 0 0 10px rgba(240, 207, 122, .35), 0 0 26px rgba(240, 207, 122, .9); } }
 @keyframes p05-shake { 0%, 100% { translate: 0; } 25% { translate: -6px; } 50% { translate: 6px; } 75% { translate: -4px; } }
-@keyframes p05-pin-pulse { 0%, 100% { scale: 1; } 50% { scale: 1.12; } }
+@keyframes p05-pin-pulse { 0%, 100% { scale: 1; } 50% { scale: 1.14; } }
 
-/* the Community Node: gold dashed lines from the temple to the homes, the street and the market */
-.p05-lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: visible; }
+/* the meeting-point question takes the deck's place in the tray */
+.p05-deckslot.is-question::before, .p05-deckslot.is-question::after { display: none; }
+.p05-tray .node-card.p05-meetcard { cursor: default; touch-action: auto; box-shadow: inset 0 0 0 1.5px var(--gold-500), 0 0 0 3px rgba(240, 207, 122, .55), var(--shadow-card); }
+.p05-meetcard .q.seal { background: var(--grad-vermilion); font-family: var(--font-zh); font-size: 13px; border-radius: 5px; }
+
+/* the Community Node: gold lines from the temple, and neighbours walking along them */
 .p05-lines line { stroke: var(--gold-300); stroke-width: 9; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: p05-draw .9s var(--ease) forwards; filter: drop-shadow(0 2px 0 rgba(138, 100, 22, .9)); }
 .p05-lines line.is-drawn { animation: none; stroke-dashoffset: 0; stroke-dasharray: none; }
 @keyframes p05-draw { to { stroke-dashoffset: 0; } }
+.p05-walker { stroke: #FFFBF3; stroke-width: 4; }
+.p05-walker.w0 { fill: #1F6F6A; } .p05-walker.w1 { fill: #B8452F; } .p05-walker.w2 { fill: #C99A2E; }
+
+/* a scooter rides down the street, turns at the crossing and heads past the market */
+.p05-scooters { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.p05-scooters[hidden] { display: none; }
+.p05-scooters img { position: absolute; transform: translate(-50%, -50%); opacity: 0; filter: drop-shadow(0 2px 1px rgba(0, 0, 0, .3)); }
+.p05-scooters .down { width: 1.6%; animation: p05-ride-down 10s linear infinite; }
+.p05-scooters .left { width: 3.4%; animation: p05-ride-left 10s linear infinite; }
+@keyframes p05-ride-down {
+  0% { left: 64.6%; top: 28%; opacity: 0; } 4% { opacity: 1; }
+  44% { left: 66.9%; top: 69.5%; opacity: 1; } 46%, 100% { left: 67.1%; top: 71%; opacity: 0; }
+}
+@keyframes p05-ride-left {
+  0%, 45% { left: 67%; top: 72.2%; opacity: 0; } 47% { opacity: 1; }
+  90% { left: 40%; top: 72.2%; opacity: 1; } 95%, 100% { left: 36%; top: 72.2%; opacity: 0; }
+}
 
 @media (max-height: 500px) {
   .p05 { gap: var(--space-2); padding: var(--space-2); }
-  .p05-tray { gap: 6px; padding: 6px; }
-  /* phones: cards become compact rows (icon left, words right) so all four fit the height */
-  .p05-tray .node-card { width: 128px; min-height: 0; padding: 6px 8px; gap: 8px; flex-direction: row; justify-content: flex-start; text-align: left; }
-  .p05-tray .node-card .bi { line-height: 1.15; }
-  .p05-tray .node-card .ic { width: 26px; height: 26px; flex: none; }
-  .p05-tray .node-card .ic svg { width: 16px; height: 16px; }
+  .p05-tray { width: 150px; gap: 6px; padding: 6px; }
+  .p05-deckslot, .p05-tray .node-card.p05-riddle { min-height: 118px; }
+  .p05-tray .node-card.p05-riddle { padding: 7px 8px 8px; gap: 4px; }
+  .p05-riddle-text { font-size: 11.5px; line-height: 1.22; }
+  .p05-riddle-text .zh { font-size: 11px; margin-top: 2px; }
+  .p05-riddle-head .q { width: 20px; height: 20px; font-size: 13px; }
+  .p05-passport { padding-top: 6px; }
+  .p05-pp-title { font-size: 12px; margin-bottom: 4px; }
+  .p05-seal { font-size: 15px; }
   .p05-zone { width: 44px; height: 44px; }
   .p05-zone .q { width: 20px; height: 20px; font-size: 13px; }
+  /* small map: the road and temple tags sit to the left of their pins so they don't overlap or get cut off */
+  .p05 .pin-tag.p05-tag-left { margin-top: 0; transform: translate(calc(-100% - 24px), -50%); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .p05-zone, .p05-pop, .p05-zone.is-filled .map-pin.is-pulse-loop { animation: none; }
+  .p05-zone, .p05-pop, .p05-deal, .p05-stamp, .p05-mist, .p05-zone.is-ask .map-pin { animation: none; }
+  .p05-zone.is-glow { animation: none; box-shadow: 0 0 0 6px rgba(240, 207, 122, .6); }
   .p05-lines line { animation: none; stroke-dashoffset: 0; stroke-dasharray: none; }
 }
