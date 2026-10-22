@@ -1150,8 +1150,8 @@ const CONTENT = {
       "zh": "整個街角"
     },
     "arTry": {
-      "en": "Now tap a place with a camera badge to learn about it and view it in AR!",
-      "zh": "現在點有相機標誌的地點，認識它，再用 AR 看看！"
+      "en": "Now tap any place on the map to learn about it and view it in AR!",
+      "zh": "現在點地圖上的任何地點，認識它，再用 AR 看看！"
     },
     "arOpen": {
       "en": "View in AR",

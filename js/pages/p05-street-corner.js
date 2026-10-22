@@ -11,7 +11,7 @@
 //   4. Meeting point: "Where do the homes, the street and the market all meet?" Tapping the small
 //      temple makes it the Community Node: gold lines join it to the other places, neighbours walk along
 //      them, and the whole neighbourhood wakes up.
-//   5. After that, every place (and a park) gets a camera badge: tap it to see that place in AR
+//   5. After that, tapping any place (and a park) opens a dialog: picture, short explanation, View in AR
 //      (js/ar-place.js; models in assets/models/p05/). A button on the map shows the whole street corner.
 //
 // Art: the 3D neighbourhood (js/ar-diorama.js, street layout) rendered from above twice from the same
@@ -284,19 +284,17 @@ export function render(stage, ctx) {
   function enableAR(animate) {
     if (arOn) return;
     arOn = true;
-    const badge = () => el('span', { class: `p05-arbadge ${animate && !reduce ? 'p05-pop' : ''}`, 'aria-hidden': 'true', html: icon('camera') });
     ZONES.forEach((z) => {
       const zone = zones[z.id];
       zone.classList.add('is-ar');
       zone.setAttribute('aria-label', `${plain(z.temple ? c.node : c.cards[z.id])} · ${plain(c.arOpen)}`);
       zone.tabIndex = 0;
-      zone.append(badge());
       zone.onclick = () => openAR(z.id);
       zone.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAR(z.id); } };
     });
     const park = el('div', { class: 'p05-zone is-filled is-ar p05-park', role: 'button', tabindex: '0', 'aria-label': `${plain(c.park)} · ${plain(c.arOpen)}`, style: { left: `${PARK.x}%`, top: `${PARK.y}%` },
       onclick: () => openAR('park'), onkeydown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAR('park'); } } },
-      el('span', { class: `map-pin is-done is-park ${animate && !reduce ? 'p05-pop' : ''}`, html: icon(PARK.icon) }), badge());
+      el('span', { class: `map-pin is-done ${animate && !reduce ? 'p05-pop' : ''}`, html: icon(PARK.icon) }));
     frame.append(park, el('div', { class: 'pin-tag is-above', style: { left: `${PARK.x}%`, top: `${PARK.y}%` } }, bi(c.park, { layout: 'stack' })));
     frame.append(el('button', { class: `p05-arall ${animate && !reduce ? 'p05-pop' : ''}`, type: 'button', onclick: () => openAR('street') },
       el('span', { class: 'ic', html: icon('camera') }), bi(c.street, { layout: 'stack' })));

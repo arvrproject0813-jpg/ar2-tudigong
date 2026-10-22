@@ -291,16 +291,8 @@
 .p05-zone.is-ar { cursor: pointer; }
 .p05-zone.is-ar:focus-visible { outline: 3px solid var(--teal-500); outline-offset: 6px; }
 .p05-zone.is-ar:hover .map-pin { scale: 1.06; }
-.p05-arbadge {
-  position: absolute; left: -12px; top: -12px; z-index: 1; width: 26px; height: 26px; border-radius: 50%;
-  display: grid; place-items: center; background: var(--grad-lacquer); color: var(--beige-50);
-  box-shadow: 0 0 0 2px var(--gold-300), 0 2px 5px rgba(58, 42, 30, .35); animation: p05-nudge 2.8s ease-in-out infinite;
-}
-.p05-arbadge svg { width: 15px; height: 15px; }
-@keyframes p05-nudge { 0%, 70%, 100% { transform: none; } 78% { transform: rotate(-12deg) scale(1.12); } 86% { transform: rotate(10deg) scale(1.12); } }
 .p05-zone.p05-park { border: 0; background: none; animation: none; width: 44px; height: 44px; }
-.p05-park .map-pin { position: static; transform: none; background: radial-gradient(circle at 35% 30%, #A9C98C, var(--green-500) 60%, var(--green-700)); }
-.p05-park .map-pin::before { display: none; }
+.p05-park .map-pin { position: static; transform: none; }
 .p05-arall {
   position: absolute; left: 2.4%; bottom: 3.2%; z-index: 4; display: flex; align-items: center; gap: 8px; min-height: 44px;
   padding: 5px 14px 5px 5px; border: 0; border-radius: 999px; cursor: pointer; text-align: left;
@@ -356,8 +348,6 @@
   .p05-seal { max-height: 30px; font-size: 14px; border-radius: 5px; }
   .p05-pp-name { font-size: 11px; }
   .p05-pp-name .zh { font-size: 10px; }
-  .p05-arbadge { width: 22px; height: 22px; left: -10px; top: -10px; }
-  .p05-arbadge svg { width: 13px; height: 13px; }
   .p05-arall { min-height: 36px; padding: 3px 10px 3px 3px; font-size: 11px; gap: 6px; }
   .p05-arall .zh { font-size: 10px; }
   .p05-arall .ic { width: 28px; height: 28px; }
@@ -367,7 +357,7 @@
   .p05 .pin-tag.p05-tag-left { margin-top: 0; transform: translate(calc(-100% - 24px), -50%); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .p05-zone, .p05-pop, .p05-deal, .p05-stamp, .p05-mist, .p05-arbadge, .p05-zone.is-ask .map-pin { animation: none; }
+  .p05-zone, .p05-pop, .p05-deal, .p05-stamp, .p05-mist, .p05-zone.is-ask .map-pin { animation: none; }
   .p05-zone.is-glow { animation: none; box-shadow: 0 0 0 6px rgba(240, 207, 122, .6); }
   .p05-lines line { animation: none; stroke-dashoffset: 0; stroke-dasharray: none; }
 }
