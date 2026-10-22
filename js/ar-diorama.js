@@ -25,7 +25,7 @@ const COL = {
  * Every "random" detail comes from a seeded generator, so the same options always build the same scene
  * (the two P05 renders line up exactly).
  */
-export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows = false, street = false, mood = 'day', place = null, life = false } = {}) {
+export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows = false, street = false, mood = 'day', place = null, life = false, era = null } = {}) {
   const dawn = mood === 'dawn', people = mood === 'awake' || !!place;
   let seed = 20261022;
   const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
@@ -390,6 +390,7 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
 
   /* ---------- one place on its own small plinth (P05 AR camera: temple, residential, market, road, park) ---------- */
   if (place) return buildPlace(place);
+  if (era) return buildEra(era);
   function buildPlace(id) {
     const g = new THREE.Group();
     const at = (obj, x, z, ry = 0, sc = 1) => { obj.position.set(x, 0, z); obj.rotation.y = ry; obj.scale.setScalar(sc); g.add(obj); return obj; };
@@ -483,6 +484,151 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
       walker([[-0.17, -0.03], [-0.11, -0.08], [-0.04, -0.13]], { phase: 0.7 });
     }
     return { root: g, parts: [], markers: [], lanterns, anchors: {}, movers };
+  }
+
+  /* ---------- P06: the same piece of land long ago ('past') and today ('present') ----------
+     Same plinth, same canal, and the small shrine with its banyan in exactly the same place in both,
+     so the two renders line up for the Past ↔ Present slider. Everything else changes. */
+  function buildEra(which) {
+    const now = which === 'present';
+    const g = new THREE.Group();
+    const at = (obj, x, z, ry = 0, sc = 1) => { obj.position.set(x, 0, z); obj.rotation.y = ry; obj.scale.setScalar(sc); g.add(obj); return obj; };
+    const flat = (w, d, mat, x, z, y = 0.0045) => { const m = mesh(new THREE.PlaneGeometry(w, d), mat, x, y, z); m.rotation.x = -Math.PI / 2; g.add(m); return m; };
+    const ribbon = (curve, width, mat, y) => {                // a flat strip following a curve (canal, banks)
+      const N = 80, pos = [], uv = [], idx = [];
+      for (let i = 0; i <= N; i++) {
+        const t = i / N, p = curve.getPointAt(t), tg = curve.getTangentAt(t);
+        const nx = -tg.z, nz = tg.x, l = Math.hypot(nx, nz) || 1;
+        pos.push(p.x + nx / l * width / 2, y, p.z + nz / l * width / 2, p.x - nx / l * width / 2, y, p.z - nz / l * width / 2);
+        uv.push(0, t * 3, 1, t * 3);
+        if (i < N) { const a = i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+      geo.setIndex(idx); geo.computeVertexNormals();
+      const m = new THREE.Mesh(geo, mat); g.add(m); return m;
+    };
+    // light: warm late morning today; softer, golden light long ago
+    g.add(new THREE.HemisphereLight(now ? '#FFF4E0' : '#FFEFD6', now ? '#6A5638' : '#7A6243', now ? 0.6 : 0.66));
+    const sun = new THREE.DirectionalLight(now ? '#FFE6BF' : '#FFD9A8', now ? 1.0 : 0.95); sun.position.set(0.6, 1.0, 0.8); g.add(sun);
+    if (shadows) {
+      sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.002;
+      Object.assign(sun.shadow.camera, { left: -0.7, right: 0.7, top: 0.7, bottom: -0.7, near: 0.1, far: 3 });
+    }
+    const fill = new THREE.DirectionalLight('#CFE6E3', 0.3); fill.position.set(-0.8, 0.6, -0.4); g.add(fill);
+
+    // plinth: paved today, packed earth long ago
+    const earth = std('#ffffff', { map: TEX.plaster('#D2C3A0'), roughness: 0.95 });
+    g.add(box(0.94, 0.02, 0.62, M.wood, 0, -0.02, 0));
+    g.add(box(0.92, 0.004, 0.6, now ? std('#ffffff', { map: TEX.paving(), roughness: 0.9 }) : earth, 0, 0, 0));
+    [[0.94, 0.004, 0.006, 0, 0.31], [0.94, 0.004, 0.006, 0, -0.31], [0.006, 0.004, 0.62, 0.47, 0], [0.006, 0.004, 0.62, -0.47, 0]]
+      .forEach(([w, h, d, x, z]) => g.add(box(w, h, d, M.gold, x, 0, z)));
+
+    // the irrigation canal (same course in both): earth banks long ago, concrete banks today
+    const canal = new THREE.CatmullRomCurve3([[-0.09, -0.3], [-0.045, -0.15], [-0.075, 0.03], [-0.035, 0.18], [-0.06, 0.3]].map(([x, z]) => new THREE.Vector3(x, 0, z)));
+    ribbon(canal, 0.05, now ? std('#B9B2A4', { roughness: 0.9 }) : std('#A88D62', { roughness: 1 }), 0.0052);
+    ribbon(canal, 0.032, M.water, 0.0062);
+
+    // rice paddies: green, golden and freshly flooded
+    const fieldMats = [std('#ffffff', { map: TEX.field(), roughness: 0.6 }), std('#EEF2B8', { map: TEX.field(), roughness: 0.6 }), std('#CFE9E2', { map: TEX.field(), roughness: 0.3 })];
+    const paddy = (x, z, w = 0.072, d = 0.066) => flat(w, d, fieldMats[Math.floor(rnd() * 3)], x, z, 0.0048);
+    const canalX = (z) => { let best = 0, bd = 9; for (let i = 0; i <= 60; i++) { const p = canal.getPointAt(i / 60); const d = Math.abs(p.z - z); if (d < bd) { bd = d; best = p.x; } } return best; };
+
+    // the shrine and its banyan: identical in both eras (same seed, same place)
+    const saved = seed; seed = 4242;
+    const sh = shrine(); at(sh, 0.1, 0.02, 0, 0.44);
+    at(banyan(), 0.19, -0.055, 0, 0.72);
+    seed = saved;
+    const lanterns = sh.userData.lanterns;
+    const plaza = mesh(new THREE.CircleGeometry(0.085, 48), now ? std('#ffffff', { map: TEX.paving(), roughness: 0.9 }) : std('#C9B184', { roughness: 1 }), 0.15, 0.0047, -0.02);
+    plaza.rotation.x = -Math.PI / 2; g.add(plaza);
+
+    const hat = std('#E3C77E', { roughness: 0.8 });
+    const farmer = (x, z, ry) => { const p = at(person(['#3F6F8F', '#B9D3A4', '#F2C9C0'][Math.floor(rnd() * 3)]), x, z, ry, 1.7); p.add(mesh(new THREE.ConeGeometry(0.0055, 0.0035, 12), hat, 0, 0.0172, 0)); return p; };
+    const buffalo = (x, z, ry) => {
+      const b = new THREE.Group(), hide = std('#5C5650', { roughness: 0.9 });
+      b.add(box(0.012, 0.009, 0.022, hide, 0, 0.006, 0));
+      b.add(box(0.008, 0.007, 0.008, hide, 0, 0.011, 0.014));
+      [-1, 1].forEach((s) => { const h = mesh(new THREE.TorusGeometry(0.004, 0.0009, 4, 10, Math.PI), std('#D8CBB4'), s * 0.003, 0.016, 0.014); h.rotation.z = s * 0.6; b.add(h); });
+      [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sz]) => b.add(box(0.002, 0.006, 0.002, hide, sx * 0.004, 0, sz * 0.007)));
+      return at(b, x, z, ry, 1.5);
+    };
+    const haystack = (x, z) => { const h = new THREE.Group(); h.add(mesh(new THREE.ConeGeometry(0.009, 0.016, 10), std('#D9B866', { roughness: 1 }), 0, 0.008, 0)); return at(h, x, z); };
+    const bamboo = (x, z) => { const b = new THREE.Group(); for (let i = 0; i < 6; i++) { const h = 0.05 + rnd() * 0.03; b.add(mesh(new THREE.CylinderGeometry(0.0012, 0.0014, h, 5), std('#7FA35A'), (rnd() - 0.5) * 0.018, h / 2, (rnd() - 0.5) * 0.018)); } canopy(b, 4, 0.01, 0.01, 0.05, 0.07, 0.008, 0.012); return at(b, x, z); };
+    // sanheyuan farmhouse: a U of low brick wings around a sunny courtyard, red-tiled gable roofs
+    const roofMat = std('#B4583A', { map: TEX.tiles(), roughness: 0.75 });
+    const gable = (w, d, x, y, z, ry = 0) => {
+      const shape = new THREE.Shape(); shape.moveTo(-d / 2 - 0.004, 0); shape.lineTo(0, 0.016); shape.lineTo(d / 2 + 0.004, 0); shape.lineTo(-d / 2 - 0.004, 0);
+      const geo = new THREE.ExtrudeGeometry(shape, { depth: w + 0.006, bevelEnabled: false }); geo.translate(0, 0, -(w + 0.006) / 2);
+      const m = new THREE.Mesh(geo, roofMat); m.position.set(x, y, z); m.rotation.y = ry + Math.PI / 2; return m;
+    };
+    const sanheyuan = (x, z, ry = 0, sc = 1) => {
+      const h = new THREE.Group(), H = 0.018;
+      h.add(box(0.08, 0.002, 0.06, std('#E2CFA6', { roughness: 1 }), 0, 0, 0.008));                  // courtyard
+      h.add(box(0.08, H, 0.02, brickMat, 0, 0, -0.02)); h.add(gable(0.08, 0.02, 0, H, -0.02));
+      [-1, 1].forEach((s) => { h.add(box(0.018, H * 0.9, 0.045, brickMat, s * 0.031, 0, 0.012)); h.add(gable(0.045, 0.018, s * 0.031, H * 0.9, 0.012, Math.PI / 2)); });
+      h.add(box(0.012, 0.011, 0.002, M.dark, 0, 0.002, -0.0095));                                       // door
+      return at(h, x, z, ry, sc);
+    };
+
+    // ---------------- long ago ----------------
+    if (!now) {
+      // dirt paths: along the canal, across the land (with a little bridge), up to the farmhouses
+      const path = std('#BFA67C', { roughness: 1 });
+      flat(0.92, 0.024, path, 0, 0.115, 0.0049);
+      flat(0.02, 0.6, path, 0.02, 0, 0.0049);
+      flat(0.02, 0.225, path, -0.27, -0.005, 0.0049);
+      g.add(box(0.05, 0.004, 0.026, M.wood, canalX(0.115), 0.006, 0.115));
+      // paddies everywhere else
+      for (let x = -0.41; x < 0.45; x += 0.08) for (let z = -0.27; z < 0.29; z += 0.074) {
+        const cx = canalX(z);
+        if (Math.abs(x - cx) < 0.07 || Math.abs(x - 0.02) < 0.05) continue;     // canal, path
+        if (Math.abs(z - 0.115) < 0.05) continue;                               // path across
+        if (x < -0.14 && z < -0.1) continue;                                    // the settlement
+        if (x > 0.04 && x < 0.26 && z > -0.15 && z < 0.07) continue;              // the shrine plot
+        if (Math.abs(x + 0.27) < 0.03 && z < 0.08 && z > -0.1) continue;         // path to the farmhouses
+        paddy(x, z);
+      }
+      sanheyuan(-0.37, -0.235, 0, 1.15); sanheyuan(-0.22, -0.245, 0, 1.0); sanheyuan(-0.37, -0.135, 0, 0.9); sanheyuan(-0.21, -0.145, 0, 0.85);
+      bamboo(-0.43, -0.28); bamboo(-0.16, -0.28); bamboo(-0.18, -0.14);
+      haystack(-0.29, -0.11); haystack(-0.285, -0.17); haystack(0.3, 0.2); haystack(-0.15, 0.17);
+      [[-0.32, 0.05, 1], [0.32, -0.02, -1], [0.12, 0.2, 2], [-0.2, 0.22, 0.5], [0.38, 0.2, 3]].forEach(([x, z, r]) => farmer(x, z, r));
+      buffalo(0.27, 0.06, 1.2); buffalo(-0.22, 0.04, -0.6);
+      [[0.4, -0.28], [0.27, -0.14], [-0.12, 0.27], [0.44, 0.1]].forEach(([x, z], i) => at(smallTree(), x, z, i, 1.1));
+      return { root: g, parts: [], markers: [], lanterns, anchors: {}, movers: [] };
+    }
+
+    // ---------------- today ----------------
+    const asphaltX = std('#ffffff', { map: TEX.asphalt('x'), roughness: 0.95 }), asphaltZ = std('#ffffff', { map: TEX.asphalt('z'), roughness: 0.95 });
+    flat(0.92, 0.05, asphaltX, 0, 0.115, 0.0072);                // the old path across the land is now the main road
+    flat(0.055, 0.6, asphaltZ, 0.3, 0, 0.0074);                  // a new road
+    const zebra = std('#F4F0E6', { roughness: 0.8 });
+    for (let i = 0; i < 5; i++) g.add(box(0.007, 0.0012, 0.04, zebra, 0.215 + i * 0.012, 0.0072, 0.115));
+    for (let i = 0; i < 4; i++) g.add(box(0.045, 0.0012, 0.007, zebra, 0.3, 0.0074, 0.17 + i * 0.012));
+    // one small field is still here
+    [[-0.39, -0.045], [-0.3, -0.045]].forEach(([x, z]) => paddy(x, z, 0.078, 0.07));
+    farmer(-0.34, -0.03, 0.4);
+    // homes where the farmhouses were, and around the shrine
+    const H = [[-0.41, -0.24, 0.07, 0.15, '#F3EADA', COL.teal], [-0.33, -0.24, 0.07, 0.12, '#EAD9C0', COL.red], [-0.25, -0.235, 0.07, 0.17, '#F6EFE2', COL.gold],
+      [-0.17, -0.22, 0.06, 0.11, '#E9E1CF', COL.green], [0.06, -0.24, 0.07, 0.14, '#F2E2CC', COL.teal], [0.14, -0.245, 0.07, 0.18, '#F3E3CF', COL.red],
+      [0.23, -0.24, 0.065, 0.12, '#E9E1CF', COL.gold], [0.4, -0.24, 0.08, 0.17, '#F3EADA', COL.red], [0.4, -0.12, 0.08, 0.13, '#EAD9C0', COL.teal],
+      [0.4, 0.0, 0.08, 0.11, '#F6EFE2', COL.green], [0.1, 0.25, 0.07, 0.075, '#F2E2CC', COL.gold], [0.19, 0.25, 0.07, 0.09, '#E9E1CF', COL.red], [0.4, 0.25, 0.08, 0.085, '#F3E3CF', COL.teal]];
+    H.forEach(([x, z, w, h, wall, acc]) => at(house(w, h, 0.06, wall, acc), x, z));
+    // a row of small shops on the main road, and a market
+    [[-0.41, 0.05, COL.red], [-0.33, 0.05, COL.teal], [-0.25, 0.05, COL.gold], [-0.17, 0.05, COL.red]].forEach(([x, z, c]) => {
+      at(house(0.07, 0.052, 0.05, '#F3EADA', c), x, z);
+      const aw = mesh(new THREE.BoxGeometry(0.07, 0.002, 0.022), std('#ffffff', { map: TEX.awning(c), roughness: 0.7 }), x, 0.026, z + 0.034); aw.rotation.x = 0.25; g.add(aw);
+    });
+    [[-0.39, 0.22, COL.red], [-0.31, 0.22, COL.teal], [-0.23, 0.22, COL.red], [-0.35, 0.28, COL.teal]].forEach(([x, z, c]) => at(stall(c), x, z, 0, 1.15));
+    // street life
+    const scooterCols = ['#F3F1EC', '#B23A27', '#2F8C88', '#C9C6BF', '#E1B655'];
+    [[-0.35, 0.128, Math.PI / 2], [0.05, 0.1, -Math.PI / 2], [0.29, -0.17, 0], [0.31, 0.24, Math.PI], [-0.13, 0.142, Math.PI / 2], [0.33, 0.07, Math.PI],
+     [-0.21, 0.155, 0], [-0.2, 0.155, 0], [0.16, 0.17, 0], [0.17, 0.17, 0]].forEach(([x, z, ry], i) => at(scooter(scooterCols[i % 5]), x, z, ry, 1.5));
+    [[-0.38, 0.17], [-0.27, 0.18], [-0.3, 0.265], [0.07, 0.08], [0.13, 0.085], [0.26, 0.15], [0.35, -0.06], [-0.1, -0.2], [0.02, 0.19], [-0.16, 0.25], [0.24, 0.03]]
+      .forEach(([x, z], i) => at(person(clothes[(i + 2) % clothes.length] === '#FFFFFF' ? '#3F6F8F' : clothes[(i + 2) % clothes.length]), x, z, rnd() * 6, 1.7));
+    [[-0.44, 0.09], [-0.1, 0.09], [0.27, 0.09], [0.27, -0.2], [0.33, 0.27]].forEach(([x, z]) => at(lamp(), x, z));
+    [[0.0, 0.27], [-0.12, -0.27], [0.44, 0.13]].forEach(([x, z], i) => at(smallTree(), x, z, i, 1.1));
+    return { root: g, parts: [], markers: [], lanterns, anchors: {}, movers: [] };
   }
 
   const root = new THREE.Group();

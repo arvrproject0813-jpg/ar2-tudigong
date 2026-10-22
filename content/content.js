@@ -724,6 +724,50 @@ const CONTENT = {
       "en": "Select a Cultural Clue",
       "zh": "選出一個文化線索"
     },
+    "pins": {
+      "temple": {
+        "en": "Small Temple",
+        "zh": "小廟"
+      },
+      "tree": {
+        "en": "Old Tree",
+        "zh": "老樹"
+      }
+    },
+    "timeline": {
+      "en": "Timeline",
+      "zh": "時間軸"
+    },
+    "slideHint": {
+      "en": "Drag the timeline from Past to Present and watch the land change.",
+      "zh": "把時間軸從過去拖到現在，看看土地怎麼改變。"
+    },
+    "reached": {
+      "en": "This is the neighborhood today. What stayed the same?",
+      "zh": "這是今天的街坊。哪些東西沒有改變？"
+    },
+    "clueHint": {
+      "en": "Tap the small temple or the old tree.",
+      "zh": "點選小廟或老樹。"
+    },
+    "notYet": {
+      "en": "First slide all the way from Past to Present.",
+      "zh": "先把時間軸從過去一路滑到現在。"
+    },
+    "complete": {
+      "en": "Land-Use Task Complete",
+      "zh": "土地利用任務完成"
+    },
+    "chips": [
+      {
+        "en": "Farming Life",
+        "zh": "農業生活"
+      },
+      {
+        "en": "Cultural Memory",
+        "zh": "文化記憶"
+      }
+    ],
     "narration": {
       "en": "Tudigong culture has long been connected with fields, settlements, and life on the land. As parts of Kaohsiung have changed, some fields have become roads, homes, or business areas, while some small temples have remained in or near their earlier locations. Comparing past and present maps can help us read local change and cultural memory.",
       "zh": "土地公文化長久以來與田野、聚落以及土地上的生活緊密相連。隨著高雄部分地區的變遷，有些田地變成了道路、住家或商業區，而有些小廟仍留在原本的位置或附近。比較過去與現在的地圖，可以幫助我們解讀地方的變化與文化記憶。"

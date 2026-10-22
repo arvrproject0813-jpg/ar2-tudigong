@@ -428,3 +428,130 @@
   .p05-pp-name { font-size: 12px; }
   .p05-pp-name .zh { font-size: 11px; }
 }
+
+/* ---------- P06 land use: Past ↔ Present on the same piece of land ---------- */
+.p06 { position: absolute; inset: 0; container-type: size; display: grid; place-items: center; padding: var(--space-3) var(--space-3) var(--space-3) max(var(--space-3), env(safe-area-inset-left, 0px)); }
+.p06-group { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.p06 .map-frame.p06-frame {
+  --t: 0;
+  width: min(calc(100cqw - 2 * var(--space-3) - 24px), calc((100cqh - 2 * var(--space-3) - 24px - 132px) * 1.5));
+  aspect-ratio: 3 / 2; touch-action: pan-y;
+  background: url('../assets/img/p06_mapbg.svg') center / 100% 100% no-repeat, #F3E7CE;
+}
+.p06-past, .p06-present, .p06-present > img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.p06-past, .p06-present > img { object-fit: contain; user-select: none; -webkit-user-drag: none; }
+/* today's land is revealed from the left as the timeline moves right */
+.p06-present { clip-path: inset(0 calc(100% - var(--t) * 1%) 0 0); }
+.p06-divider { position: absolute; top: 0; bottom: 0; left: calc(var(--t) * 1%); width: 0; z-index: 3; }
+.p06-frame.is-gliding .p06-present { transition: clip-path .6s var(--ease); }
+.p06-frame.is-gliding .p06-divider, .p06-frame.is-gliding .p06-knob { transition: left .6s var(--ease); }
+.p06-divider::before { content: ""; position: absolute; top: 0; bottom: 0; left: -1.5px; width: 3px; background: linear-gradient(var(--gold-300), var(--gold-500)); box-shadow: 0 0 0 1px rgba(138, 100, 22, .5), 0 0 12px rgba(240, 207, 122, .7); }
+.p06-knob {
+  position: absolute; z-index: 4; top: 50%; left: clamp(26px, calc(var(--t) * 1%), calc(100% - 26px)); transform: translate(-50%, -50%); width: 46px; height: 46px; border-radius: 50%; border: 0; padding: 0;
+  display: grid; place-items: center; cursor: ew-resize; touch-action: none; color: var(--wood-900);
+  background: radial-gradient(circle at 35% 30%, #FBE9B8, var(--gold-300) 45%, var(--gold-500));
+  box-shadow: 0 0 0 3px var(--gold-700), 0 0 0 5px rgba(255, 251, 243, .9), 0 6px 14px rgba(58, 42, 30, .35);
+}
+.p06-knob svg { width: 24px; height: 24px; }
+.p06-knob::after { content: ""; position: absolute; inset: -10px; border-radius: 50%; }
+.p06-knob:focus-visible { outline: 3px solid var(--teal-500); outline-offset: 4px; }
+.p06-knob.is-dragging { transform: translate(-50%, -50%) scale(1.08); }
+.p06-knob.is-hinting { animation: p06-nudge 1.6s var(--ease) 2; }
+@keyframes p06-nudge { 0%, 100% { translate: 0; } 40% { translate: 22px; } 70% { translate: -4px; } }
+/* little era tags either side of the line */
+.p06-era {
+  position: absolute; top: 12px; white-space: nowrap; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;
+  background: rgba(255, 251, 243, .93); box-shadow: inset 0 0 0 1px var(--gold-500), 0 2px 6px rgba(58, 42, 30, .2); transition: opacity .2s;
+}
+.p06-era .zh { font-size: 11px; font-weight: 500; }
+.p06-era.is-now { right: 10px; color: var(--teal-600); }
+.p06-era.is-then { left: 10px; color: var(--red-700); }
+.p06-divider.is-start .is-now, .p06-divider.is-end .is-then { opacity: 0; }
+/* the persistent cultural nodes */
+.p06-stems { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 4; pointer-events: none; overflow: visible; }
+.p06-stems line { stroke: var(--gold-300); stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 1px 0 rgba(138, 100, 22, .9)); }
+.p06-dot { position: absolute; z-index: 4; width: 12px; height: 12px; border-radius: 50%; transform: translate(-50%, -50%); background: var(--gold-300); box-shadow: 0 0 0 2px var(--gold-700), 0 0 0 5px rgba(240, 207, 122, .35); pointer-events: none; }
+.p06-pin { z-index: 5; }
+.p06 .pin-tag { z-index: 5; }
+.p06-frame.is-clues .p06-pin { box-shadow: 0 0 0 3px #F0CF7A, 0 0 0 5px #8A6416, 0 0 0 10px rgba(240, 207, 122, .45), var(--shadow-medallion); }
+.p06-frame > .culture-note { z-index: 10; }
+.p06-caption { position: absolute; left: 12px; bottom: 10px; z-index: 4; padding: 2px 9px; border-radius: 6px; font-size: 11px; color: var(--wood-600); background: rgba(255, 251, 243, .82); pointer-events: none; }
+.p06-caption .zh { font-size: 10.5px; }
+/* scooters on today's roads (inside the revealed layer, so they only show in the present) */
+.p06-traffic { position: absolute; inset: 0; pointer-events: none; }
+.p06-traffic img { position: absolute; transform: translate(-50%, -50%); opacity: 0; filter: drop-shadow(0 2px 1px rgba(0, 0, 0, .3)); }
+.p06-traffic .r1 { width: 3.2%; animation: p06-r1 11s linear infinite; }
+.p06-traffic .r2 { width: 3.2%; animation: p06-r2 13s linear infinite 4s; }
+.p06-traffic .r3 { width: 1.5%; animation: p06-r3 9s linear infinite 2s; }
+@keyframes p06-r1 { 0% { left: 87%; top: 60.4%; opacity: 0; } 5% { opacity: 1; } 92% { opacity: 1; } 100% { left: 13%; top: 60.4%; opacity: 0; } }
+@keyframes p06-r2 { 0% { left: 13%; top: 62.4%; opacity: 0; transform: translate(-50%, -50%) scaleX(-1); } 5% { opacity: 1; } 92% { opacity: 1; } 100% { left: 87%; top: 62.4%; opacity: 0; transform: translate(-50%, -50%) scaleX(-1); } }
+@keyframes p06-r3 { 0% { left: 71.2%; top: 29%; opacity: 0; } 6% { opacity: 1; } 90% { opacity: 1; } 100% { left: 77.6%; top: 77%; opacity: 0; } }
+
+/* legend chips: each one is as strong as its layer is on the map */
+.p06-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.p06-layer {
+  --s: 1; display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 4px 12px 4px 5px; border-radius: 999px;
+  font-family: 'Alegreya Sans', var(--font-ui); font-size: 14px; font-weight: 700; white-space: nowrap; color: var(--wood-900);
+  background: var(--tex-paper), rgba(255, 251, 243, .92); box-shadow: inset 0 0 0 1.5px rgba(201, 149, 46, calc(.25 + var(--s) * .75)), 0 3px 8px rgba(58, 42, 30, calc(var(--s) * .2));
+  opacity: calc(.38 + var(--s) * .62); transform: scale(calc(.94 + var(--s) * .06)); transition: opacity .15s, transform .15s;
+}
+.p06-layer .zh { font-family: 'Chiron Sung HK', var(--font-zh); font-size: 12.5px; font-weight: 600; }
+.p06-layer .ic { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; color: var(--beige-50); flex: none; }
+.p06-layer .ic svg { width: 15px; height: 15px; }
+.p06-layer.is-past .ic { background: radial-gradient(circle at 35% 30%, #A9C98C, var(--green-500) 60%, var(--green-700)); }
+.p06-layer.is-present .ic { background: var(--grad-lacquer); }
+.p06-layer.is-strong { box-shadow: inset 0 0 0 2px var(--gold-500), 0 0 0 3px rgba(240, 207, 122, .4), 0 3px 8px rgba(58, 42, 30, .2); }
+
+/* the timeline: a wooden rail with a gold handle */
+.p06-timeline {
+  display: flex; align-items: center; gap: 12px; width: 100%; max-width: 100%; padding: 8px 12px; border-radius: 14px;
+  background: var(--tex-paper), rgba(255, 251, 243, .9); box-shadow: inset 0 0 0 1.5px var(--gold-500), var(--shadow-card);
+}
+.p06-end { flex: none; font-family: 'Alegreya', var(--font-display); font-weight: 700; font-size: 15px; line-height: 1.1; text-align: center; }
+.p06-end .zh { font-family: 'Chiron Sung HK', var(--font-zh); font-size: 12.5px; }
+.p06-end.is-past { color: var(--red-700); }
+.p06-end.is-present { color: var(--teal-600); }
+.p06-track { position: relative; flex: 1; min-width: 120px; height: 44px; display: flex; align-items: center; }
+.p06-ticks { position: absolute; left: 22px; right: 22px; top: 50%; display: flex; justify-content: space-between; pointer-events: none; transform: translateY(9px); }
+.p06-ticks span { width: 2px; height: 7px; border-radius: 1px; background: var(--gold-500); opacity: .7; }
+.p06-range { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; margin: 0; background: transparent; cursor: pointer; position: relative; z-index: 1; }
+.p06-range::-webkit-slider-runnable-track { height: 10px; border-radius: 5px; background: linear-gradient(90deg, #C9B184, #8CB27A 30%, #9AA5A0 70%, #2F8C88); box-shadow: inset 0 1px 2px rgba(0, 0, 0, .25), 0 0 0 1.5px var(--wood-400); }
+.p06-range::-moz-range-track { height: 10px; border-radius: 5px; background: linear-gradient(90deg, #C9B184, #8CB27A 30%, #9AA5A0 70%, #2F8C88); box-shadow: inset 0 1px 2px rgba(0, 0, 0, .25), 0 0 0 1.5px var(--wood-400); }
+.p06-range::-webkit-slider-thumb { -webkit-appearance: none; width: 44px; height: 44px; margin-top: -17px; border-radius: 50%; border: 0; background: radial-gradient(circle at 35% 30%, #FBE9B8, var(--gold-300) 45%, var(--gold-500)); box-shadow: 0 0 0 3px var(--gold-700), 0 0 0 5px rgba(255, 251, 243, .9), 0 4px 10px rgba(58, 42, 30, .35); }
+.p06-range::-moz-range-thumb { width: 44px; height: 44px; border-radius: 50%; border: 0; background: radial-gradient(circle at 35% 30%, #FBE9B8, var(--gold-300) 45%, var(--gold-500)); box-shadow: 0 0 0 3px var(--gold-700), 0 0 0 5px rgba(255, 251, 243, .9), 0 4px 10px rgba(58, 42, 30, .35); }
+.p06-range:focus-visible { outline: 3px solid var(--teal-500); outline-offset: 2px; border-radius: 22px; }
+.p06-compare { flex: none; min-height: 40px; gap: 6px; font-family: 'Alegreya Sans', var(--font-ui); font-size: 13.5px; }
+.p06-compare .ic, .p06-clues .ic { width: 20px; height: 20px; display: grid; place-items: center; }
+.p06-compare .ic svg, .p06-clues .ic svg { width: 18px; height: 18px; }
+.p06-clues { position: absolute; right: 12px; bottom: 10px; z-index: 6; flex-direction: row; gap: 8px; min-height: 44px; padding-inline: 16px; }
+.p06-clues[hidden] { display: none; }
+.p06-in { animation: p05-pop .45s cubic-bezier(.3, 1.6, .5, 1) both, p06-glow 2s ease-in-out .5s 3; }
+@keyframes p06-glow { 0%, 100% { filter: none; } 50% { filter: drop-shadow(0 0 8px rgba(240, 207, 122, .95)); } }
+
+@media (max-height: 500px) {
+  .p06 { padding: var(--space-2); }
+  .p06-group { gap: 6px; }
+  .p06 .map-frame.p06-frame { width: min(calc(100cqw - 2 * var(--space-2) - 16px), calc((100cqh - 2 * var(--space-2) - 16px - 96px) * 1.5)); }
+  .p06-layer { min-height: 26px; padding: 2px 9px 2px 3px; font-size: 11.5px; gap: 4px; }
+  .p06-layer .zh { font-size: 10.5px; }
+  .p06-layer .ic { width: 20px; height: 20px; }
+  .p06-layer .ic svg { width: 12px; height: 12px; }
+  .p06-legend { gap: 5px; }
+  .p06-timeline { gap: 8px; padding: 3px 8px; }
+  .p06-end { font-size: 12.5px; }
+  .p06-end .zh { font-size: 11px; }
+  .p06-track { height: 40px; }
+  .p06-range { height: 40px; }
+  .p06-range::-webkit-slider-thumb { width: 36px; height: 36px; margin-top: -13px; }
+  .p06-compare { min-height: 34px; font-size: 11.5px; padding: 2px 10px; }
+  .p06-clues { min-height: 34px; padding-inline: 10px; right: 6px; bottom: 6px; }
+  .p06-knob { width: 38px; height: 38px; }
+  .p06-era { top: 6px; font-size: 10.5px; padding: 2px 7px; }
+  .p06-era .zh { font-size: 10px; }
+  .p06-caption { font-size: 9.5px; left: 8px; bottom: 6px; white-space: nowrap; }
+  .p06-caption .zh:not(.solo) { display: none; }   /* small map: one line only */
+}
+@media (prefers-reduced-motion: reduce) {
+  .p06-in, .p06-knob.is-hinting { animation: none; }
+  .p06-frame.is-gliding .p06-present, .p06-frame.is-gliding .p06-divider, .p06-frame.is-gliding .p06-knob { transition: none; }
+}
