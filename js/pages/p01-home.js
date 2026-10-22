@@ -31,6 +31,9 @@ export function render(stage, ctx) {
     el('img', { class: 'w-bg', src: ASSETS.welcomeBg, alt: '' }),
     el('div', { class: 'w-clouds far', 'aria-hidden': 'true' }),
     el('div', { class: 'w-clouds near', 'aria-hidden': 'true' }),
+    // contact shadows on the ground (under the shrine's steps and the banyan's trunk)
+    el('div', { class: 'w-ground shrine', 'aria-hidden': 'true' }),
+    el('div', { class: 'w-ground tree', 'aria-hidden': 'true' }),
     // everything that rises is clipped at the ground line
     el('div', { class: 'w-rise', 'aria-hidden': 'true' },
       el('img', { class: 'w-banyan', src: ASSETS.banyan, alt: '' }),
