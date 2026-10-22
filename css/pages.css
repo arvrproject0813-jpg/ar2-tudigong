@@ -293,16 +293,6 @@
 .p05-zone.is-ar:hover .map-pin { scale: 1.06; }
 .p05-zone.p05-park { border: 0; background: none; animation: none; width: 44px; height: 44px; }
 .p05-park .map-pin { position: static; transform: none; }
-.p05-arall {
-  position: absolute; left: 2.4%; bottom: 3.2%; z-index: 4; display: flex; align-items: center; gap: 8px; min-height: 44px;
-  padding: 5px 14px 5px 5px; border: 0; border-radius: 999px; cursor: pointer; text-align: left;
-  background: var(--grad-lacquer); color: var(--beige-50); font-family: var(--font-ui); font-weight: 700; font-size: 13px; line-height: 1.1;
-  box-shadow: 0 0 0 2px var(--gold-300), 0 0 0 3px var(--gold-700), 0 6px 14px rgba(58, 42, 30, .3);
-}
-.p05-arall .zh { color: var(--gold-100); font-size: 11.5px; font-weight: 500; }
-.p05-arall .ic { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--grad-gold); color: var(--wood-900); flex: none; }
-.p05-arall .ic svg { width: 19px; height: 19px; }
-.p05-arall:focus-visible { outline: 3px solid var(--teal-500); outline-offset: 3px; }
 
 /* the meeting-point question takes the deck's place in the tray */
 .p05-deckslot.is-question::before, .p05-deckslot.is-question::after { display: none; }
@@ -348,9 +338,6 @@
   .p05-seal { max-height: 30px; font-size: 14px; border-radius: 5px; }
   .p05-pp-name { font-size: 11px; }
   .p05-pp-name .zh { font-size: 10px; }
-  .p05-arall { min-height: 36px; padding: 3px 10px 3px 3px; font-size: 11px; gap: 6px; }
-  .p05-arall .zh { font-size: 10px; }
-  .p05-arall .ic { width: 28px; height: 28px; }
   .p05-zone { width: 44px; height: 44px; }
   .p05-zone .q { width: 20px; height: 20px; font-size: 13px; }
   /* small map: the road and temple tags sit to the left of their pins so they don't overlap or get cut off */
@@ -381,3 +368,63 @@
   .p05-info-text p .zh { font-size: 12px; }
 }
 .btn.p05-info-ar { flex-direction: row; }
+
+/* P05 tray: same fonts as the side panel, everything centred and in proportion */
+.p05-tray {
+  --font-display: 'Alegreya', 'Chiron Sung HK', 'Noto Serif TC', Georgia, serif;
+  --font-display-zh: 'Chiron Sung HK', 'Noto Serif TC', 'Songti TC', serif;
+  --font-ui: 'Alegreya Sans', 'Chiron Sung HK', 'Noto Sans TC', system-ui, sans-serif;
+  --font-zh: 'Chiron Sung HK', 'Noto Serif TC', 'PMingLiU', serif;
+  font-family: var(--font-ui); padding: 10px; gap: 10px;
+}
+.p05-tray .zh { font-family: var(--font-zh); }
+/* the riddle card fills the tray's height; its words sit in the middle */
+.p05-deckslot { align-self: stretch; }
+.p05-tray .node-card.p05-riddle { height: 100%; min-height: 0; padding: 14px 12px; gap: 10px; justify-content: center; align-items: center; text-align: center; font-weight: 500; }
+.p05-riddle-head { flex-direction: column; gap: 4px; font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--teal-600); }
+.p05-riddle-head .bi { display: flex; flex-direction: column; align-items: center; }
+.p05-riddle-head .zh { font-size: 12.5px; color: var(--red-700); font-weight: 700; }
+.p05-riddle-head .q { width: 30px; height: 30px; font-size: 17px; }
+.p05-riddle-text { font-family: var(--font-ui); font-size: 15.5px; font-weight: 500; line-height: 1.38; color: var(--wood-900); }
+.p05-riddle-text .zh { font-size: 14px; line-height: 1.55; margin-top: 6px; color: var(--wood-600); font-weight: 500; }
+.p05-riddle-text::before { content: ""; display: block; width: 36px; height: 2px; margin: 0 auto 10px; background: var(--gold-500); border-radius: 1px; }
+/* the passport strip: title and seals as one centred column */
+.p05-passport { justify-content: center; gap: 14px; }
+.p05-pp-spine { font-family: var(--font-display-zh); font-weight: 700; font-size: 16px; letter-spacing: .35em; padding: 0; white-space: nowrap; }
+.p05-seals { flex: none; justify-content: center; gap: 10px; }
+.p05-pp-row { flex: none; height: 40px; }
+.p05-seal { height: 40px; max-height: none; font-family: var(--font-display-zh); font-weight: 700; font-size: 20px; }
+/* finished: the passport opens into a centred list */
+.p05-tray.is-done .p05-passport { justify-content: center; gap: 16px; }
+.p05-tray.is-done .p05-pp-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--wood-900); }
+.p05-tray.is-done .p05-pp-title .zh { font-family: var(--font-display-zh); font-size: 14px; color: var(--red-700); margin-top: 2px; }
+.p05-tray.is-done .p05-pp-title::after { content: ""; display: block; width: 36px; height: 2px; margin: 8px auto 0; background: var(--gold-500); border-radius: 1px; }
+.p05-tray.is-done .p05-seals { justify-content: center; gap: 14px; padding: 0 6px; }
+.p05-tray.is-done .p05-pp-row { height: 44px; gap: 12px; }
+.p05-tray.is-done .p05-seal { height: 44px; font-size: 21px; }
+.p05-pp-name { font-family: var(--font-ui); font-size: 15px; font-weight: 600; line-height: 1.2; }
+.p05-pp-name .zh { font-size: 13px; font-weight: 500; }
+@media (max-height: 500px) {
+  .p05-tray { padding: 6px; gap: 6px; }
+  .p05-tray .node-card.p05-riddle { padding: 8px 7px; gap: 6px; }
+  .p05-riddle-head { font-size: 12.5px; gap: 2px; }
+  .p05-riddle-head .zh { font-size: 11px; }
+  .p05-riddle-head .q { width: 22px; height: 22px; font-size: 13px; }
+  .p05-riddle-text { font-size: 12px; line-height: 1.28; }
+  .p05-riddle-text .zh { font-size: 11px; line-height: 1.4; margin-top: 3px; }
+  .p05-riddle-text::before { margin-bottom: 6px; width: 28px; }
+  .p05-passport { gap: 8px; }
+  .p05-pp-spine { font-size: 12.5px; letter-spacing: .2em; }
+  .p05-seals { gap: 6px; }
+  .p05-pp-row { height: 28px; }
+  .p05-seal { height: 28px; font-size: 14px; }
+  .p05-tray.is-done .p05-passport { gap: 8px; }
+  .p05-tray.is-done .p05-pp-title { font-size: 13px; }
+  .p05-tray.is-done .p05-pp-title .zh { font-size: 11.5px; }
+  .p05-tray.is-done .p05-pp-title::after { margin-top: 4px; }
+  .p05-tray.is-done .p05-seals { gap: 8px; padding: 0 2px; }
+  .p05-tray.is-done .p05-pp-row { height: 32px; gap: 8px; }
+  .p05-tray.is-done .p05-seal { height: 32px; font-size: 15px; }
+  .p05-pp-name { font-size: 12px; }
+  .p05-pp-name .zh { font-size: 11px; }
+}

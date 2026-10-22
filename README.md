@@ -90,7 +90,7 @@ The stage background is a semi-realistic dawn landscape of misty mountains and t
 `assets/img/p01_home_hero.webp`, `assets/img/p04_culture_map.webp` and `assets/targets/tudigong-card.png` are in-house semi-realistic illustrations. Their editable SVG sources are in `assets/source-art/`. To use other art, change the paths in `js/config.js` → `ASSETS`:
 
 - `welcomeBg`, `shrine`, `banyan`: the welcome scene. Shrine/banyan positions are `.w-shrine` / `.w-banyan` in `css/welcome.css` (% of the 16:9 scene).
-- P05 AR models: `assets/models/p05/{temple,residential,market,road,park,street}.glb`, about 40 cm across in AR, exported from `buildNeighborhood(THREE, { place: id })`. To use your own model for a place, export a GLB (Y up, metres, base at y = 0) with the same file name.
+- P05 AR models: `assets/models/p05/{temple,residential,market,road,park}.glb`, about 40 cm across in AR, exported from `buildNeighborhood(THREE, { place: id })`. To use your own model for a place, export a GLB (Y up, metres, base at y = 0) with the same file name.
 - P04 shows the 3D neighborhood from `js/ar-diorama.js` (`buildNeighborhood()`, the same model that rises from the card in AR) using three.js 0.160 from jsDelivr (mapped as `three` in the import map in `index.html`). The pins are attached to `anchors` in `buildNeighborhood()`; the start view and zoom limits are `VIEW` in `js/pages/p04-intro.js`. If WebGL is not available, the flat map `p04Map` is shown instead, with pin positions in `NODES` (% of the 3:2 image).
 
 ## Building the next pages

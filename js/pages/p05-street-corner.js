@@ -12,7 +12,7 @@
 //      temple makes it the Community Node: gold lines join it to the other places, neighbours walk along
 //      them, and the whole neighbourhood wakes up.
 //   5. After that, tapping any place (and a park) opens a dialog: picture, short explanation, View in AR
-//      (js/ar-place.js; models in assets/models/p05/). A button on the map shows the whole street corner.
+//      (js/ar-place.js; models in assets/models/p05/).
 //
 // Art: the 3D neighbourhood (js/ar-diorama.js, street layout) rendered from above twice from the same
 // camera: assets/img/p05_dawn.webp and p05_awake.webp (1692 × 995), plus p05_mist.webp and two scooter
@@ -264,7 +264,7 @@ export function render(stage, ctx) {
   /* ---------- after the game: every place opens in the AR camera ---------- */
   const PARK = { id: 'park', icon: 'tree', x: 50.5, y: 61.5 };
   let arOn = false;
-  const placeTitle = (id) => (id === 'temple' ? c.node : id === 'street' ? c.street : id === 'park' ? c.park : c.cards[id]);
+  const placeTitle = (id) => (id === 'temple' ? c.node : id === 'park' ? c.park : c.cards[id]);
   // tapping a place: a small dialog with a picture, a short explanation and a "View in AR" button
   const openAR = (id) => {
     const title = placeTitle(id);
@@ -296,8 +296,6 @@ export function render(stage, ctx) {
       onclick: () => openAR('park'), onkeydown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAR('park'); } } },
       el('span', { class: `map-pin is-done ${animate && !reduce ? 'p05-pop' : ''}`, html: icon(PARK.icon) }));
     frame.append(park, el('div', { class: 'pin-tag is-above', style: { left: `${PARK.x}%`, top: `${PARK.y}%` } }, bi(c.park, { layout: 'stack' })));
-    frame.append(el('button', { class: `p05-arall ${animate && !reduce ? 'p05-pop' : ''}`, type: 'button', onclick: () => openAR('street') },
-      el('span', { class: 'ic', html: icon('camera') }), bi(c.street, { layout: 'stack' })));
     loadModelViewer().catch(() => {});        // warm up the 3D viewer
   }
 
