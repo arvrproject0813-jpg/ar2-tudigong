@@ -36,5 +36,5 @@ export const AR_SCRIPTS = [
   'https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js',
 ];
 
-// localStorage key for progress
+// Old localStorage key: progress is no longer saved; app.js only clears this key on start
 export const STORE_KEY = 'ar2-tudigong';

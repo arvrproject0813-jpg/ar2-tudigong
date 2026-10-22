@@ -11,12 +11,11 @@ const freshState = () => ({
   lang: 'bi', page: 'p01', done: {}, seen: {},
   p08Route: [], p11Sentences: [], badges: [], arAvailable: false, panelCollapsed: false, music: true,
 });
-function load() {
-  try { return { ...freshState(), ...JSON.parse(localStorage.getItem(STORE_KEY) || '{}') }; }
-  catch (e) { return freshState(); }
-}
-const state = load();
-function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) { /* storage blocked: progress just isn't kept */ } }
+// Progress lives only in memory: moving between pages keeps it, but reloading the page (or
+// opening the link again) always starts fresh from the welcome page. Nothing is stored on the device.
+const state = freshState();
+function save() { /* nothing is stored: progress resets on reload */ }
+try { localStorage.removeItem(STORE_KEY); } catch (e) { /* clear progress saved by older versions */ }
 setLang(state.lang);
 
 const $topbar = document.getElementById('topbar');
@@ -213,6 +212,7 @@ function makeCtx(id) {
 /* ---------- start ---------- */
 // Developer shortcuts: open index.html#p04 to jump to a page, #reset to clear progress,
 // #reset-p05 to clear one page's progress and open it again (handy for replaying a game).
+// (A reload already starts everything fresh; these also work without reloading.)
 function fromHash() {
   const h = location.hash.replace('#', '');
   if (h === 'reset') { Object.assign(state, freshState()); save(); setLang(state.lang); return 'p01'; }

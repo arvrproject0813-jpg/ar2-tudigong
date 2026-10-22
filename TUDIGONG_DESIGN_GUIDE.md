@@ -68,7 +68,7 @@ CULTURAL SAFETY RULES (non-negotiable):
 
 STATE (js/app.js):
 state = { lang:'bi', page:'p01', done:{}, p08Route:[], p11Sentences:[], badges:[], arAvailable:false }
-Persist to localStorage key "ar2-tudigong" inside try/catch. "Experience Again" clears it.
+Keep state in memory only (no localStorage): moving between pages keeps progress, a reload starts fresh from P01. "Experience Again" clears it.
 
 HOW TO ANSWER ME:
 - Return complete files, not fragments, with the file path as a heading above each file.
@@ -302,7 +302,7 @@ Create these files in full:
 2. css/tokens.css — exactly as pasted. Do not edit.
 3. css/base.css — reset; html,body height:100%; body background var(--color-bg), font var(--font-ui), color var(--color-text); .layout grid (stage 1fr | panel var(--panel-w)) under the top bar filling the rest of the screen with no page scroll; safe-area side padding; #rotate-overlay shown only in @media (orientation:portrait); prefers-reduced-motion.
 4. css/components.css — every component in the COMPONENT SPEC (.btn-primary, .btn-secondary, .icon-btn, .chip, .node-card + states, .drop-zone + states, .map-pin + states, .culture-note, .vocab-card, .toast, .timeline, .progress-dots, .checklist, .badge, .sentence-slot, .panel, .topbar).
-5. js/app.js — PAGES = ['p01',…,'p12'], dynamic import of js/pages/pXX-*.js, go(id) / next() / back(), renders the top bar (back hidden on P01, progress dots, language button cycling bi → en → zh and re-rendering the page), renders the panel shell (eyebrow, title, narration, checklist, primary button disabled until ctx.complete). State saved to localStorage in try/catch.
+5. js/app.js — PAGES = ['p01',…,'p12'], dynamic import of js/pages/pXX-*.js, go(id) / next() / back(), renders the top bar (back hidden on P01, progress dots, language button cycling bi → en → zh and re-rendering the page), renders the panel shell (eyebrow, title, narration, checklist, primary button disabled until ctx.complete). State kept in memory only; a reload starts fresh.
 6. js/ui.js — bi(textObj, {tag, size}) returns an element with the EN line and ZH line according to state.lang; button(textObj, {variant, onClick}); toast(textObj, type); notePopover(anchorEl, titleObj, bodyObj); openVocab(term) shows a .vocab-card modal from CONTENT.vocab.
 7. js/drag.js — makeDraggable(cardEl, {targets, accept(card, target) → true/false, onCorrect, onWrong}). Pointer events, setPointerCapture, a floating clone follows the finger, target found with document.elementFromPoint, .is-over highlight, snap animation 200ms, wrong → card returns to tray with .is-hint. Also tap-card-then-tap-target as an alternative.
 8. js/pages/p01-home.js … p12-end.js — stubs that render the page title from CONTENT and call ctx.complete immediately (so navigation can be tested).
@@ -543,7 +543,7 @@ PANEL
 - Recap box (core-question style): CONTENT.meta.coreQuestion + narration answer sentence.
 - "I Can Introduce Local Culture 我能介紹在地文化": the student's sentences from state.p11Sentences.
 - Accordion sections: Story Introduction 故事簡介 (CONTENT.meta.statement), Further Reading 延伸閱讀 (CONTENT.references as links, target=_blank rel=noopener), Teacher Questions 教師提問 (studentPrompt + teacherPrompt), User Feedback 使用者回饋.
-- Feedback: 5 map-pin icons as a 1–5 rating (radio group, keyboard accessible) + optional textarea + "Submit 送出" → save to localStorage, show "Thank you for your feedback! 謝謝你的回饋！". (If the team needs to collect answers, replace with a link to a Google Form.)
+- Feedback: 5 map-pin icons as a 1–5 rating (radio group, keyboard accessible) + optional textarea + "Submit 送出" → show "Thank you for your feedback! 謝謝你的回饋！". (If the team needs to collect answers, replace with a link to a Google Form.)
 - Buttons: secondary "Back to Home 回到首頁" (go p01, keep state), primary "Experience Again 再體驗一次" (clear state, go p01).
 Completion: reaching P12 completes it.
 ```
@@ -2083,6 +2083,6 @@ A peaceful rural landscape inspired by Meinong, Kaohsiung, a Hakka farming commu
 - **Chinese narration:** The storyboard only contains the English narration. The Traditional Chinese narration in content.js is a draft translation written for this app; please proofread it (and replace it with the original Chinese script if one exists).
 - **P05 card name:** The Storyboard sheet says 'Residential Area', the Interaction Spec sheet says 'Homes'. This guide uses Residential Area 住宅區 on P05 and Homes 住家 on P06/P08. Confirm with your supervisor.
 - **Draft Chinese UI text:** All Traditional Chinese UI labels and the short culture notes (P01 info, P04 notes, P07 meanings) are drafts written for this guide. Please proofread them before they go into content.js.
-- **Feedback storage:** P12 feedback is saved only on the device. If the team needs to collect responses, link to a Google Form instead.
+- **Feedback storage:** P12 feedback is not stored anywhere. If the team needs to collect responses, link to a Google Form instead.
 - **Library versions:** MindAR 1.2.5 and A-Frame 1.5.0 are confirmed on npm and pinned in js/config.js. Do not change them mid-project.
 - **Real photos:** Bogong / Fuchang (P10) need real photos with permission and credit, or no photo.

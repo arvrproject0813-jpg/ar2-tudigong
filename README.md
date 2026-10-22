@@ -23,7 +23,7 @@ The camera only works over **HTTPS** (or `localhost`).
 
 Updates show up within about 2 minutes of a push: `index.html` stamps every CSS/JS file with a `?v=` that changes every 2 minutes, so browsers never keep an old copy. **If you add a new .js or .css file, add its name to the lists at the top of `index.html`.**
 
-Developer shortcuts: add `#p04` to the URL to jump to a page, `#reset` to clear saved progress.
+Developer shortcuts: add `#p04` to the URL to jump to a page, `#reset` to clear progress, `#reset-p05` to replay one page.
 
 ## Narration audio
 
@@ -136,4 +136,4 @@ assets/targets/     printable scan card + compiled .mind target
 
 - The Traditional Chinese narration in `content/content.js` is a draft translation of the storyboard's English narration. Please proofread it, or replace it with the original Chinese script if you have one.
 - Icons are inline SVG in `js/icons.js`, so the app has no icon-font dependency.
-- Progress is saved on the device (localStorage). `#reset` or "Experience Again" clears it.
+- Progress is kept only while the page is open: moving between pages keeps it, a reload starts fresh from the welcome page. Nothing is stored on the device. `#reset` or "Experience Again" also clears it.
