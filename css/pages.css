@@ -180,23 +180,26 @@
 @media (max-height: 500px) { .map3d-tools .icon-btn { width: 34px; height: 34px; } .map3d-tools { right: 6px; bottom: 6px; gap: 4px; } }
 
 /* ---------- P05 street corner: riddle deck + passport + a neighbourhood that wakes up ---------- */
-.p05 { position: absolute; inset: 0; display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-3) var(--space-3) max(var(--space-3), env(safe-area-inset-left, 0px)); }
+.p05 { position: absolute; inset: 0; container-type: size; display: grid; place-items: center; padding: var(--space-3) var(--space-3) var(--space-3) max(var(--space-3), env(safe-area-inset-left, 0px)); }
+/* the tray and the map are one group, centred: when the panel closes they slide over together */
+.p05-group { --p05-tray: 218px; --p05-gap: 12px; display: flex; align-items: center; gap: var(--p05-gap); transition: transform var(--dur-med, .3s) var(--ease); }
+.p05-traywrap { position: relative; flex: none; align-self: stretch; width: var(--p05-tray); }   /* exactly as tall as the map */
 .p05-tray {
-  flex: none; width: 196px; display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-2);
+  position: absolute; inset: 0; overflow: hidden; display: flex; flex-direction: row; gap: var(--space-2); padding: var(--space-2);
   border-radius: var(--radius-lg); background: var(--tex-paper), rgba(255, 251, 243, .82);
-  box-shadow: inset 0 0 0 1.5px var(--gold-500), var(--shadow-card); position: relative;
+  box-shadow: inset 0 0 0 1.5px var(--gold-500), var(--shadow-card);
 }
 /* the deck: one riddle card on top of a small stack */
-.p05-deckslot { position: relative; min-height: 150px; display: grid; }
+.p05-deckslot { position: relative; flex: 1; min-width: 0; align-self: flex-start; display: grid; }
 .p05-deckslot::before, .p05-deckslot::after {          /* the cards still waiting underneath */
   content: ""; position: absolute; inset: 6px -3px -5px 5px; border-radius: var(--radius-md);
   background: var(--beige-100); box-shadow: inset 0 0 0 1.5px var(--wood-400); transform: rotate(2.5deg); z-index: 0;
 }
 .p05-deckslot::after { inset: 3px 1px -2px 1px; transform: rotate(-1.5deg); background: var(--beige-50); }
 .p05-deckslot.is-empty::before, .p05-deckslot.is-empty::after { display: none; }
-.p05-deckslot.is-empty { min-height: 0; }
+.p05-deckslot.is-empty { display: none; }
 .p05-tray .node-card.p05-riddle {
-  position: relative; z-index: 1; width: 100%; min-height: 150px; padding: 10px 10px 12px; gap: 6px;
+  position: relative; z-index: 1; width: 100%; min-height: 160px; padding: 10px 10px 12px; gap: 6px;
   justify-content: flex-start; align-items: stretch; text-align: left; touch-action: none;
 }
 .p05-riddle-head { display: flex; align-items: center; gap: 6px; font-family: var(--font-display); font-weight: 700; color: var(--teal-600); font-size: 13px; }
@@ -217,14 +220,27 @@
 }
 .p05-deckcount[hidden] { display: none; }
 
-/* the passport: four empty seal squares that fill with red (or gold) stamps */
-.p05-passport { border-top: 1.5px dashed var(--gold-500); padding-top: var(--space-2); }
-.p05-pp-title { font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--wood-600); text-align: center; margin-bottom: 6px; }
+/* the passport: a tall strip down the side of the tray, four seal squares that fill with red (or gold) stamps.
+   While the game is on it is a narrow strip (seals only, title written downwards); when the page is done the
+   riddle deck is gone and it opens into a list with each place's name beside its seal. */
+.p05-passport { order: -1; flex: none; width: 50px; min-height: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; padding-right: var(--space-2); border-right: 1.5px dashed var(--gold-500); }
+.p05-pp-spine { writing-mode: vertical-rl; font-family: var(--font-zh); font-weight: 800; font-size: 15px; letter-spacing: .3em; color: var(--red-700); padding: 4px 0; }
+.p05-pp-title { display: none; font-family: var(--font-display); font-weight: 700; font-size: 13px; line-height: 1.2; color: var(--wood-600); text-align: center; }
 .p05-pp-title .zh { font-size: 12px; }
-.p05-seals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.p05-seals { list-style: none; margin: 0; padding: 0; flex: 1; min-height: 0; width: 100%; display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+.p05-pp-row { flex: 0 1 44px; min-height: 0; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.p05-pp-name { display: none; flex: 1; min-width: 0; font-size: 13px; line-height: 1.15; color: var(--wood-900); font-weight: 600; }
+.p05-pp-name .zh { font-size: 11.5px; font-weight: 500; color: var(--wood-600); }
+.p05-pp-name .blank { display: block; width: 78%; border-bottom: 1.5px dashed rgba(184, 140, 50, .55); }
+.p05-tray.is-done .p05-passport { flex: 1; width: auto; border-right: 0; padding-right: 0; align-items: stretch; }
+.p05-tray.is-done .p05-pp-title { display: block; }
+.p05-tray.is-done .p05-pp-spine { display: none; }
+.p05-tray.is-done .p05-seals { justify-content: space-evenly; }
+.p05-tray.is-done .p05-pp-row { justify-content: flex-start; flex-basis: 52px; }
+.p05-tray.is-done .p05-pp-name { display: block; }
 .p05-seal {
-  aspect-ratio: 1; border-radius: 6px; display: grid; place-items: center;
-  font-family: var(--font-zh); font-weight: 800; font-size: 19px; color: rgba(138, 100, 22, .28);
+  height: 100%; max-height: 40px; width: auto; flex: none; aspect-ratio: 1; border-radius: 6px; display: grid; place-items: center;
+  font-family: var(--font-zh); font-weight: 800; font-size: 20px; color: rgba(138, 100, 22, .28);
   border: 1.5px dashed rgba(184, 140, 50, .55); background: rgba(255, 251, 243, .5);
 }
 .p05-seal.is-stamped {
@@ -236,8 +252,11 @@
 @keyframes p05-stamp { 0% { transform: scale(2.2) rotate(-14deg); opacity: 0; } 60% { transform: scale(.92) rotate(-4deg); opacity: 1; } 100% { transform: rotate(-4deg); } }
 
 /* the map */
-.p05-mapwrap { flex: 1; min-width: 0; height: 100%; container-type: size; display: grid; place-items: center; position: relative; }
-.p05 .map-frame.p05-frame { width: min(calc(100cqw - 24px), calc((100cqh - 24px) * 1.7)); aspect-ratio: 1692 / 995; background: radial-gradient(ellipse at 50% 40%, #FDF8EE, #EDE1C8); }
+.p05 .map-frame.p05-frame {
+  width: min(calc(100cqw - var(--p05-tray) - var(--p05-gap) - 2 * var(--space-3) - 24px), calc((100cqh - 2 * var(--space-3) - 24px) * 1.7));
+  aspect-ratio: 1692 / 995;
+  background: url('../assets/img/p05_mapbg.svg') center / 100% 100% no-repeat, #F3E7CE;   /* old survey paper: grid, gold leaf, clouds, compass */
+}
 .p05-scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .p05-mist { animation: p05-mist 7s ease-in-out infinite alternate; }
 @keyframes p05-mist { from { opacity: .82; } to { opacity: 1; } }
@@ -268,6 +287,31 @@
 @keyframes p05-shake { 0%, 100% { translate: 0; } 25% { translate: -6px; } 50% { translate: 6px; } 75% { translate: -4px; } }
 @keyframes p05-pin-pulse { 0%, 100% { scale: 1; } 50% { scale: 1.14; } }
 
+/* after the game: camera badges open each place in the AR camera */
+.p05-zone.is-ar { cursor: pointer; }
+.p05-zone.is-ar:focus-visible { outline: 3px solid var(--teal-500); outline-offset: 6px; }
+.p05-zone.is-ar:hover .map-pin { scale: 1.06; }
+.p05-arbadge {
+  position: absolute; left: -12px; top: -12px; z-index: 1; width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--grad-lacquer); color: var(--beige-50);
+  box-shadow: 0 0 0 2px var(--gold-300), 0 2px 5px rgba(58, 42, 30, .35); animation: p05-nudge 2.8s ease-in-out infinite;
+}
+.p05-arbadge svg { width: 15px; height: 15px; }
+@keyframes p05-nudge { 0%, 70%, 100% { transform: none; } 78% { transform: rotate(-12deg) scale(1.12); } 86% { transform: rotate(10deg) scale(1.12); } }
+.p05-zone.p05-park { border: 0; background: none; animation: none; width: 44px; height: 44px; }
+.p05-park .map-pin { position: static; transform: none; background: radial-gradient(circle at 35% 30%, #A9C98C, var(--green-500) 60%, var(--green-700)); }
+.p05-park .map-pin::before { display: none; }
+.p05-arall {
+  position: absolute; left: 2.4%; bottom: 3.2%; z-index: 4; display: flex; align-items: center; gap: 8px; min-height: 44px;
+  padding: 5px 14px 5px 5px; border: 0; border-radius: 999px; cursor: pointer; text-align: left;
+  background: var(--grad-lacquer); color: var(--beige-50); font-family: var(--font-ui); font-weight: 700; font-size: 13px; line-height: 1.1;
+  box-shadow: 0 0 0 2px var(--gold-300), 0 0 0 3px var(--gold-700), 0 6px 14px rgba(58, 42, 30, .3);
+}
+.p05-arall .zh { color: var(--gold-100); font-size: 11.5px; font-weight: 500; }
+.p05-arall .ic { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--grad-gold); color: var(--wood-900); flex: none; }
+.p05-arall .ic svg { width: 19px; height: 19px; }
+.p05-arall:focus-visible { outline: 3px solid var(--teal-500); outline-offset: 3px; }
+
 /* the meeting-point question takes the deck's place in the tray */
 .p05-deckslot.is-question::before, .p05-deckslot.is-question::after { display: none; }
 .p05-tray .node-card.p05-meetcard { cursor: default; touch-action: auto; box-shadow: inset 0 0 0 1.5px var(--gold-500), 0 0 0 3px rgba(240, 207, 122, .55), var(--shadow-card); }
@@ -297,22 +341,33 @@
 
 @media (max-height: 500px) {
   .p05 { gap: var(--space-2); padding: var(--space-2); }
-  .p05-tray { width: 150px; gap: 6px; padding: 6px; }
-  .p05-deckslot, .p05-tray .node-card.p05-riddle { min-height: 118px; }
+  .p05-group { --p05-tray: 168px; --p05-gap: 8px; }
+  .p05-tray { gap: 6px; padding: 6px; }
+  .p05-tray .node-card.p05-riddle { min-height: 118px; }
+  .p05-passport { width: 36px; gap: 6px; padding-right: 6px; }
+  .p05-pp-spine { font-size: 12.5px; letter-spacing: .2em; }
   .p05-tray .node-card.p05-riddle { padding: 7px 8px 8px; gap: 4px; }
   .p05-riddle-text { font-size: 11.5px; line-height: 1.22; }
   .p05-riddle-text .zh { font-size: 11px; margin-top: 2px; }
   .p05-riddle-head .q { width: 20px; height: 20px; font-size: 13px; }
   .p05-passport { padding-top: 6px; }
-  .p05-pp-title { font-size: 12px; margin-bottom: 4px; }
-  .p05-seal { font-size: 15px; }
+  .p05-seals { gap: 4px; }
+  .p05-pp-row { gap: 6px; }
+  .p05-seal { max-height: 30px; font-size: 14px; border-radius: 5px; }
+  .p05-pp-name { font-size: 11px; }
+  .p05-pp-name .zh { font-size: 10px; }
+  .p05-arbadge { width: 22px; height: 22px; left: -10px; top: -10px; }
+  .p05-arbadge svg { width: 13px; height: 13px; }
+  .p05-arall { min-height: 36px; padding: 3px 10px 3px 3px; font-size: 11px; gap: 6px; }
+  .p05-arall .zh { font-size: 10px; }
+  .p05-arall .ic { width: 28px; height: 28px; }
   .p05-zone { width: 44px; height: 44px; }
   .p05-zone .q { width: 20px; height: 20px; font-size: 13px; }
   /* small map: the road and temple tags sit to the left of their pins so they don't overlap or get cut off */
   .p05 .pin-tag.p05-tag-left { margin-top: 0; transform: translate(calc(-100% - 24px), -50%); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .p05-zone, .p05-pop, .p05-deal, .p05-stamp, .p05-mist, .p05-zone.is-ask .map-pin { animation: none; }
+  .p05-zone, .p05-pop, .p05-deal, .p05-stamp, .p05-mist, .p05-arbadge, .p05-zone.is-ask .map-pin { animation: none; }
   .p05-zone.is-glow { animation: none; box-shadow: 0 0 0 6px rgba(240, 207, 122, .6); }
   .p05-lines line { animation: none; stroke-dashoffset: 0; stroke-dasharray: none; }
 }

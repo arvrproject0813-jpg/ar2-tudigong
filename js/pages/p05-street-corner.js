@@ -11,6 +11,8 @@
 //   4. Meeting point: "Where do the homes, the street and the market all meet?" Tapping the small
 //      temple makes it the Community Node: gold lines join it to the other places, neighbours walk along
 //      them, and the whole neighbourhood wakes up.
+//   5. After that, every place (and a park) gets a camera badge: tap it to see that place in AR
+//      (js/ar-place.js; models in assets/models/p05/). A button on the map shows the whole street corner.
 //
 // Art: the 3D neighbourhood (js/ar-diorama.js, street layout) rendered from above twice from the same
 // camera: assets/img/p05_dawn.webp and p05_awake.webp (1692 × 995), plus p05_mist.webp and two scooter
@@ -19,6 +21,7 @@ import { el, bi, chip, toast, clearToasts, notePopover, plain } from '../ui.js';
 import { icon } from '../icons.js';
 import { createDragGroup } from '../drag.js';
 import { playChime, playMiss, playFlourish } from '../sound.js';
+import { openPlaceAR, loadModelViewer } from '../ar-place.js';
 
 const IMG = { dawn: 'assets/img/p05_dawn.webp', awake: 'assets/img/p05_awake.webp', mist: 'assets/img/p05_mist.webp',
   scooterDown: 'assets/img/p05_scooter_down.webp', scooterLeft: 'assets/img/p05_scooter_left.webp' };
@@ -116,12 +119,20 @@ export function render(stage, ctx) {
   /* ---------- tray: riddle deck + passport ---------- */
   const deckSlot = el('div', { class: 'p05-deckslot' });
   const deckCount = el('div', { class: 'p05-deckcount', 'aria-hidden': 'true' });
-  const seals = Object.fromEntries(ZONES.map((z) => [z.id, el('span', { class: 'p05-seal', 'data-id': z.id, lang: 'zh-Hant', title: plain(c.cards[z.id]) }, z.seal)]));
+  const seals = {}, rows = {};
+  ZONES.forEach((z) => {
+    seals[z.id] = el('span', { class: 'p05-seal', 'data-id': z.id, lang: 'zh-Hant', 'aria-hidden': 'true' }, z.seal);
+    rows[z.id] = el('li', { class: 'p05-pp-row', 'aria-label': '?' }, seals[z.id], el('span', { class: 'p05-pp-name' }, el('span', { class: 'blank', 'aria-hidden': 'true' })));
+  });
   const passport = el('div', { class: 'p05-passport' },
+    el('div', { class: 'p05-pp-spine', lang: 'zh-Hant', 'aria-hidden': 'true' }, c.passport.zh),   // narrow strip: written downwards
     el('div', { class: 'p05-pp-title' }, bi(c.passport, { layout: 'stack' })),
-    el('div', { class: 'p05-seals' }, ZONES.map((z) => seals[z.id])));
+    el('ol', { class: 'p05-seals' }, ZONES.map((z) => rows[z.id])));
   const stamp = (id, gold, animate) => {
     const s = seals[id];
+    rows[id].classList.add('is-stamped');
+    rows[id].setAttribute('aria-label', plain(c.cards[id]));
+    rows[id].querySelector('.p05-pp-name').replaceChildren(bi(c.cards[id], { layout: 'stack' }));
     s.classList.add('is-stamped');
     if (gold) s.classList.add('is-gold');
     if (animate && !reduce) { s.classList.remove('p05-stamp'); void s.offsetWidth; s.classList.add('p05-stamp'); }
@@ -129,8 +140,8 @@ export function render(stage, ctx) {
   const tray = el('div', { class: 'p05-tray' }, deckSlot, deckCount, passport);
 
 
-  stage.append(el('div', { class: 'p05' }, tray,
-    el('div', { class: 'p05-mapwrap' }, el('div', { class: 'map-carved' }, frame))));
+  // tray and map travel together as one group, centred in the stage (they slide over when the panel closes)
+  stage.append(el('div', { class: 'p05' }, el('div', { class: 'p05-group' }, el('div', { class: 'p05-traywrap' }, tray), el('div', { class: 'map-carved' }, frame))));
 
   /* ---------- panel ---------- */
   ctx.panel({
@@ -225,7 +236,6 @@ export function render(stage, ctx) {
       }
     });
     zones.temple.classList.add('is-node');
-    zones.temple.onclick = () => notePopover(frame, { xPct: Z.temple.x, yPct: Z.temple.y, title: c.node, body: c.nodeNote });
     tags.temple?.replaceChildren(bi(c.node, { layout: 'stack' }));
     tags.temple?.classList.add('is-node');
   }
@@ -235,6 +245,7 @@ export function render(stage, ctx) {
     nodeDone = true;
     ctx.seen('node', true);
     deckSlot.replaceChildren(); deckSlot.classList.remove('is-question'); deckSlot.classList.add('is-empty');
+    tray.classList.add('is-done');
     ZONES.forEach((z) => { zones[z.id].classList.remove('is-ask'); zones[z.id].onclick = null; });
     drawNode(true);
     playFlourish();
@@ -247,12 +258,39 @@ export function render(stage, ctx) {
       if (!ctx.state.badges.includes('node')) { ctx.state.badges.push('node'); ctx.save(); }
       timers.push(setTimeout(() => toast(c.complete, 'success'), 1100));
     }
+    timers.push(setTimeout(() => { enableAR(true); toast(c.arTry, 'hint', 5000); }, reduce ? 800 : 4600));
+  }
+
+  /* ---------- after the game: every place opens in the AR camera ---------- */
+  const PARK = { id: 'park', icon: 'tree', x: 50.5, y: 61.5 };
+  let arOn = false;
+  const openAR = (id) => openPlaceAR({ id, title: id === 'temple' ? c.node : id === 'street' ? c.street : id === 'park' ? c.park : c.cards[id], fact: c.arFacts[id] });
+  function enableAR(animate) {
+    if (arOn) return;
+    arOn = true;
+    const badge = () => el('span', { class: `p05-arbadge ${animate && !reduce ? 'p05-pop' : ''}`, 'aria-hidden': 'true', html: icon('camera') });
+    ZONES.forEach((z) => {
+      const zone = zones[z.id];
+      zone.classList.add('is-ar');
+      zone.setAttribute('aria-label', `${plain(z.temple ? c.node : c.cards[z.id])} · ${plain(c.arOpen)}`);
+      zone.tabIndex = 0;
+      zone.append(badge());
+      zone.onclick = () => openAR(z.id);
+      zone.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAR(z.id); } };
+    });
+    const park = el('div', { class: 'p05-zone is-filled is-ar p05-park', role: 'button', tabindex: '0', 'aria-label': `${plain(c.park)} · ${plain(c.arOpen)}`, style: { left: `${PARK.x}%`, top: `${PARK.y}%` },
+      onclick: () => openAR('park'), onkeydown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAR('park'); } } },
+      el('span', { class: `map-pin is-done is-park ${animate && !reduce ? 'p05-pop' : ''}`, html: icon(PARK.icon) }), badge());
+    frame.append(park, el('div', { class: 'pin-tag is-above', style: { left: `${PARK.x}%`, top: `${PARK.y}%` } }, bi(c.park, { layout: 'stack' })));
+    frame.append(el('button', { class: `p05-arall ${animate && !reduce ? 'p05-pop' : ''}`, type: 'button', onclick: () => openAR('street') },
+      el('span', { class: 'ic', html: icon('camera') }), bi(c.street, { layout: 'stack' })));
+    loadModelViewer().catch(() => {});        // warm up the 3D viewer
   }
 
   /* ---------- start or restore ---------- */
   placed.forEach((id) => { fillZone(id, false); stamp(id, clean.has(id), false); });
   deal();
-  if (nodeDone) { drawNode(false); openAt(Z.temple.x, Z.temple.y, 2400, false); }
+  if (nodeDone) { drawNode(false); openAt(Z.temple.x, Z.temple.y, 2400, false); enableAR(false); tray.classList.add('is-done'); }
   else if (placed.size === ZONES.length) askMeetingPoint();
   progress();
   if (nodeDone) ctx.complete();

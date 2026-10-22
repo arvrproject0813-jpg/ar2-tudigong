@@ -12,7 +12,8 @@ Built from the team build guide (`TUDIGONG_DESIGN_GUIDE.md`).
 | P02 Scan (MindAR) | Done, tested with the placeholder card | B |
 | P03 How to Use | Done | A |
 | P04 Introduction | Done: 3D neighborhood (drag to turn 360°, pinch/scroll to zoom) with 4 attached info pins; flat map as fallback | B |
-| P05–P12 | Stubs: show "planned for a later milestone" and let you tap Next | see guide |
+| P05 Street Corner | Done: riddle cards, misty map that wakes up, vertical Neighborhood Passport, meeting-point question; afterwards every place opens in the AR camera | B |
+| P06–P12 | Stubs: show "planned for a later milestone" and let you tap Next | see guide |
 
 ## Run it
 
@@ -89,6 +90,7 @@ The stage background is a semi-realistic dawn landscape of misty mountains and t
 `assets/img/p01_home_hero.webp`, `assets/img/p04_culture_map.webp` and `assets/targets/tudigong-card.png` are in-house semi-realistic illustrations. Their editable SVG sources are in `assets/source-art/`. To use other art, change the paths in `js/config.js` → `ASSETS`:
 
 - `welcomeBg`, `shrine`, `banyan`: the welcome scene. Shrine/banyan positions are `.w-shrine` / `.w-banyan` in `css/welcome.css` (% of the 16:9 scene).
+- P05 AR models: `assets/models/p05/{temple,residential,market,road,park,street}.glb`, about 40 cm across in AR, exported from `buildNeighborhood(THREE, { place: id })`. To use your own model for a place, export a GLB (Y up, metres, base at y = 0) with the same file name.
 - P04 shows the 3D neighborhood from `js/ar-diorama.js` (`buildNeighborhood()`, the same model that rises from the card in AR) using three.js 0.160 from jsDelivr (mapped as `three` in the import map in `index.html`). The pins are attached to `anchors` in `buildNeighborhood()`; the start view and zoom limits are `VIEW` in `js/pages/p04-intro.js`. If WebGL is not available, the flat map `p04Map` is shown instead, with pin positions in `NODES` (% of the 3:2 image).
 
 ## Building the next pages
@@ -124,7 +126,8 @@ js/ui.js            bi(), button(), chip(), toast(), modal(), openVocab(), noteP
 js/icons.js         inline SVG icons (no icon font needed, works offline)
 js/drag.js          drag + tap-to-place for touch (for P05, P07–P10)
 js/ar.js            loads A-Frame 1.5.0 + MindAR 1.2.5 on demand, startAR() / stopAR()
-js/ar-diorama.js    the 3D pop-up neighbourhood shown on the card (three.js, no model files)
+js/ar-diorama.js    the 3D pop-up neighbourhood shown on the card (three.js, no model files); buildNeighborhood(THREE, { place }) builds one place for P05
+js/ar-place.js      P05 "See it in AR": camera view + 3D place (<model-viewer> from jsDelivr), real AR on supported phones/tablets
 js/narration.js     narration player + Listen button
 js/config.js        page list, asset paths, library URLs
 js/pages/           one file per page

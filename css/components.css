@@ -326,3 +326,53 @@ button.chip:hover { background: var(--teal-50); }
 
 /* music toggle: dimmed when the music is off */
 .music-btn.is-off { opacity: .7; }
+
+/* ---------- AR camera viewer (js/ar-place.js): one place in front of the camera ---------- */
+.arv { position: fixed; inset: 0; z-index: 90; overflow: hidden; background: radial-gradient(ellipse at 50% 42%, #FCF6E8, #E2CFA8); }
+.arv.has-cam { background: #14110E; }
+.arv-cam { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .4s var(--ease); }
+.arv.has-cam .arv-cam { opacity: 1; }
+.arv-cam.is-mirror { transform: scaleX(-1); }
+.arv-shade { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: linear-gradient(to bottom, rgba(18, 63, 60, .5), transparent 24%, transparent 68%, rgba(18, 63, 60, .55)); }
+.arv.has-cam .arv-shade { opacity: 1; }
+.arv-stage, .arv-mv { position: absolute; inset: 0; width: 100%; height: 100%; }
+.arv-mv { background: transparent; --poster-color: transparent; --progress-bar-color: transparent; }
+.arv-top, .arv-bottom { position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); display: flex; gap: 12px; pointer-events: none; }
+.arv-top > *, .arv-bottom > * { pointer-events: auto; }
+.arv-top { top: max(12px, env(safe-area-inset-top, 0px)); justify-content: space-between; align-items: flex-start; }
+.arv-bottom { bottom: max(14px, env(safe-area-inset-bottom, 0px)); justify-content: space-between; align-items: flex-end; }
+.arv-title, .arv-fact {
+  border-radius: 12px; background: var(--tex-paper), rgba(255, 251, 243, .94); color: var(--wood-900);
+  box-shadow: inset 0 0 0 1.5px var(--gold-500), 0 8px 20px rgba(20, 14, 8, .28);
+}
+.arv-title { display: flex; align-items: center; gap: 10px; padding: 8px 18px 8px 8px; font-family: var(--font-display, serif); font-weight: 700; font-size: 18px; line-height: 1.15; }
+.arv-title .zh { font-family: var(--font-display-zh, var(--font-zh)); font-size: 14px; color: var(--red-700); }
+.arv-badge { width: 38px; height: 38px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--grad-lacquer); color: var(--beige-50); box-shadow: 0 0 0 2px var(--gold-300); }
+.arv-badge svg { width: 20px; height: 20px; }
+.arv-close { width: 48px; height: 48px; background: rgba(255, 251, 243, .95); border: 2px solid var(--gold-500); color: var(--wood-900); box-shadow: 0 6px 14px rgba(20, 14, 8, .3); }
+.arv-fact { max-width: min(480px, 58%); padding: 10px 14px; font-size: 14.5px; line-height: 1.35; }
+.arv-fact .zh { font-size: 13px; margin-top: 3px; color: var(--wood-600); }
+.arv-hint { margin-top: 7px; padding-top: 6px; border-top: 1px dashed rgba(184, 140, 50, .55); font-size: 12px; color: var(--teal-600); font-weight: 600; }
+.arv-place { min-width: 210px; display: flex; align-items: center; gap: 10px; }
+.arv-place .ic { width: 22px; height: 22px; flex: none; }
+.arv-place .ic svg { width: 22px; height: 22px; }
+.arv-place[hidden], .arv-loading[hidden], .arv-note[hidden] { display: none; }
+.arv-loading {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 10px;
+  padding: 10px 18px; border-radius: 999px; background: rgba(255, 251, 243, .94); box-shadow: 0 6px 16px rgba(20, 14, 8, .25); font-size: 14px; color: var(--wood-900);
+}
+.arv-spin { width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--gold-100); border-top-color: var(--teal-600); animation: arv-spin .9s linear infinite; }
+@keyframes arv-spin { to { transform: rotate(360deg); } }
+.arv-note { position: absolute; top: 84px; left: 50%; transform: translateX(-50%); max-width: calc(100% - 32px); padding: 7px 16px; border-radius: 999px; background: var(--gold-100); color: var(--wood-900); font-size: 13px; box-shadow: 0 4px 12px rgba(20, 14, 8, .2); }
+@media (max-height: 500px) {
+  .arv-title { font-size: 15px; padding: 6px 14px 6px 6px; }
+  .arv-title .zh { font-size: 12px; }
+  .arv-badge { width: 30px; height: 30px; }
+  .arv-close { width: 42px; height: 42px; }
+  .arv-fact { font-size: 12.5px; padding: 8px 11px; max-width: 56%; }
+  .arv-fact .zh { font-size: 11.5px; }
+  .arv-hint { font-size: 11px; margin-top: 4px; padding-top: 4px; }
+  .arv-place { min-width: 0; }
+  .arv-note { top: 62px; font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { .arv-spin { animation-duration: 3s; } .arv-cam { transition: none; } }

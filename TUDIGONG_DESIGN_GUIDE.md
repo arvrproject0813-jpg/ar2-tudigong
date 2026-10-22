@@ -1141,6 +1141,64 @@ const CONTENT = {
       "en": "Placed",
       "zh": "已放好"
     },
+    "park": {
+      "en": "Park",
+      "zh": "公園"
+    },
+    "street": {
+      "en": "Whole Street Corner",
+      "zh": "整個街角"
+    },
+    "arTry": {
+      "en": "Now tap a place with a camera badge to see it in AR!",
+      "zh": "現在點有相機標誌的地點，用 AR 看看！"
+    },
+    "arOpen": {
+      "en": "See it in AR",
+      "zh": "用 AR 看看"
+    },
+    "arHint": {
+      "en": "Drag to turn · pinch to zoom",
+      "zh": "拖曳旋轉・雙指縮放"
+    },
+    "arPlace": {
+      "en": "Place it in the room",
+      "zh": "放進真實空間"
+    },
+    "arNoCam": {
+      "en": "The camera isn't available, so here is the 3D model.",
+      "zh": "無法開啟相機，先看看 3D 模型。"
+    },
+    "arLoading": {
+      "en": "Loading the 3D model…",
+      "zh": "3D 模型載入中…"
+    },
+    "arFacts": {
+      "temple": {
+        "en": "Homes, the street and the market all meet near the small temple. That makes it a landmark and a meeting point.",
+        "zh": "住家、街道與市場都在小廟附近交會，讓它成為地標與聚集點。"
+      },
+      "residential": {
+        "en": "Families live here. Neighbors walk past the small temple every day.",
+        "zh": "許多家庭住在這裡，鄰居每天都會經過小廟。"
+      },
+      "road": {
+        "en": "The road links the homes, the market and the temple.",
+        "zh": "道路把住家、市場和小廟連在一起。"
+      },
+      "market": {
+        "en": "People shop and chat here every morning.",
+        "zh": "每天早上，大家在這裡買菜、聊天。"
+      },
+      "park": {
+        "en": "A big banyan tree gives shade. Neighbors rest and meet here.",
+        "zh": "大榕樹帶來樹蔭，鄰居在這裡休息、聚會。"
+      },
+      "street": {
+        "en": "The whole street corner, with the small temple where everything meets.",
+        "zh": "整個街角，小廟就在大家交會的地方。"
+      }
+    },
     "nodeNote": {
       "en": "Homes, the street and the market all meet near the small temple. That makes it a landmark and a meeting point for the neighborhood.",
       "zh": "住家、街道與市場都在小廟附近交會，讓它成為街坊的地標與聚集點。"

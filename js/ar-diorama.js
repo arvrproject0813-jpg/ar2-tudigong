@@ -25,8 +25,8 @@ const COL = {
  * Every "random" detail comes from a seeded generator, so the same options always build the same scene
  * (the two P05 renders line up exactly).
  */
-export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows = false, street = false, mood = 'day' } = {}) {
-  const dawn = mood === 'dawn', people = mood === 'awake';
+export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows = false, street = false, mood = 'day', place = null } = {}) {
+  const dawn = mood === 'dawn', people = mood === 'awake' || !!place;
   let seed = 20261022;
   const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
 
@@ -386,6 +386,76 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
     const ring = mesh(new THREE.TorusGeometry(0.02, 0.0025, 6, 24), M.goldL);
     ring.rotation.x = Math.PI / 2; g.add(ring);
     return g;
+  }
+
+  /* ---------- one place on its own small plinth (P05 AR camera: temple, residential, market, road, park) ---------- */
+  if (place) return buildPlace(place);
+  function buildPlace(id) {
+    const g = new THREE.Group();
+    const at = (obj, x, z, ry = 0, sc = 1) => { obj.position.set(x, 0, z); obj.rotation.y = ry; obj.scale.setScalar(sc); g.add(obj); return obj; };
+    const flat = (geo, mat, x, z, y = 0.0045) => { const m = mesh(geo, mat, x, y, z); m.rotation.x = -Math.PI / 2; g.add(m); return m; };
+    const paveMat = std('#ffffff', { map: TEX.paving(), roughness: 0.9 });
+    const roundPlinth = (r) => {
+      g.add(mesh(new THREE.CylinderGeometry(r + 0.006, r + 0.012, 0.024, 64), M.wood, 0, -0.012, 0));
+      g.add(mesh(new THREE.CylinderGeometry(r, r, 0.004, 64), paveMat, 0, 0.002, 0));
+      const rim = mesh(new THREE.TorusGeometry(r + 0.003, 0.0032, 8, 96), M.gold, 0, 0.002, 0); rim.rotation.x = Math.PI / 2; g.add(rim);
+    };
+    const folk = (pts) => pts.forEach(([x, z, ry], i) => at(person(clothes[(i + 1) % clothes.length] === '#FFFFFF' ? '#3F6F8F' : clothes[(i + 1) % clothes.length]), x, z, ry ?? rnd() * 6, 1.7));
+    const scooterCols = ['#F3F1EC', '#B23A27', '#2F8C88', '#C9C6BF', '#E1B655'];
+    const scoot = (x, z, ry, i) => at(scooter(scooterCols[i % scooterCols.length]), x, z, ry, 1.5);
+    let lanterns = [];
+    if (id === 'temple') {
+      roundPlinth(0.21);
+      const sh = at(shrine(), 0, -0.03); lanterns = sh.userData.lanterns;
+      at(smallTree(), -0.15, -0.12, 0, 1.3); at(smallTree(), 0.15, -0.12, 1, 1.2);
+      at(pottedPlant(), -0.11, 0.12, 0, 1.6); at(pottedPlant(), 0.11, 0.12, 0, 1.6);
+      at(lamp(), -0.17, 0.07);
+      scoot(0.16, 0.07, 0.7, 1);
+      folk([[-0.04, 0.15, Math.PI], [0.05, 0.16, Math.PI + 0.3], [0.13, 0.13]]);
+    } else if (id === 'residential') {
+      roundPlinth(0.2);
+      [[-0.088, -0.065, 0.08, 0.17, '#F3EADA', COL.teal], [0.0, -0.075, 0.08, 0.21, '#EAD9C0', COL.red], [0.088, -0.065, 0.08, 0.15, '#F6EFE2', COL.gold]]
+        .forEach(([x, z, w, h, wall, acc]) => at(house(w, h, 0.07, wall, acc), x, z));
+      [-0.1, -0.08, -0.06, 0.06].forEach((x, i) => scoot(x, 0.02, 0, i));
+      at(lamp(), 0.14, 0.08); at(smallTree(), -0.15, 0.08, 0, 1.2);
+      folk([[-0.02, 0.07], [0.03, 0.1], [0.1, 0.05], [-0.12, 0.13]]);
+    } else if (id === 'market') {
+      roundPlinth(0.18);
+      [[-0.075, -0.03, 0.4, COL.red], [0, -0.055, 0, COL.teal], [0.075, -0.03, -0.4, COL.red]].forEach(([x, z, ry, c]) => at(stall(c), x, z, ry, 1.25));
+      [[-0.12, 0.05], [0.12, 0.05], [0.0, 0.03]].forEach(([x, z]) => g.add(box(0.022, 0.014, 0.016, M.wood, x, 0, z)));   // crates
+      for (let i = 0; i < 6; i++) g.add(mesh(new THREE.SphereGeometry(0.0045, 10, 8), std(fruit[i % fruit.length], { roughness: 0.45 }), -0.126 + (i % 3) * 0.006, 0.018, 0.047 + Math.floor(i / 3) * 0.006));
+      at(lamp(), -0.15, -0.06);
+      folk([[-0.06, 0.05, Math.PI], [-0.03, 0.08], [0.04, 0.06, Math.PI], [0.08, 0.09], [0.1, 0.0, -1], [-0.1, 0.1]]);
+    } else if (id === 'road') {
+      g.add(box(0.44, 0.024, 0.44, M.wood, 0, -0.024, 0));
+      g.add(box(0.42, 0.004, 0.42, paveMat, 0, 0, 0));
+      [[0.44, 0.004, 0.006, 0, 0.22], [0.44, 0.004, 0.006, 0, -0.22], [0.006, 0.004, 0.44, 0.22, 0], [0.006, 0.004, 0.44, -0.22, 0]]
+        .forEach(([w, h, d, x, z]) => g.add(box(w, h, d, M.gold, x, 0, z)));
+      flat(new THREE.PlaneGeometry(0.07, 0.42), std('#ffffff', { map: TEX.asphalt('z'), roughness: 0.95 }), 0.02, 0, 0.0045);
+      flat(new THREE.PlaneGeometry(0.42, 0.06), std('#ffffff', { map: TEX.asphalt('x'), roughness: 0.95 }), 0, 0.05, 0.0048);
+      for (let i = 0; i < 5; i++) g.add(box(0.058, 0.0012, 0.007, std('#F4F0E6', { roughness: 0.8 }), 0.02, 0.0045, -0.005 - i * 0.013));   // zebra crossing
+      at(house(0.09, 0.13, 0.07, '#F2E2CC', COL.red), -0.12, -0.13); at(house(0.08, 0.11, 0.07, '#E9E1CF', COL.teal), 0.13, -0.13);
+      const mini = shrine(); mini.scale.setScalar(0.42); const mw = new THREE.Group(); mw.add(mini); at(mw, 0.13, 0.14, 0); lanterns = mini.userData.lanterns;
+      scoot(0.035, -0.12, 0, 0); scoot(0.005, 0.15, Math.PI, 1); scoot(-0.13, 0.06, Math.PI / 2, 2); scoot(0.15, 0.04, -Math.PI / 2, 4);
+      at(lamp(), -0.03, -0.02); at(lamp(), 0.07, 0.1); at(smallTree(), -0.16, 0.15, 0, 1.2);
+      folk([[-0.06, 0.1], [0.09, -0.04], [-0.1, -0.05]]);
+    } else if (id === 'park') {
+      roundPlinth(0.21);
+      flat(new THREE.CircleGeometry(0.2, 64), std('#ffffff', { map: TEX.grass(), roughness: 0.95 }), 0, 0, 0.0045);
+      flat(new THREE.PlaneGeometry(0.034, 0.2), paveMat, 0.0, 0.105, 0.0052);       // path in from the front
+      flat(new THREE.CircleGeometry(0.05, 48), paveMat, 0.0, 0.0, 0.0052);           // little plaza round the banyan
+      at(banyan(), 0.0, -0.01, 0, 0.95);
+      [[-0.13, 0.06, 1.15], [0.14, 0.07, 1.2], [-0.1, -0.13, 1.3], [0.12, -0.12, 1.1]].forEach(([x, z, sc], i) => at(smallTree(), x, z, i, sc));
+      [[-0.05, 0.1, 0.3], [0.06, 0.1, -0.3]].forEach(([x, z, ry]) => {
+        const b = new THREE.Group();
+        b.add(box(0.045, 0.004, 0.014, M.wood, 0, 0.012, 0)); b.add(box(0.045, 0.012, 0.003, M.wood, 0, 0.016, -0.006));
+        [-1, 1].forEach((sx) => b.add(box(0.003, 0.012, 0.012, M.woodD, sx * 0.019, 0, 0)));
+        at(b, x, z, ry);
+      });
+      at(lamp(), 0.03, 0.17);
+      folk([[-0.05, 0.12, Math.PI], [0.07, 0.04], [-0.06, -0.05], [0.04, 0.16]]);
+    }
+    return { root: g, parts: [], markers: [], lanterns, anchors: {} };
   }
 
   const root = new THREE.Group();
