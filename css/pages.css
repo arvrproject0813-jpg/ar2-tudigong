@@ -178,3 +178,70 @@
 .map3d-tools .icon-btn svg { width: 18px; height: 18px; }
 .map-frame.is-3d > .culture-note { z-index: 10; }
 @media (max-height: 500px) { .map3d-tools .icon-btn { width: 34px; height: 34px; } .map3d-tools { right: 6px; bottom: 6px; gap: 4px; } }
+
+/* ---------- P05 street corner: card tray + map with drop circles ---------- */
+.p05 { position: absolute; inset: 0; display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-3) var(--space-3) max(var(--space-3), env(safe-area-inset-left, 0px)); }
+.p05-tray {
+  flex: none; display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-2);
+  border-radius: var(--radius-lg); background: var(--tex-paper), rgba(255, 251, 243, .82);
+  box-shadow: inset 0 0 0 1.5px var(--gold-500), var(--shadow-card);
+}
+.p05-tray .node-card { position: relative; width: 116px; }
+.p05-tray .node-card.is-placed { opacity: .55; }
+.p05-tray .node-card.is-placed .ic { background: var(--green-500); }
+.p05-check { display: none; position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; border-radius: 50%; background: var(--green-500); color: var(--beige-50); place-items: center; box-shadow: 0 0 0 2px var(--beige-50); }
+.p05-check svg { width: 13px; height: 13px; }
+.node-card.is-placed .p05-check { display: grid; }
+.p05-mapwrap { flex: 1; min-width: 0; height: 100%; container-type: size; display: grid; place-items: center; }
+.p05 .map-frame.p05-frame { width: min(calc(100cqw - 24px), calc((100cqh - 24px) * 1.7)); aspect-ratio: 1692 / 995; background: radial-gradient(ellipse at 50% 40%, #FDF8EE, #EDE1C8); }
+.p05 .map-frame.p05-frame > img { object-fit: contain; }
+
+/* drop circle: a dashed gold ring over the place, with a generous invisible touch area */
+.p05-zone {
+  position: absolute; z-index: 3; width: 54px; height: 54px; transform: translate(-50%, -50%);
+  border-radius: 50%; border: 2.5px dashed var(--gold-500); background: rgba(255, 251, 243, .28);
+  display: grid; place-items: center; transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+  animation: p05-breathe 2.4s ease-in-out infinite;
+}
+.p05-zone::after { content: ""; position: absolute; inset: -16px; border-radius: 50%; }
+.p05-zone .q {
+  width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 15px; color: var(--beige-50);
+  background: var(--grad-lacquer); box-shadow: 0 0 0 2px var(--gold-300);
+}
+.p05-zone.is-over { border-style: solid; border-color: var(--teal-600); background: rgba(230, 242, 241, .7); transform: translate(-50%, -50%) scale(1.12); }
+.p05-zone.is-hint { animation: p05-shake 300ms var(--ease); }
+.p05-zone.is-filled { border: 0; background: none; animation: none; width: 44px; height: 44px; }
+.p05-zone.is-filled .map-pin { position: static; transform: none; }
+.p05-zone.is-filled .map-pin.is-pulse-loop { animation: p05-pin-pulse 1.6s var(--ease) infinite; }
+.p05-zone.is-ask { cursor: pointer; }
+.p05 .pin-tag { z-index: 2; }
+.p05 .pin-tag.is-node { background: var(--grad-vermilion); color: var(--beige-50); box-shadow: inset 0 0 0 1px var(--gold-300), 0 3px 8px rgba(58, 42, 30, .25); }
+.p05 .pin-tag.is-node .zh { color: var(--gold-100); }
+.p05-pop { animation: p05-pop .45s cubic-bezier(.3, 1.6, .5, 1) both; }
+@keyframes p05-pop { from { transform: scale(.3); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes p05-breathe { 0%, 100% { box-shadow: 0 0 0 0 rgba(240, 207, 122, 0); } 50% { box-shadow: 0 0 0 6px rgba(240, 207, 122, .35); } }
+@keyframes p05-shake { 0%, 100% { translate: 0; } 25% { translate: -6px; } 50% { translate: 6px; } 75% { translate: -4px; } }
+@keyframes p05-pin-pulse { 0%, 100% { scale: 1; } 50% { scale: 1.12; } }
+
+/* the Community Node: gold dashed lines from the temple to the homes, the street and the market */
+.p05-lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: visible; }
+.p05-lines line { stroke: var(--gold-300); stroke-width: 9; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: p05-draw .9s var(--ease) forwards; filter: drop-shadow(0 2px 0 rgba(138, 100, 22, .9)); }
+.p05-lines line.is-drawn { animation: none; stroke-dashoffset: 0; stroke-dasharray: none; }
+@keyframes p05-draw { to { stroke-dashoffset: 0; } }
+
+@media (max-height: 500px) {
+  .p05 { gap: var(--space-2); padding: var(--space-2); }
+  .p05-tray { gap: 6px; padding: 6px; }
+  /* phones: cards become compact rows (icon left, words right) so all four fit the height */
+  .p05-tray .node-card { width: 128px; min-height: 0; padding: 6px 8px; gap: 8px; flex-direction: row; justify-content: flex-start; text-align: left; }
+  .p05-tray .node-card .bi { line-height: 1.15; }
+  .p05-tray .node-card .ic { width: 26px; height: 26px; flex: none; }
+  .p05-tray .node-card .ic svg { width: 16px; height: 16px; }
+  .p05-zone { width: 44px; height: 44px; }
+  .p05-zone .q { width: 20px; height: 20px; font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .p05-zone, .p05-pop, .p05-zone.is-filled .map-pin.is-pulse-loop { animation: none; }
+  .p05-lines line { animation: none; stroke-dashoffset: 0; stroke-dasharray: none; }
+}

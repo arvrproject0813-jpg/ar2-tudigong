@@ -18,7 +18,8 @@ const COL = {
  * Returns { root, parts, markers, lanterns, anchors }. +Y is up, the plinth is about 0.94 × 0.62 units.
  * anchors = points above the four places the P04 pins point at (temple, fields, market, street corner).
  */
-export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows = false } = {}) {
+export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows = false, street = false } = {}) {
+  // street = true: the P05 street-corner layout (no big central temple, more homes, the small shrine on the corner)
 
   /* ---------- canvas textures ---------- */
   const canvasTex = (w, h, draw, repeat) => {
@@ -273,16 +274,18 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
   add(ground, 0, 0, 0.1);
 
   // shrine at the centre (the hero), banyan behind it, houses, market
-  const sh = shrine(); const lanterns = sh.userData.lanterns;
-  add(sh, 0.04, 0.03, 0.35);
+  let lanterns = [];
+  if (!street) { const sh = shrine(); lanterns = sh.userData.lanterns; add(sh, 0.04, 0.03, 0.35); }
   add(banyan(), -0.2, -0.05, 0.5);
   // a small street-corner shrine where the two roads meet, facing the street
   const mini = shrine(); mini.scale.setScalar(0.42);
   const miniWrap = new THREE.Group(); miniWrap.add(mini);
-  add(miniWrap, 0.285, 0.118, 0.55);
+  if (street) { add(miniWrap, 0.3, 0.255, 0.55); lanterns = mini.userData.lanterns; }   // on the front-right corner of the crossing, facing the street
+  else add(miniWrap, 0.285, 0.118, 0.55);
   // qilou houses in two rows behind the shrine, facades towards the viewer (+z = bottom edge of the card)
   const H = [[0.22, -0.2, 0.08, 0.17, '#F3EADA', COL.teal], [0.31, -0.2, 0.08, 0.21, '#EAD9C0', COL.red], [0.4, -0.2, 0.08, 0.15, '#F6EFE2', COL.gold],
              [0.27, -0.08, 0.08, 0.12, '#E9E1CF', COL.green], [0.37, -0.08, 0.09, 0.14, '#F2E2CC', COL.teal], [0.12, -0.22, 0.07, 0.13, '#F3E3CF', COL.red]];
+  if (street) H.push([0.0, 0.0, 0.08, 0.13, '#F2E2CC', COL.red], [0.09, 0.0, 0.07, 0.11, '#E9E1CF', COL.teal], [0.36, 0.06, 0.08, 0.12, '#F3EADA', COL.gold]);
   H.forEach(([x, z, w, h, wall, acc], i) => add(house(w, h, 0.07, wall, acc), x, z, 0.6 + i * 0.07));
   [[-0.26, 0.2, COL.teal], [-0.18, 0.2, COL.red], [-0.34, 0.2, COL.red]].forEach(([x, z, c], i) => add(stall(c), x, z, 0.75 + i * 0.06));
   [[-0.42, -0.24], [0.44, 0.24], [-0.02, 0.26]].forEach(([x, z], i) => {

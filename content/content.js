@@ -518,8 +518,8 @@ const CONTENT = {
         "zh": "找找有一排排房子的區域。"
       },
       "road": {
-        "en": "Look for the crossing where streets meet.",
-        "zh": "找找街道交會的路口。"
+        "en": "Look for the street that runs between the buildings.",
+        "zh": "找找建築物之間的那條街道。"
       },
       "market": {
         "en": "Look for the striped awnings.",
@@ -542,6 +542,28 @@ const CONTENT = {
       "en": "Community Task Complete",
       "zh": "社區任務完成"
     },
+    "dragHint": {
+      "en": "Drag each card to its place on the map, or tap a card and then a circle.",
+      "zh": "把每張卡片拖到地圖上的位置，或先點卡片再點圓圈。"
+    },
+    "placed": {
+      "en": "Placed",
+      "zh": "已放好"
+    },
+    "nodeNote": {
+      "en": "Homes, the street and the market all meet near the small temple. That makes it a landmark and a meeting point for the neighborhood.",
+      "zh": "住家、街道與市場都在小廟附近交會，讓它成為街坊的地標與聚集點。"
+    },
+    "chips": [
+      {
+        "en": "Local Temple",
+        "zh": "地方廟宇／小廟"
+      },
+      {
+        "en": "Neighborhood",
+        "zh": "街坊／社區"
+      }
+    ],
     "narration": {
       "en": "In Kaohsiung and many places in Taiwan, a Tudigong temple does not have to be large. Some are found at street corners, beside roads, or inside neighborhoods. Besides being places of belief, these small temples can also become local landmarks and cultural points connected with community memory.",
       "zh": "在高雄與臺灣許多地方，土地公廟不一定很大。有些位在街角、路旁，或就在社區之中。這些小廟除了是信仰的場所，也可能成為地方地標，以及與社區記憶相連的文化據點。"

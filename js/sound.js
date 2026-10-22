@@ -444,3 +444,33 @@ export function playRise() {
   const unduck = setTimeout(() => duckMusic(false), 5600);
   return () => { clearTimeout(unduck); duckMusic(false); g.gain.cancelScheduledValues(ctx.currentTime); g.gain.setTargetAtTime(0, ctx.currentTime, 0.12); rb.output.gain.setTargetAtTime(0, ctx.currentTime, 0.12); };
 }
+
+/* ---------- task sounds (same instruments as the music and the opening) ---------- */
+// A right answer plays one zither note that climbs the pentatonic scale with each step,
+// a wrong one a soft low clapper, and finishing a task the opening's rising zither run.
+const STEP_NOTES = ['A4', 'B4', 'D5', 'E5', 'F#5', 'A5'];
+function sfxOut() {
+  if (!ensureCtx()) return null;
+  if (ctx.state !== 'running') ctx.resume().catch(() => {});
+  const g = ctx.createGain(); g.gain.value = 0.9;
+  g.connect(sfxGain);
+  return g;
+}
+/** A correct placement. step = 0, 1, 2 … (each one a note higher). */
+export function playChime(step = 0) {
+  const out = sfxOut(); if (!out) return;
+  const t = ctx.currentTime + 0.01;
+  woodTock(ctx, out, t, 0.35, 1.05);
+  zither(ctx, out, t + 0.02, NOTE[STEP_NOTES[Math.min(step, STEP_NOTES.length - 1)]], 1.1, 0.6);
+}
+/** A wrong placement: gentle, never harsh. */
+export function playMiss() {
+  const out = sfxOut(); if (!out) return;
+  woodTock(ctx, out, ctx.currentTime + 0.01, 0.55, 0.55);
+}
+/** A task finished: the rising zither run from the opening. */
+export function playFlourish() {
+  const out = sfxOut(); if (!out) return;
+  const t = ctx.currentTime + 0.02;
+  ['D4', 'E4', 'F#4', 'A4', 'B4', 'D5', 'E5', 'F#5', 'A5', 'B5', 'D6'].forEach((n, i) => zither(ctx, out, t + i * 0.055, NOTE[n], 0.6 - i * 0.025, 0.55));
+}
