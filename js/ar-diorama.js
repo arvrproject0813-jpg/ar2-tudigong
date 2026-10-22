@@ -25,7 +25,7 @@ const COL = {
  * Every "random" detail comes from a seeded generator, so the same options always build the same scene
  * (the two P05 renders line up exactly).
  */
-export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows = false, street = false, mood = 'day', place = null } = {}) {
+export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows = false, street = false, mood = 'day', place = null, life = false } = {}) {
   const dawn = mood === 'dawn', people = mood === 'awake' || !!place;
   let seed = 20261022;
   const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
@@ -403,6 +403,13 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
     const folk = (pts) => pts.forEach(([x, z, ry], i) => at(person(clothes[(i + 1) % clothes.length] === '#FFFFFF' ? '#3F6F8F' : clothes[(i + 1) % clothes.length]), x, z, ry ?? rnd() * 6, 1.7));
     const scooterCols = ['#F3F1EC', '#B23A27', '#2F8C88', '#C9C6BF', '#E1B655'];
     const scoot = (x, z, ry, i) => at(scooter(scooterCols[i % scooterCols.length]), x, z, ry, 1.5);
+    // movers: people who walk and scooters that ride (turned into an animation in the AR models)
+    //   path = [[x, z], …]; mode 'pingpong' (there and back) or 'loop' (start again; appear = grow in / shrink out at the ends)
+    const movers = [];
+    let nWalk = 0;
+    const walker = (path, o = {}) => { const p = at(person(['#3F6F8F', '#F2C9C0', '#F3DE9A', '#B9D3A4', '#CFE3EA', '#C7432C'][nWalk++ % 6]), path[0][0], path[0][1], 0, 1.7); movers.push({ obj: p, path, mode: 'pingpong', speed: 0.022, bob: true, ...o }); return p; };
+    const rider = (path, i, o = {}) => { const sc = scoot(path[0][0], path[0][1], 0, i); movers.push({ obj: sc, path, mode: 'loop', appear: true, speed: 0.06, ...o }); return sc; };
+    const circle = (r, cx = 0, cz = 0, n = 20) => Array.from({ length: n + 1 }, (_, k) => [cx + Math.cos(k / n * Math.PI * 2) * r, cz + Math.sin(k / n * Math.PI * 2) * r]);
     let lanterns = [];
     if (id === 'temple') {
       roundPlinth(0.21);
@@ -411,21 +418,31 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
       at(pottedPlant(), -0.11, 0.12, 0, 1.6); at(pottedPlant(), 0.11, 0.12, 0, 1.6);
       at(lamp(), -0.17, 0.07);
       scoot(0.16, 0.07, 0.7, 1);
-      folk([[-0.04, 0.15, Math.PI], [0.05, 0.16, Math.PI + 0.3], [0.13, 0.13]]);
+      folk([[0.13, 0.13]]);
+      walker([[-0.16, 0.17], [-0.035, 0.125]], { phase: 0 });          // neighbours come to pray and go again
+      walker([[0.15, 0.18], [0.04, 0.128]], { phase: 0.5 });
+      walker([[-0.19, 0.04], [-0.17, 0.12], [-0.08, 0.19], [0.08, 0.19], [0.18, 0.1]], { phase: 0.25, speed: 0.018 });
     } else if (id === 'residential') {
       roundPlinth(0.2);
       [[-0.088, -0.065, 0.08, 0.17, '#F3EADA', COL.teal], [0.0, -0.075, 0.08, 0.21, '#EAD9C0', COL.red], [0.088, -0.065, 0.08, 0.15, '#F6EFE2', COL.gold]]
         .forEach(([x, z, w, h, wall, acc]) => at(house(w, h, 0.07, wall, acc), x, z));
       [-0.1, -0.08, -0.06, 0.06].forEach((x, i) => scoot(x, 0.02, 0, i));
       at(lamp(), 0.14, 0.08); at(smallTree(), -0.15, 0.08, 0, 1.2);
-      folk([[-0.02, 0.07], [0.03, 0.1], [0.1, 0.05], [-0.12, 0.13]]);
+      folk([[0.1, 0.05]]);
+      walker([[-0.13, 0.06], [0.12, 0.065]], { phase: 0.1 });
+      walker([[0.12, 0.145], [-0.12, 0.145]], { phase: 0.6 });
+      walker([[-0.03, 0.04], [-0.02, 0.18]], { phase: 0.3, speed: 0.015 });
+      rider([[-0.17, 0.105], [0.17, 0.105]], 1, { phase: 0.4 });
     } else if (id === 'market') {
       roundPlinth(0.18);
       [[-0.075, -0.03, 0.4, COL.red], [0, -0.055, 0, COL.teal], [0.075, -0.03, -0.4, COL.red]].forEach(([x, z, ry, c]) => at(stall(c), x, z, ry, 1.25));
       [[-0.12, 0.05], [0.12, 0.05], [0.0, 0.03]].forEach(([x, z]) => g.add(box(0.022, 0.014, 0.016, M.wood, x, 0, z)));   // crates
       for (let i = 0; i < 6; i++) g.add(mesh(new THREE.SphereGeometry(0.0045, 10, 8), std(fruit[i % fruit.length], { roughness: 0.45 }), -0.126 + (i % 3) * 0.006, 0.018, 0.047 + Math.floor(i / 3) * 0.006));
       at(lamp(), -0.15, -0.06);
-      folk([[-0.06, 0.05, Math.PI], [-0.03, 0.08], [0.04, 0.06, Math.PI], [0.08, 0.09], [0.1, 0.0, -1], [-0.1, 0.1]]);
+      folk([[-0.06, 0.05, Math.PI], [0.04, 0.06, Math.PI], [0.1, 0.0, -1]]);
+      walker([[-0.11, 0.075], [-0.02, 0.095], [0.09, 0.075]], { phase: 0 });   // shoppers going from stall to stall
+      walker([[0.1, 0.12], [-0.08, 0.125]], { phase: 0.4 });
+      walker([[-0.02, 0.17], [-0.02, 0.06]], { phase: 0.7, speed: 0.016 });
     } else if (id === 'road') {
       g.add(box(0.44, 0.024, 0.44, M.wood, 0, -0.024, 0));
       g.add(box(0.42, 0.004, 0.42, paveMat, 0, 0, 0));
@@ -436,9 +453,15 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
       for (let i = 0; i < 5; i++) g.add(box(0.058, 0.0012, 0.007, std('#F4F0E6', { roughness: 0.8 }), 0.02, 0.0045, -0.005 - i * 0.013));   // zebra crossing
       at(house(0.09, 0.13, 0.07, '#F2E2CC', COL.red), -0.12, -0.13); at(house(0.08, 0.11, 0.07, '#E9E1CF', COL.teal), 0.13, -0.13);
       const mini = shrine(); mini.scale.setScalar(0.42); const mw = new THREE.Group(); mw.add(mini); at(mw, 0.13, 0.14, 0); lanterns = mini.userData.lanterns;
-      scoot(0.035, -0.12, 0, 0); scoot(0.005, 0.15, Math.PI, 1); scoot(-0.13, 0.06, Math.PI / 2, 2); scoot(0.15, 0.04, -Math.PI / 2, 4);
+      rider([[0.036, -0.2], [0.036, 0.2]], 0, { phase: 0 });          // scooters riding both ways on both roads
+      rider([[0.004, 0.2], [0.004, -0.2]], 1, { phase: 0.45 });
+      rider([[-0.2, 0.064], [0.2, 0.064]], 2, { phase: 0.2 });
+      rider([[0.2, 0.036], [-0.2, 0.036]], 4, { phase: 0.7 });
       at(lamp(), -0.03, -0.02); at(lamp(), 0.07, 0.1); at(smallTree(), -0.16, 0.15, 0, 1.2);
-      folk([[-0.06, 0.1], [0.09, -0.04], [-0.1, -0.05]]);
+      folk([[-0.1, -0.05]]);
+      walker([[-0.03, -0.03], [0.075, -0.03]], { phase: 0.15, speed: 0.016 });   // crossing at the zebra crossing
+      walker([[-0.18, 0.13], [-0.05, 0.13]], { phase: 0.5 });
+      walker([[0.07, -0.18], [0.07, -0.06]], { phase: 0.8 });
     } else if (id === 'park') {
       roundPlinth(0.21);
       flat(new THREE.CircleGeometry(0.2, 64), std('#ffffff', { map: TEX.grass(), roughness: 0.95 }), 0, 0, 0.0045);
@@ -453,9 +476,13 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
         at(b, x, z, ry);
       });
       at(lamp(), 0.03, 0.17);
-      folk([[-0.05, 0.12, Math.PI], [0.07, 0.04], [-0.06, -0.05], [0.04, 0.16]]);
+      folk([[-0.05, 0.115, Math.PI]]);
+      walker(circle(0.075), { mode: 'loop', phase: 0, speed: 0.02 });     // strolling round the banyan
+      walker(circle(0.075), { mode: 'loop', phase: 0.5, speed: 0.02 });
+      walker([[0.0, 0.2], [0.0, 0.08]], { phase: 0.3, speed: 0.016 });
+      walker([[-0.17, -0.03], [-0.11, -0.08], [-0.04, -0.13]], { phase: 0.7 });
     }
-    return { root: g, parts: [], markers: [], lanterns, anchors: {} };
+    return { root: g, parts: [], markers: [], lanterns, anchors: {}, movers };
   }
 
   const root = new THREE.Group();
@@ -528,6 +555,18 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
     add(crowd, 0, 0, 1.0);
   }
 
+  // moving people and scooters (only for the animated AR model of the street corner)
+  const movers = [];
+  if (life) {
+    const lifeG = new THREE.Group();
+    const cols = ['#3F6F8F', '#F2C9C0', '#F3DE9A', '#B9D3A4', '#CFE3EA', '#C7432C'];
+    [[[-0.36, 0.255], [-0.14, 0.255]], [[0.12, 0.285], [0.27, 0.285]], [[0.25, -0.26], [0.25, 0.12]], [[0.15, -0.2], [0.15, 0.1]], [[-0.05, 0.215], [0.13, 0.215]]]
+      .forEach((path, i) => { const p = person(cols[i % cols.length]); p.scale.setScalar(1.7); p.position.set(path[0][0], 0, path[0][1]); lifeG.add(p); movers.push({ obj: p, path, mode: 'pingpong', speed: 0.022, bob: true, phase: i * 0.21 }); });
+    [[[0.212, -0.29], [0.212, 0.29]], [[0.188, 0.29], [0.188, -0.29]], [[-0.15, 0.19], [0.47, 0.19]], [[0.47, 0.17], [-0.15, 0.17]]]
+      .forEach((path, i) => { const sc = scooter(['#F3F1EC', '#B23A27', '#2F8C88', '#E1B655'][i]); sc.scale.setScalar(1.5); sc.position.set(path[0][0], 0, path[0][1]); lifeG.add(sc); movers.push({ obj: sc, path, mode: 'loop', appear: true, speed: 0.07, phase: i * 0.27 }); });
+    add(lifeG, 0, 0, 1.0);
+  }
+
   // floating markers above the key places (shrine is vermilion, others gold)
   const markers = [];
   if (withMarkers) [[0.04, 0.03, 0.3, COL.red], [-0.32, -0.1, 0.09, COL.gold], [-0.26, 0.2, 0.12, COL.gold], [0.31, -0.2, 0.3, COL.gold], [-0.2, -0.05, 0.3, COL.gold]]
@@ -541,7 +580,52 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
     corner: new THREE.Vector3(0.285, 0.13, 0.118),
   };
   if (shadows) root.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
-  return { root, parts, markers, lanterns, anchors };
+  return { root, parts, markers, lanterns, anchors, movers };
+}
+
+/**
+ * Turn a built place's movers and lanterns into one looping AnimationClip (for the AR models).
+ * Every mover's trip is fitted to a whole number of rounds in `length` seconds so the clip loops seamlessly.
+ */
+export function lifeClip(THREE, n, { length = 12, fps = 12 } = {}) {
+  const tracks = [];
+  const steps = Math.round(length * fps), times = Array.from({ length: steps + 1 }, (_, i) => i / fps);
+  const yAxis = new THREE.Vector3(0, 1, 0), zAxis = new THREE.Vector3(0, 0, 1), q = new THREE.Quaternion(), q2 = new THREE.Quaternion();
+  (n.movers || []).forEach((m, k) => {
+    const o = m.obj; o.name = o.name || `mover_${k}`;
+    let pts = m.path.map(([x, z]) => new THREE.Vector2(x, z));
+    if (m.mode === 'pingpong') pts = pts.concat(pts.slice(0, -1).reverse());
+    const seg = []; let total = 0;
+    for (let i = 1; i < pts.length; i++) { const d = pts[i].distanceTo(pts[i - 1]); seg.push(d); total += d; }
+    const rounds = Math.max(1, Math.round(length / (total / m.speed)));
+    const base = o.scale.x, pos = [], rot = [], scl = [];
+    times.forEach((t) => {
+      const u = (((t / length) * rounds + (m.phase || 0)) % 1 + 1) % 1;
+      let d = u * total, i = 0;
+      while (i < seg.length - 1 && d > seg[i]) { d -= seg[i]; i++; }
+      const a = pts[i], b = pts[i + 1], f = seg[i] ? d / seg[i] : 0;
+      const x = a.x + (b.x - a.x) * f, z = a.y + (b.y - a.y) * f;
+      const stepPhase = u * total / 0.012;                                   // about one step every 1.2 cm
+      const y = m.bob ? Math.abs(Math.sin(stepPhase * Math.PI)) * 0.0022 : 0;
+      pos.push(x, y, z);
+      q.setFromAxisAngle(yAxis, Math.atan2(b.x - a.x, b.y - a.y));
+      if (m.bob) q.multiply(q2.setFromAxisAngle(zAxis, Math.sin(stepPhase * Math.PI) * 0.06));
+      rot.push(q.x, q.y, q.z, q.w);
+      let s = 1;
+      if (m.appear) { const e = 0.06; s = u < e ? u / e : u > 1 - e ? (1 - u) / e : 1; }
+      scl.push(base * s, base * s, base * s);
+    });
+    tracks.push(new THREE.VectorKeyframeTrack(`${o.name}.position`, times, pos));
+    tracks.push(new THREE.QuaternionKeyframeTrack(`${o.name}.quaternion`, times, rot));
+    if (m.appear) tracks.push(new THREE.VectorKeyframeTrack(`${o.name}.scale`, times, scl));
+  });
+  (n.lanterns || []).forEach((L, k) => {
+    L.name = L.name || `lantern_${k}`;
+    const rot = [];
+    times.forEach((t) => { q.setFromAxisAngle(zAxis, Math.sin(t / 1.5 * Math.PI * 2 + k * 1.3) * 0.12); rot.push(q.x, q.y, q.z, q.w); });
+    tracks.push(new THREE.QuaternionKeyframeTrack(`${L.name}.quaternion`, times, rot));
+  });
+  return new THREE.AnimationClip('Neighbourhood life', length, tracks);
 }
 
 /* ---------- your own model (GLB) ----------

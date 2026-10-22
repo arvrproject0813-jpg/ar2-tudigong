@@ -17,7 +17,7 @@
 // Art: the 3D neighbourhood (js/ar-diorama.js, street layout) rendered from above twice from the same
 // camera: assets/img/p05_dawn.webp and p05_awake.webp (1692 × 995), plus p05_mist.webp and two scooter
 // sprites. Positions below are % of those images.
-import { el, bi, chip, toast, clearToasts, notePopover, plain } from '../ui.js';
+import { el, bi, chip, toast, clearToasts, notePopover, plain, modal } from '../ui.js';
 import { icon } from '../icons.js';
 import { createDragGroup } from '../drag.js';
 import { playChime, playMiss, playFlourish } from '../sound.js';
@@ -264,7 +264,23 @@ export function render(stage, ctx) {
   /* ---------- after the game: every place opens in the AR camera ---------- */
   const PARK = { id: 'park', icon: 'tree', x: 50.5, y: 61.5 };
   let arOn = false;
-  const openAR = (id) => openPlaceAR({ id, title: id === 'temple' ? c.node : id === 'street' ? c.street : id === 'park' ? c.park : c.cards[id], fact: c.arFacts[id] });
+  const placeTitle = (id) => (id === 'temple' ? c.node : id === 'street' ? c.street : id === 'park' ? c.park : c.cards[id]);
+  // tapping a place: a small dialog with a picture, a short explanation and a "View in AR" button
+  const openAR = (id) => {
+    const title = placeTitle(id);
+    let close = null;
+    const go = el('button', { class: 'btn btn-primary p05-info-ar', type: 'button' },
+      el('span', { class: 'ic', html: icon('camera') }), bi(c.arOpen, { layout: 'stack' }));
+    go.addEventListener('click', () => { close?.(); openPlaceAR({ id, title, fact: c.arFacts[id] }); });
+    close = modal({
+      title,
+      body: [el('div', { class: 'p05-info-body' },
+        el('div', { class: 'p05-info-pic' }, el('img', { src: `assets/img/p05_place_${id}.webp`, alt: '', width: 520, height: 400 })),
+        el('div', { class: 'p05-info-text' }, el('p', {}, bi(c.arFacts[id])), go))],
+    });
+    document.querySelector('#modal-layer .modal')?.classList.add('p05-info');
+    go.focus();
+  };
   function enableAR(animate) {
     if (arOn) return;
     arOn = true;

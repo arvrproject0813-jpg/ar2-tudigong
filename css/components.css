@@ -370,6 +370,8 @@ button.chip:hover { background: var(--teal-50); }
   .arv-badge { width: 30px; height: 30px; }
   .arv-close { width: 42px; height: 42px; }
   .arv-fact { font-size: 12.5px; padding: 8px 11px; max-width: 56%; }
+  .arv-fact > .bi { display: none; }            /* small screens: the explanation was in the dialog; keep the model clear */
+  .arv-hint { margin-top: 0; padding-top: 0; border-top: 0; }
   .arv-fact .zh { font-size: 11.5px; }
   .arv-hint { font-size: 11px; margin-top: 4px; padding-top: 4px; }
   .arv-place { min-width: 0; }

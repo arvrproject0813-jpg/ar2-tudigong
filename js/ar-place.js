@@ -89,8 +89,8 @@ export function openPlaceAR({ id, title, fact }) {
     mv = el('model-viewer', {
       class: 'arv-mv', src: PLACE_MODELS(id), alt: plain(title),
       'camera-controls': true, 'touch-action': 'none', 'interaction-prompt': 'none',
-      'auto-rotate': true, 'auto-rotate-delay': '2500', 'rotation-per-second': '14deg',
-      'camera-orbit': '24deg 62deg 125%', 'min-camera-orbit': 'auto 15deg auto', 'max-camera-orbit': 'auto 88deg auto',
+      autoplay: true, 'auto-rotate': true, 'auto-rotate-delay': '2500', 'rotation-per-second': '14deg',
+      'camera-orbit': `24deg 62deg ${matchMedia('(max-height: 500px)').matches ? 150 : 125}%`, 'min-camera-orbit': 'auto 15deg auto', 'max-camera-orbit': 'auto 88deg auto',
       'field-of-view': '30deg', 'shadow-intensity': '1', 'shadow-softness': '0.8', exposure: '1.05',
       'environment-image': 'neutral', ar: true, 'ar-modes': 'webxr scene-viewer quick-look', 'ar-placement': 'floor', 'ar-scale': 'auto',
     });

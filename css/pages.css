@@ -371,3 +371,23 @@
   .p05-zone.is-glow { animation: none; box-shadow: 0 0 0 6px rgba(240, 207, 122, .6); }
   .p05-lines line { animation: none; stroke-dashoffset: 0; stroke-dasharray: none; }
 }
+
+/* P05 place dialog: picture, short explanation, "View in AR" */
+.modal.p05-info { width: min(660px, 100%); }
+.p05-info-body { display: grid; grid-template-columns: minmax(0, 44%) 1fr; gap: var(--space-4); align-items: center; }
+.p05-info-pic { aspect-ratio: 13 / 10; display: grid; place-items: center; border-radius: var(--radius-md); background: radial-gradient(ellipse at 50% 60%, #FFFBF3, #EFE2C6 75%); box-shadow: inset 0 0 0 1.5px rgba(201, 149, 46, .55); overflow: hidden; }
+.p05-info-pic img { width: 92%; height: 92%; object-fit: contain; filter: drop-shadow(0 6px 8px rgba(58, 42, 30, .25)); }
+.p05-info-text { display: flex; flex-direction: column; gap: var(--space-3); align-items: flex-start; }
+.p05-info-text p { font-size: 15px; line-height: 1.45; }
+.p05-info-ar { display: flex; align-items: center; gap: 10px; min-width: 190px; }
+.p05-info-ar .ic, .p05-info-ar .ic svg { width: 22px; height: 22px; flex: none; }
+@media (max-height: 500px) {
+  .modal.p05-info { padding: var(--space-3) var(--space-4); gap: var(--space-2); }
+  .modal.p05-info h2 .en { font-size: 18px; }
+  .modal.p05-info .close { top: 8px; right: 8px; }
+  .p05-info-body { gap: var(--space-3); grid-template-columns: minmax(0, 38%) 1fr; }
+  .p05-info-text { gap: var(--space-2); }
+  .p05-info-text p { font-size: 13px; line-height: 1.35; }
+  .p05-info-text p .zh { font-size: 12px; }
+}
+.btn.p05-info-ar { flex-direction: row; }

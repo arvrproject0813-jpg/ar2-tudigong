@@ -597,11 +597,11 @@ const CONTENT = {
       "zh": "整個街角"
     },
     "arTry": {
-      "en": "Now tap a place with a camera badge to see it in AR!",
-      "zh": "現在點有相機標誌的地點，用 AR 看看！"
+      "en": "Now tap a place with a camera badge to learn about it and view it in AR!",
+      "zh": "現在點有相機標誌的地點，認識它，再用 AR 看看！"
     },
     "arOpen": {
-      "en": "See it in AR",
+      "en": "View in AR",
       "zh": "用 AR 看看"
     },
     "arHint": {
@@ -622,28 +622,28 @@ const CONTENT = {
     },
     "arFacts": {
       "temple": {
-        "en": "Homes, the street and the market all meet near the small temple. That makes it a landmark and a meeting point.",
-        "zh": "住家、街道與市場都在小廟附近交會，讓它成為地標與聚集點。"
+        "en": "This small Tudigong temple stands where the homes, the street and the market meet. Neighbors stop here to pray, chat and meet friends, so it is a landmark and a meeting point.",
+        "zh": "這座土地公小廟就在住家、街道和市場交會的地方。鄰居們會在這裡拜拜、聊天、和朋友碰面，所以它是地標，也是聚集點。"
       },
       "residential": {
-        "en": "Families live here. Neighbors walk past the small temple every day.",
-        "zh": "許多家庭住在這裡，鄰居每天都會經過小廟。"
+        "en": "Rows of houses where families live. Every day, many neighbors walk past the small temple on their way to school, work or the market.",
+        "zh": "一排排房子，許多家庭住在這裡。每天，很多鄰居上學、上班或去市場時，都會經過小廟。"
       },
       "road": {
-        "en": "The road links the homes, the market and the temple.",
-        "zh": "道路把住家、市場和小廟連在一起。"
+        "en": "The road links the homes, the market and the temple. Scooters, cars and people move along it all day long.",
+        "zh": "道路把住家、市場和小廟連在一起。機車、汽車和行人整天都在這裡來來往往。"
       },
       "market": {
-        "en": "People shop and chat here every morning.",
-        "zh": "每天早上，大家在這裡買菜、聊天。"
+        "en": "In the morning, people buy fruit and vegetables here and chat with their neighbors. After shopping, many of them walk past the temple.",
+        "zh": "早上，大家在這裡買水果和蔬菜，也和鄰居聊聊天。買完菜，很多人會順路經過小廟。"
       },
       "park": {
-        "en": "A big banyan tree gives shade. Neighbors rest and meet here.",
-        "zh": "大榕樹帶來樹蔭，鄰居在這裡休息、聚會。"
+        "en": "A big banyan tree gives cool shade. Neighbors rest, play and meet here, close to the small temple.",
+        "zh": "大榕樹帶來涼爽的樹蔭。鄰居們在這裡休息、玩耍、聚會，離小廟很近。"
       },
       "street": {
-        "en": "The whole street corner, with the small temple where everything meets.",
-        "zh": "整個街角，小廟就在大家交會的地方。"
+        "en": "The whole street corner in 3D. Find the small temple where the homes, the street and the market all meet.",
+        "zh": "立體的整個街角。找一找住家、街道和市場交會處的小廟。"
       }
     },
     "nodeNote": {
