@@ -760,11 +760,11 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
   add(kit ? kitBanyan(0.2) : banyan(), -0.2, -0.05, 0.5);
   // P05: a small street-corner shrine where the two roads meet, facing the street.
   // P02/P04 already have the temple in the middle, so their street corner has a corner shop instead.
-  const mini = street ? (kit ? kitShrine(0.1, { burner: false }) : shrine()) : (kit ? kitPiece('storefront', { width: 0.085 }) : house(0.08, 0.1, 0.07, '#F2E2CC', COL.red));
+  const mini = street ? (kit ? kitShrine(0.1, { burner: false }) : shrine()) : (kit ? kitPiece('storefront', { width: 0.125 }) : house(0.1, 0.11, 0.08, '#F2E2CC', COL.red));
   if (street && !kit) mini.scale.setScalar(0.42);
   const miniWrap = new THREE.Group(); miniWrap.add(mini);
   if (street) { add(miniWrap, 0.3, 0.255, 0.55); lanterns = mini.userData.lanterns; }
-  else add(miniWrap, 0.285, 0.118, 0.55);
+  else add(miniWrap, 0.318, 0.074, 0.55);                       // the corner shop, kept clear of both roads
   // qilou houses in two rows behind the shrine, facades towards the viewer (+z = bottom edge of the card)
   const H = [[0.22, -0.2, 0.08, 0.17, '#F3EADA', COL.teal], [0.31, -0.2, 0.08, 0.21, '#EAD9C0', COL.red], [0.4, -0.2, 0.08, 0.15, '#F6EFE2', COL.gold],
              [0.27, -0.08, 0.08, 0.12, '#E9E1CF', COL.green], [0.37, -0.08, 0.09, 0.14, '#F2E2CC', COL.teal], [0.12, -0.22, 0.07, 0.13, '#F3E3CF', COL.red]];
@@ -812,7 +812,7 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
     temple: new THREE.Vector3(0.04, kit ? 0.33 : 0.27, 0.03),
     fields: new THREE.Vector3(-0.32, 0.05, -0.08),
     market: new THREE.Vector3(-0.26, 0.09, 0.2),
-    corner: new THREE.Vector3(0.285, 0.13, 0.118),
+    corner: new THREE.Vector3(0.318, street ? 0.13 : 0.16, street ? 0.118 : 0.074),
   };
   if (shadows) root.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
   return { root, parts, markers, lanterns, anchors, movers };
