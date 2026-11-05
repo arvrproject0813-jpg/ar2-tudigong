@@ -85,7 +85,7 @@ export function render(stage, ctx) {
     if (!(probe.getContext('webgl2') || probe.getContext('webgl'))) throw new Error('NO_WEBGL');
     const THREE = await import('three');
     const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
-    const { buildNeighborhood, tickNeighborhood, customModelExists, loadNeighborhoodGLB } = await import('../ar-diorama.js');
+    const { buildNeighborhood, tickNeighborhood, customModelExists, loadNeighborhoodGLB, loadKit } = await import('../ar-diorama.js');
     // the team's own model (assets/models/tudigong-neighborhood.glb) replaces the built-in one when it exists
     let n = null;
     if (await customModelExists()) {
@@ -95,6 +95,12 @@ export function render(stage, ctx) {
         n = await loadNeighborhoodGLB(THREE, GLTFLoader, DRACOLoader, { shadows: true });
       } catch (e) { console.warn('P04: own model failed to load, using the built-in one.', e); }
     }
+    // otherwise the built-in layout, with the team's 3D models (temple, shrine, banyan, roads…) when they load
+    let kit = null;
+    if (!n) {
+      try { const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js'); kit = await loadKit(THREE, GLTFLoader, { timeout: 12000 }); }
+      catch (e) { console.warn('P04: model kit failed to load.', e); }
+    }
     if (!alive) return;
 
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -103,7 +109,7 @@ export function render(stage, ctx) {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     const scene = new THREE.Scene();
-    if (!n) n = buildNeighborhood(THREE, { markers: false, shadows: true });
+    if (!n) n = buildNeighborhood(THREE, { markers: false, shadows: true, kit });
     // the model's lights were tuned for A-Frame's legacy light units; three r160 uses physical units
     n.root.traverse((o) => { if (o.isLight) o.intensity *= Math.PI; });
     scene.add(n.root);

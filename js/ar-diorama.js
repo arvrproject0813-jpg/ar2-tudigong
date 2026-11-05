@@ -3,8 +3,10 @@
 // Usage (after A-Frame + MindAR are loaded): registerDiorama(); then add
 //   <a-entity tdg-diorama></a-entity> inside the mindar-image-target entity.
 //
-// Cultural rules: shrine architecture, lanterns, stone lions and the offering table only.
-// No deity figure, no incense, no smoke, no light rays.
+// Cultural rules: shrine architecture, lanterns, stone lions and the offering table as observation objects.
+// With the model kit, a small Tudigong statue sits inside the shrine doorway and an incense burner stands to
+// one side: background elements only, never tappable or highlighted (storyboard Object Usage Rules).
+// No smoke, no light rays, no miracle effects.
 
 const COL = {
   paper: '#F6EEDF', paperD: '#EADCC2', wood: '#6B4A32', woodD: '#3A2A1E',
@@ -22,10 +24,12 @@ const COL = {
  *   street: the P05 street-corner layout (no big central temple, more homes, the small shrine on the corner)
  *   mood:   'day' (default) · 'dawn' (P05 before: cool light, shops shuttered, no laundry, lanterns unlit)
  *           · 'awake' (P05 after: day + people in the street and market)
+ *   kit:    the loaded model kit (loadKit()): the team's 3D models replace the built-in temple, corner shrine,
+ *           stone lions, banyan, shop buildings and roads. Without it everything is built from code.
  * Every "random" detail comes from a seeded generator, so the same options always build the same scene
  * (the two P05 renders line up exactly).
  */
-export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows = false, street = false, mood = 'day', place = null, life = false, era = null } = {}) {
+export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows = false, street = false, mood = 'day', place = null, life = false, era = null, kit = null } = {}) {
   const dawn = mood === 'dawn', people = mood === 'awake' || !!place;
   let seed = 20261022;
   const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
@@ -388,6 +392,68 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
     return g;
   }
 
+  /* ---------- the model kit: the team's 3D models, placed and scaled to fit the layout ---------- */
+  const kitPiece = (name, { width, height } = {}) => {        // a copy of a kit model, `width` (or `height`) across
+    const src = kit[name], sz = src.userData.size, o = src.clone(true);
+    o.scale.setScalar(width ? width / sz.x : height / sz.y);
+    const outer = new THREE.Group(); outer.add(o);
+    Object.defineProperty(outer, 'kitInner', { value: o });          // not in userData: that is exported into GLB files
+    return outer;
+  };
+  // inside a kit model, positions are in the model's own units (its box: centred, standing on y = 0)
+  const putIn = (host, name, nativeHeight, x, y, z, ry = 0, mirror = false) => {
+    const src = kit[name], o = src.clone(true), k = nativeHeight / src.userData.size.y;
+    o.scale.set(mirror ? -k : k, k, k); o.position.set(x, y, z); o.rotation.y = ry;
+    host.kitInner.add(o); return o;
+  };
+  // the small red-brick street-corner shrine: the Tudigong statue in its niche, stone lions either side, an incense burner to one side
+  function kitShrine(width, { lions = true, burner = true } = {}) {
+    const g = kitPiece('shrine', { width });                     // model: 2.19 wide, 2.5 tall; niche x ±0.34, y 0.215–1.45, z −0.06–0.24
+    putIn(g, 'statue', 0.5, 0, 0.215, 0.06);                       // small, inside the niche: a background element
+    if (lions) { putIn(g, 'lion', 0.62, -1.32, 0, 0.62, 0.15); putIn(g, 'lion', 0.62, 1.32, 0, 0.62, -0.15, true); }
+    if (burner) putIn(g, 'burner', 0.55, -0.82, 0, 1.45);
+    g.userData.lanterns = [];
+    return g;
+  }
+  // the ornate temple with dragons on the roof (the big centre temple)
+  function kitTemple(width) {
+    const g = kitPiece('temple', { width });                     // model: 0.88 wide, 0.98 tall, 0.72 deep, open front hall
+    putIn(g, 'statue', 0.2, 0, 0.07, -0.13);
+    putIn(g, 'lion', 0.15, -0.5, 0, 0.3, 0.15); putIn(g, 'lion', 0.15, 0.5, 0, 0.3, -0.15, true);
+    putIn(g, 'burner', 0.13, -0.3, 0, 0.5);
+    g.userData.lanterns = [];
+    return g;
+  }
+  // roads from the straight road tiles (asphalt, centre dashes, low kerbs and pavements either side)
+  //   axis 'x' or 'z'; at = the road's centre line; from/to along the axis; w = road width; cuts = [[a, b], …] left open for crossings
+  const ROAD_Y = 0.0064, KERB = 0.35;                           // tiles sit on the plinth; kerbs squashed to a low step
+  function tileRoad(axis, at, from, to, w, cuts = []) {
+    const s = w / 1.2;                                           // tile: road 1.2 wide, pavements 0.4 each side, 2 long
+    let segs = [[from, to]];
+    cuts.forEach(([a, b]) => { segs = segs.flatMap(([p, q]) => (b <= p || a >= q ? [[p, q]] : [[p, a], [b, q]].filter(([u, v]) => v - u > 0.004))); });
+    segs.forEach(([p, q]) => {
+      const len = q - p, n = Math.max(1, Math.round(len / (2 * s))), step = len / n;
+      for (let i = 0; i < n; i++) {
+        const t = kitPiece('roadStraight', { width: 2 }), inner = t.kitInner;
+        inner.scale.set(step / 2, s * KERB, s);
+        const mid = p + step * (i + 0.5);
+        if (axis === 'x') t.position.set(mid, ROAD_Y, at); else { t.position.set(at, ROAD_Y, mid); t.rotation.y = Math.PI / 2; }
+        roadsG.add(t);
+      }
+    });
+    return s;
+  }
+  // where two tile roads cross: an asphalt square and a pavement block on each corner
+  function tileCrossing(x, z, wx, wz) {                          // wx = width of the road running along z, wz = along x
+    const sx = wx / 1.2, sz = wz / 1.2, asph = kitMat('roadStraight', 'asphalt'), walk = kitMat('roadStraight', 'sidewalk');
+    const sq = mesh(new THREE.PlaneGeometry(wx, wz), asph, x, ROAD_Y + 0.0004, z); sq.rotation.x = -Math.PI / 2; roadsG.add(sq);
+    const pw = 0.4 * sx, pd = 0.4 * sz, h = 0.14 * sx * KERB;
+    [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([a, b]) => roadsG.add(box(pw, h, pd, walk, x + a * (wx / 2 + pw / 2), ROAD_Y, z + b * (wz / 2 + pd / 2))));
+  }
+  const kitMat = (name, matName) => { let m = null; kit[name].traverse((o) => { if (o.isMesh && !m && (o.material.name || '').toLowerCase() === matName) m = o.material; }); return m || M.stone; };
+  const roadsG = new THREE.Group();
+  const kitBanyan = (width) => kitPiece('banyan', { width });
+
   /* ---------- one place on its own small plinth (P05 AR camera: temple, residential, market, road, park) ---------- */
   if (place) return buildPlace(place);
   if (era) return buildEra(era);
@@ -414,9 +480,9 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
     let lanterns = [];
     if (id === 'temple') {
       roundPlinth(0.21);
-      const sh = at(shrine(), 0, -0.03); lanterns = sh.userData.lanterns;
+      const sh = at(kit ? kitShrine(0.24) : shrine(), 0, -0.03); lanterns = sh.userData.lanterns;
       at(smallTree(), -0.15, -0.12, 0, 1.3); at(smallTree(), 0.15, -0.12, 1, 1.2);
-      at(pottedPlant(), -0.11, 0.12, 0, 1.6); at(pottedPlant(), 0.11, 0.12, 0, 1.6);
+      if (!kit) { at(pottedPlant(), -0.11, 0.12, 0, 1.6); at(pottedPlant(), 0.11, 0.12, 0, 1.6); }
       at(lamp(), -0.17, 0.07);
       scoot(0.16, 0.07, 0.7, 1);
       folk([[0.13, 0.13]]);
@@ -436,7 +502,8 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
       rider([[-0.17, 0.105], [0.17, 0.105]], 1, { phase: 0.4 });
     } else if (id === 'market') {
       roundPlinth(0.18);
-      [[-0.075, -0.03, 0.4, COL.red], [0, -0.055, 0, COL.teal], [0.075, -0.03, -0.4, COL.red]].forEach(([x, z, ry, c]) => at(stall(c), x, z, ry, 1.25));
+      if (kit) at(kitPiece('storefront', { width: 0.13 }), 0, -0.095);          // the shop behind the stalls
+      [[-0.075, kit ? 0.0 : -0.03, 0.4, COL.red], [0, kit ? -0.015 : -0.055, 0, COL.teal], [0.075, kit ? 0.0 : -0.03, -0.4, COL.red]].forEach(([x, z, ry, c]) => at(stall(c), x, z, ry, 1.25));
       [[-0.12, 0.05], [0.12, 0.05], [0.0, 0.03]].forEach(([x, z]) => g.add(box(0.022, 0.014, 0.016, M.wood, x, 0, z)));   // crates
       for (let i = 0; i < 6; i++) g.add(mesh(new THREE.SphereGeometry(0.0045, 10, 8), std(fruit[i % fruit.length], { roughness: 0.45 }), -0.126 + (i % 3) * 0.006, 0.018, 0.047 + Math.floor(i / 3) * 0.006));
       at(lamp(), -0.15, -0.06);
@@ -449,11 +516,17 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
       g.add(box(0.42, 0.004, 0.42, paveMat, 0, 0, 0));
       [[0.44, 0.004, 0.006, 0, 0.22], [0.44, 0.004, 0.006, 0, -0.22], [0.006, 0.004, 0.44, 0.22, 0], [0.006, 0.004, 0.44, -0.22, 0]]
         .forEach(([w, h, d, x, z]) => g.add(box(w, h, d, M.gold, x, 0, z)));
-      flat(new THREE.PlaneGeometry(0.07, 0.42), std('#ffffff', { map: TEX.asphalt('z'), roughness: 0.95 }), 0.02, 0, 0.0045);
-      flat(new THREE.PlaneGeometry(0.42, 0.06), std('#ffffff', { map: TEX.asphalt('x'), roughness: 0.95 }), 0, 0.05, 0.0048);
-      for (let i = 0; i < 5; i++) g.add(box(0.058, 0.0012, 0.007, std('#F4F0E6', { roughness: 0.8 }), 0.02, 0.0045, -0.005 - i * 0.013));   // zebra crossing
+      if (kit) {
+        tileRoad('z', 0.02, -0.21, 0.21, 0.07, [[0, 0.1]]); tileRoad('x', 0.05, -0.21, 0.21, 0.06, [[-0.039, 0.079]]);
+        tileCrossing(0.02, 0.05, 0.07, 0.06); g.add(roadsG);
+      } else {
+        flat(new THREE.PlaneGeometry(0.07, 0.42), std('#ffffff', { map: TEX.asphalt('z'), roughness: 0.95 }), 0.02, 0, 0.0045);
+        flat(new THREE.PlaneGeometry(0.42, 0.06), std('#ffffff', { map: TEX.asphalt('x'), roughness: 0.95 }), 0, 0.05, 0.0048);
+      }
+      for (let i = 0; i < 5; i++) g.add(box(0.058, 0.0012, 0.007, std('#F4F0E6', { roughness: 0.8 }), 0.02, kit ? 0.0066 : 0.0045, -0.005 - i * 0.013));   // zebra crossing
       at(house(0.09, 0.13, 0.07, '#F2E2CC', COL.red), -0.12, -0.13); at(house(0.08, 0.11, 0.07, '#E9E1CF', COL.teal), 0.13, -0.13);
-      const mini = shrine(); mini.scale.setScalar(0.42); const mw = new THREE.Group(); mw.add(mini); at(mw, 0.13, 0.14, 0); lanterns = mini.userData.lanterns;
+      if (kit) at(kitShrine(0.1, { burner: false }), 0.13, 0.145);
+      else { const mini = shrine(); mini.scale.setScalar(0.42); const mw = new THREE.Group(); mw.add(mini); at(mw, 0.13, 0.14, 0); lanterns = mini.userData.lanterns; }
       rider([[0.036, -0.2], [0.036, 0.2]], 0, { phase: 0 });          // scooters riding both ways on both roads
       rider([[0.004, 0.2], [0.004, -0.2]], 1, { phase: 0.45 });
       rider([[-0.2, 0.064], [0.2, 0.064]], 2, { phase: 0.2 });
@@ -468,7 +541,7 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
       flat(new THREE.CircleGeometry(0.2, 64), std('#ffffff', { map: TEX.grass(), roughness: 0.95 }), 0, 0, 0.0045);
       flat(new THREE.PlaneGeometry(0.034, 0.2), paveMat, 0.0, 0.105, 0.0052);       // path in from the front
       flat(new THREE.CircleGeometry(0.05, 48), paveMat, 0.0, 0.0, 0.0052);           // little plaza round the banyan
-      at(banyan(), 0.0, -0.01, 0, 0.95);
+      at(kit ? kitBanyan(0.27) : banyan(), 0.0, -0.01, 0, kit ? 1 : 0.95);
       [[-0.13, 0.06, 1.15], [0.14, 0.07, 1.2], [-0.1, -0.13, 1.3], [0.12, -0.12, 1.1]].forEach(([x, z, sc], i) => at(smallTree(), x, z, i, sc));
       [[-0.05, 0.1, 0.3], [0.06, 0.1, -0.3]].forEach(([x, z, ry]) => {
         const b = new THREE.Group();
@@ -536,8 +609,8 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
 
     // the shrine and its banyan: identical in both eras (same seed, same place)
     const saved = seed; seed = 4242;
-    const sh = shrine(); at(sh, 0.1, 0.02, 0, 0.44);
-    at(banyan(), 0.19, -0.055, 0, 0.72);
+    const sh = kit ? at(kitShrine(0.11), 0.1, 0.02) : at(shrine(), 0.1, 0.02, 0, 0.44);
+    if (kit) at(kitBanyan(0.22), 0.19, -0.055); else at(banyan(), 0.19, -0.055, 0, 0.72);
     seed = saved;
     const lanterns = sh.userData.lanterns;
     const plaza = mesh(new THREE.CircleGeometry(0.085, 48), now ? std('#ffffff', { map: TEX.paving(), roughness: 0.9 }) : std('#C9B184', { roughness: 1 }), 0.15, 0.0047, -0.02);
@@ -600,8 +673,13 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
 
     // ---------------- today ----------------
     const asphaltX = std('#ffffff', { map: TEX.asphalt('x'), roughness: 0.95 }), asphaltZ = std('#ffffff', { map: TEX.asphalt('z'), roughness: 0.95 });
-    flat(0.92, 0.05, asphaltX, 0, 0.115, 0.0072);                // the old path across the land is now the main road
-    flat(0.055, 0.6, asphaltZ, 0.3, 0, 0.0074);                  // a new road
+    if (kit) {                                                   // the old path across the land is now the main road, plus a new road
+      tileRoad('x', 0.115, -0.46, 0.46, 0.05, [[0.23, 0.37]]); tileRoad('z', 0.3, -0.3, 0.3, 0.055, [[0.073, 0.157]]);
+      tileCrossing(0.3, 0.115, 0.055, 0.05); g.add(roadsG);
+    } else {
+      flat(0.92, 0.05, asphaltX, 0, 0.115, 0.0072);
+      flat(0.055, 0.6, asphaltZ, 0.3, 0, 0.0074);
+    }
     const zebra = std('#F4F0E6', { roughness: 0.8 });
     for (let i = 0; i < 5; i++) g.add(box(0.007, 0.0012, 0.04, zebra, 0.215 + i * 0.012, 0.0072, 0.115));
     for (let i = 0; i < 4; i++) g.add(box(0.045, 0.0012, 0.007, zebra, 0.3, 0.0074, 0.17 + i * 0.012));
@@ -615,7 +693,8 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
       [0.4, 0.0, 0.08, 0.11, '#F6EFE2', COL.green], [0.1, 0.25, 0.07, 0.075, '#F2E2CC', COL.gold], [0.19, 0.25, 0.07, 0.09, '#E9E1CF', COL.red], [0.4, 0.25, 0.08, 0.085, '#F3E3CF', COL.teal]];
     H.forEach(([x, z, w, h, wall, acc]) => at(house(w, h, 0.06, wall, acc), x, z));
     // a row of small shops on the main road, and a market
-    [[-0.41, 0.05, COL.red], [-0.33, 0.05, COL.teal], [-0.25, 0.05, COL.gold], [-0.17, 0.05, COL.red]].forEach(([x, z, c]) => {
+    if (kit) [-0.41, -0.33, -0.25, -0.17].forEach((x, i) => at(kitPiece('storefront', { width: 0.076 }), x, 0.038, i % 2 ? 0.0 : 0.0));
+    else [[-0.41, 0.05, COL.red], [-0.33, 0.05, COL.teal], [-0.25, 0.05, COL.gold], [-0.17, 0.05, COL.red]].forEach(([x, z, c]) => {
       at(house(0.07, 0.052, 0.05, '#F3EADA', c), x, z);
       const aw = mesh(new THREE.BoxGeometry(0.07, 0.002, 0.022), std('#ffffff', { map: TEX.awning(c), roughness: 0.7 }), x, 0.026, z + 0.034); aw.rotation.x = 0.25; g.add(aw);
     });
@@ -662,17 +741,22 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
   }
   const canal = mesh(new THREE.PlaneGeometry(0.03, 0.56), M.water, -0.12, 0.007, 0); canal.rotation.x = -Math.PI / 2; ground.add(canal);
   [-1, 1].forEach((s) => ground.add(box(0.004, 0.006, 0.56, M.stoneD, -0.12 + s * 0.017, 0.004, 0)));   // canal kerbs
-  const road1 = mesh(new THREE.PlaneGeometry(0.06, 0.58), std('#ffffff', { map: TEX.asphalt('z'), roughness: 0.95 }), 0.2, 0.0065, 0); road1.rotation.x = -Math.PI / 2; ground.add(road1);
-  const road2 = mesh(new THREE.PlaneGeometry(0.62, 0.05), std('#ffffff', { map: TEX.asphalt('x'), roughness: 0.95 }), 0.16, 0.0068, 0.18); road2.rotation.x = -Math.PI / 2; ground.add(road2);
+  if (kit) {
+    tileRoad('z', 0.2, -0.29, 0.29, 0.06, [[0.138, 0.222]]); tileRoad('x', 0.18, -0.15, 0.46, 0.05, [[0.15, 0.25]]);
+    tileCrossing(0.2, 0.18, 0.06, 0.05); ground.add(roadsG);
+  } else {
+    const road1 = mesh(new THREE.PlaneGeometry(0.06, 0.58), std('#ffffff', { map: TEX.asphalt('z'), roughness: 0.95 }), 0.2, 0.0065, 0); road1.rotation.x = -Math.PI / 2; ground.add(road1);
+    const road2 = mesh(new THREE.PlaneGeometry(0.62, 0.05), std('#ffffff', { map: TEX.asphalt('x'), roughness: 0.95 }), 0.16, 0.0068, 0.18); road2.rotation.x = -Math.PI / 2; ground.add(road2);
+  }
   const grass = mesh(new THREE.PlaneGeometry(0.28, 0.2), std('#ffffff', { map: TEX.grass(), roughness: 0.95 }), 0.0, 0.0062, 0.16); grass.rotation.x = -Math.PI / 2; ground.add(grass);
   add(ground, 0, 0, 0.1);
 
   // shrine at the centre (the hero), banyan behind it, houses, market
   let lanterns = [];
-  if (!street) { const sh = shrine(); lanterns = sh.userData.lanterns; add(sh, 0.04, 0.03, 0.35); }
-  add(banyan(), -0.2, -0.05, 0.5);
+  if (!street) { const sh = kit ? kitTemple(0.26) : shrine(); lanterns = sh.userData.lanterns; add(sh, 0.04, 0.03, 0.35); }
+  add(kit ? kitBanyan(0.2) : banyan(), -0.2, -0.05, 0.5);
   // a small street-corner shrine where the two roads meet, facing the street
-  const mini = shrine(); mini.scale.setScalar(0.42);
+  const mini = kit ? kitShrine(0.1, { burner: false }) : shrine(); if (!kit) mini.scale.setScalar(0.42);
   const miniWrap = new THREE.Group(); miniWrap.add(mini);
   if (street) { add(miniWrap, 0.3, 0.255, 0.55); lanterns = mini.userData.lanterns; }
   else add(miniWrap, 0.285, 0.118, 0.55);
@@ -720,7 +804,7 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
 
   // the places the P04 pins point at (a little above each one)
   const anchors = {
-    temple: new THREE.Vector3(0.04, 0.27, 0.03),
+    temple: new THREE.Vector3(0.04, kit ? 0.33 : 0.27, 0.03),
     fields: new THREE.Vector3(-0.32, 0.05, -0.08),
     market: new THREE.Vector3(-0.26, 0.09, 0.2),
     corner: new THREE.Vector3(0.285, 0.13, 0.118),
@@ -772,6 +856,41 @@ export function lifeClip(THREE, n, { length = 12, fps = 12 } = {}) {
     tracks.push(new THREE.QuaternionKeyframeTrack(`${L.name}.quaternion`, times, rot));
   });
   return new THREE.AnimationClip('Neighbourhood life', length, tracks);
+}
+
+/* ---------- the model kit: the team's 3D models ----------
+   assets/models/kit/*.glb, made web-ready (about 1 MB each). loadKit() loads them once per three.js build
+   (A-Frame's THREE in AR, the three module on P04) and buildNeighborhood(THREE, { kit }) puts them in place.
+   To swap a model, replace the file with one that faces +Z and stands on the ground (any size: it is fitted). */
+export const KIT_FILES = {
+  temple: 'assets/models/kit/temple.glb', shrine: 'assets/models/kit/corner-shrine.glb', statue: 'assets/models/kit/tudigong-statue.glb',
+  lion: 'assets/models/kit/stone-lion.glb', burner: 'assets/models/kit/incense-burner.glb', banyan: 'assets/models/kit/banyan.glb',
+  storefront: 'assets/models/kit/storefront.glb', roadStraight: 'assets/models/kit/road-straight.glb', roadCorner: 'assets/models/kit/road-corner.glb',
+};
+const kits = new WeakMap();
+export function loadKit(THREE, GLTFLoader, { timeout = 20000 } = {}) {
+  if (kits.has(THREE)) return kits.get(THREE);
+  const loader = new GLTFLoader();
+  const prep = (scene) => {                                     // centre it, stand it on y = 0, soften metal (no environment map in AR)
+    scene.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(scene), size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
+    scene.position.set(-c.x, -box.min.y, -c.z);
+    scene.traverse((o) => {
+      if (!o.isMesh) return;
+      o.castShadow = true; o.receiveShadow = true;
+      (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => {
+        if ('metalness' in m) m.metalness = Math.min(m.metalness ?? 0, 0.3);
+        if ('roughness' in m) m.roughness = Math.max(m.roughness ?? 1, 0.5);
+      });
+    });
+    const g = new THREE.Group(); g.add(scene); g.userData.size = size; return g;
+  };
+  const all = Promise.all(Object.entries(KIT_FILES).map(([k, url]) => loader.loadAsync(url).then((gl) => [k, prep(gl.scene)])))
+    .then(Object.fromEntries);
+  const p = Promise.race([all, new Promise((_, no) => setTimeout(() => no(new Error('model kit timed out')), timeout))])
+    .catch((e) => { console.warn('Model kit not loaded, using the built-in models.', e); kits.delete(THREE); return null; });
+  kits.set(THREE, p);
+  return p;
 }
 
 /* ---------- your own model (GLB) ----------
@@ -890,10 +1009,21 @@ export function registerDiorama() {
       this.el.object3D.add(this.holder);
       this.n = null; this.t0 = null;
       this.still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const use = (n) => { if (!this.holder) return; this.n = n; this.holder.add(n.root); this.t0 = null; };
-      customModelExists().then((yes) => (yes
-        ? loadNeighborhoodGLB(A.THREE, A.THREE.GLTFLoader, A.THREE.DRACOLoader).catch((e) => { console.warn('Own model failed to load, using the built-in one.', e); return buildNeighborhood(A.THREE); })
-        : buildNeighborhood(A.THREE))).then(use);
+      const use = (n) => {
+        if (!this.holder) return;
+        if (this.n) this.holder.remove(this.n.root);               // swap the quick built-in model for the full one
+        this.n = n; this.holder.add(n.root); this.t0 = null;
+      };
+      customModelExists().then((yes) => {
+        if (yes) {
+          loadNeighborhoodGLB(A.THREE, A.THREE.GLTFLoader, A.THREE.DRACOLoader)
+            .catch((e) => { console.warn('Own model failed to load, using the built-in one.', e); return buildNeighborhood(A.THREE); }).then(use);
+          return;
+        }
+        // show the built-in neighbourhood at once, then switch to the team's 3D models as soon as they have loaded
+        use(buildNeighborhood(A.THREE));
+        loadKit(A.THREE, A.THREE.GLTFLoader, { timeout: 45000 }).then((kit) => { if (kit) use(buildNeighborhood(A.THREE, { kit })); });
+      });
     },
     tick(time) {
       if (!this.n || !this.el.object3D.visible) return;     // still loading, or card not in view
