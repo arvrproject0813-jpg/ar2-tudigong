@@ -410,8 +410,9 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
   function kitShrine(width, { lions = true, burner = true } = {}) {
     const g = kitPiece('shrine', { width });                     // model: 2.19 wide, 2.5 tall; niche x ±0.34, y 0.215–1.45, z −0.06–0.24
     putIn(g, 'statue', 0.5, 0, 0.215, 0.06);                       // small, inside the niche: a background element
-    if (lions) { putIn(g, 'lion', 0.62, -1.32, 0, 0.62, 0.15); putIn(g, 'lion', 0.62, 1.32, 0, 0.62, -0.15, true); }
-    if (burner) putIn(g, 'burner', 0.55, -0.82, 0, 1.45);
+    // the stone lions guard the front: one at each front corner, facing out (never out in the road)
+    if (lions) { putIn(g, 'lion', 0.6, -0.92, 0, 1.0, 0.12); putIn(g, 'lion', 0.6, 0.92, 0, 1.0, -0.12, true); }
+    if (burner) putIn(g, 'burner', 0.5, -1.5, 0, 0.35);              // off to the side, in the background
     g.userData.lanterns = [];
     return g;
   }
@@ -419,8 +420,8 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
   function kitTemple(width) {
     const g = kitPiece('temple', { width });                     // model: 0.88 wide, 0.98 tall, 0.72 deep, open front hall
     putIn(g, 'statue', 0.2, 0, 0.07, -0.13);
-    putIn(g, 'lion', 0.15, -0.5, 0, 0.3, 0.15); putIn(g, 'lion', 0.15, 0.5, 0, 0.3, -0.15, true);
-    putIn(g, 'burner', 0.13, -0.3, 0, 0.5);
+    putIn(g, 'lion', 0.15, -0.36, 0, 0.45, 0.12); putIn(g, 'lion', 0.15, 0.36, 0, 0.45, -0.12, true);   // in front, at the left and right ends
+    putIn(g, 'burner', 0.12, -0.56, 0, 0.12);
     g.userData.lanterns = [];
     return g;
   }
@@ -739,8 +740,10 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
     const f = mesh(new THREE.PlaneGeometry(0.085, 0.085), fieldMat, -0.4 + i * 0.09, 0.006, -0.17 + j * 0.09);
     f.rotation.x = -Math.PI / 2; ground.add(f);
   }
-  const canal = mesh(new THREE.PlaneGeometry(0.03, 0.56), M.water, -0.12, 0.007, 0); canal.rotation.x = -Math.PI / 2; ground.add(canal);
-  [-1, 1].forEach((s) => ground.add(box(0.004, 0.006, 0.56, M.stoneD, -0.12 + s * 0.017, 0.004, 0)));   // canal kerbs
+  if (street) {                                                 // the canal runs past the market on P05 only
+    const canal = mesh(new THREE.PlaneGeometry(0.03, 0.56), M.water, -0.12, 0.007, 0); canal.rotation.x = -Math.PI / 2; ground.add(canal);
+    [-1, 1].forEach((s) => ground.add(box(0.004, 0.006, 0.56, M.stoneD, -0.12 + s * 0.017, 0.004, 0)));   // canal kerbs
+  }
   if (kit) {
     tileRoad('z', 0.2, -0.29, 0.29, 0.06, [[0.138, 0.222]]); tileRoad('x', 0.18, -0.15, 0.46, 0.05, [[0.15, 0.25]]);
     tileCrossing(0.2, 0.18, 0.06, 0.05); ground.add(roadsG);
@@ -755,8 +758,10 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
   let lanterns = [];
   if (!street) { const sh = kit ? kitTemple(0.26) : shrine(); lanterns = sh.userData.lanterns; add(sh, 0.04, 0.03, 0.35); }
   add(kit ? kitBanyan(0.2) : banyan(), -0.2, -0.05, 0.5);
-  // a small street-corner shrine where the two roads meet, facing the street
-  const mini = kit ? kitShrine(0.1, { burner: false }) : shrine(); if (!kit) mini.scale.setScalar(0.42);
+  // P05: a small street-corner shrine where the two roads meet, facing the street.
+  // P02/P04 already have the temple in the middle, so their street corner has a corner shop instead.
+  const mini = street ? (kit ? kitShrine(0.1, { burner: false }) : shrine()) : (kit ? kitPiece('storefront', { width: 0.085 }) : house(0.08, 0.1, 0.07, '#F2E2CC', COL.red));
+  if (street && !kit) mini.scale.setScalar(0.42);
   const miniWrap = new THREE.Group(); miniWrap.add(mini);
   if (street) { add(miniWrap, 0.3, 0.255, 0.55); lanterns = mini.userData.lanterns; }
   else add(miniWrap, 0.285, 0.118, 0.55);
