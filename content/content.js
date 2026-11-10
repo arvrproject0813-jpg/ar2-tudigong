@@ -634,8 +634,8 @@ const CONTENT = {
         "zh": "道路把住家、市場和小廟連在一起。機車、汽車和行人整天都在這裡來來往往。"
       },
       "market": {
-        "en": "In the morning, people buy fruit and vegetables here and chat with their neighbors. After shopping, many of them walk past the temple.",
-        "zh": "早上，大家在這裡買水果和蔬菜，也和鄰居聊聊天。買完菜，很多人會順路經過小廟。"
+        "en": "Stalls sell food and everyday things, and neighbors stop to eat and chat. After shopping, many of them walk past the temple.",
+        "zh": "攤位賣吃的和日常用品，鄰居們在這裡吃東西、聊天。逛完市場，很多人會順路經過小廟。"
       },
       "park": {
         "en": "A big banyan tree gives cool shade. Neighbors rest, play and meet here, close to the small temple.",

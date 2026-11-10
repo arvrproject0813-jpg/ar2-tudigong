@@ -366,6 +366,8 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
   /* ---------- market stall ---------- */
   const fruit = [COL.gold, '#E58A2E', COL.green, COL.red, '#F2C14E'];
   function stall(c1) {
+    // with the kit: the team's market stalls (red = food stall, teal = accessories stall)
+    if (kit) return kitPiece(c1 === COL.teal ? 'stallAcc' : 'stallFood', { width: 0.056 });
     const g = new THREE.Group();
     [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sz]) => g.add(mesh(new THREE.CylinderGeometry(0.0015, 0.0015, 0.05, 6), M.woodD, sx * 0.025, 0.025, sz * 0.018)));
     const aw = mesh(new THREE.BoxGeometry(0.064, 0.003, 0.048), std('#ffffff', { map: TEX.awning(c1), roughness: 0.7 }), 0, 0.052, 0);
@@ -870,7 +872,8 @@ export function lifeClip(THREE, n, { length = 12, fps = 12 } = {}) {
 export const KIT_FILES = {
   temple: 'assets/models/kit/temple.glb', shrine: 'assets/models/kit/corner-shrine.glb', statue: 'assets/models/kit/tudigong-statue.glb',
   lion: 'assets/models/kit/stone-lion.glb', burner: 'assets/models/kit/incense-burner.glb', banyan: 'assets/models/kit/banyan.glb',
-  storefront: 'assets/models/kit/storefront.glb', roadStraight: 'assets/models/kit/road-straight.glb', roadCorner: 'assets/models/kit/road-corner.glb',
+  storefront: 'assets/models/kit/storefront.glb', stallFood: 'assets/models/kit/stall-food.glb', stallAcc: 'assets/models/kit/stall-accessories.glb',
+  roadStraight: 'assets/models/kit/road-straight.glb', roadCorner: 'assets/models/kit/road-corner.glb',
 };
 const kits = new WeakMap();
 export function loadKit(THREE, GLTFLoader, { timeout = 20000 } = {}) {
