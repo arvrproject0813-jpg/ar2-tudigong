@@ -960,8 +960,8 @@ const CONTENT = {
           "zh": "找找小廟"
         },
         "note": {
-          "en": "Many Tudigong temples are small and sit inside neighborhoods. Even a small temple can be an important local landmark.",
-          "zh": "許多土地公廟規模不大，就位在社區之中；即使是小廟，也可能是重要的地方地標。"
+          "en": "Many Tudigong temples are small and tucked inside neighborhoods. Even a small temple can be an important local landmark.",
+          "zh": "許多土地公廟規模不大，就藏身在社區之中；即使是小廟，也可能是重要的地方地標。"
         }
       },
       "fields": {
@@ -970,8 +970,8 @@ const CONTENT = {
           "zh": "看看田野"
         },
         "note": {
-          "en": "Tudigong culture has long been connected with land and farming life. Some small temples stand near fields.",
-          "zh": "土地公文化長期與土地和農業生活相關，有些小廟就位在田邊。"
+          "en": "Tudigong culture has long been tied to the land and to farming life, and some small temples stand right beside the fields.",
+          "zh": "土地公文化長期與土地和農業生活息息相關，有些小廟就坐落在田邊。"
         }
       },
       "market": {
@@ -980,8 +980,8 @@ const CONTENT = {
           "zh": "逛逛市場"
         },
         "note": {
-          "en": "Markets are busy centers of community life, and local business culture is also part of Tudigong traditions.",
-          "zh": "市場是社區生活熱鬧的中心，在地商業文化也是土地公傳統的一部分。"
+          "en": "Markets are the busy heart of community life, and local business culture is part of Tudigong traditions too.",
+          "zh": "市場是社區生活熱鬧的中心，而在地商業文化也是土地公傳統的一部分。"
         }
       },
       "corner": {
@@ -990,8 +990,8 @@ const CONTENT = {
           "zh": "探索街角"
         },
         "note": {
-          "en": "Roads and people meet at a street corner. A small temple here can become a meeting point and a landmark.",
-          "zh": "街角是道路與人們交會之處；這裡的小廟可能成為集合點與地標。"
+          "en": "A street corner is where roads and people meet. A small temple here can become both a landmark and a meeting point.",
+          "zh": "街角是道路交會、人們相遇的地方；位在這裡的小廟可能成為地標與集合點。"
         }
       }
     },
@@ -1022,8 +1022,8 @@ const CONTENT = {
       }
     ],
     "narration": {
-      "en": "Starting from Kaohsiung's neighborhoods, fields, markets, and settlements, we can find many cultural traces of Tudigong. Tudigong, also known as Fude Zhengshen, is a common local guardian in Taiwanese folk belief. Small temples and cultural landscapes also record how people use land, build communities, and create local memory.",
-      "zh": "從高雄的街坊、田野、市場與聚落出發，我們可以找到許多土地公的文化痕跡。土地公又稱福德正神，是臺灣民間信仰中常見的地方守護神。小廟與文化地景，也記錄了人們如何利用土地、建立社區，並創造地方記憶。"
+      "en": "As we explore Kaohsiung’s neighborhoods, fields, markets, and settlements, we find many cultural traces of Tudigong. Also known as Fude Zhengshen, Tudigong is a common local guardian in Taiwanese folk belief. His small temples and the cultural landscapes around them also record how people use the land, build communities, and create local memory.",
+      "zh": "走訪高雄的街坊、田野、市場與聚落，我們可以發現許多土地公的文化痕跡。土地公又稱福德正神，是臺灣民間信仰中常見的地方守護神。土地公廟與周圍的文化地景，也記錄了人們如何利用土地、建立社區，並創造地方記憶。"
     }
   },
   "p05": {
@@ -1200,8 +1200,8 @@ const CONTENT = {
       }
     },
     "nodeNote": {
-      "en": "Homes, the street and the market all meet near the small temple. That makes it a landmark and a meeting point for the neighborhood.",
-      "zh": "住家、街道與市場都在小廟附近交會，讓它成為街坊的地標與聚集點。"
+      "en": "The small temple sits where homes, the street, and the market come together, so it becomes a landmark and a meeting place for the neighborhood.",
+      "zh": "小廟正好位在住家、街道與市場交會的地方，因此成為街坊的地標與聚集點。"
     },
     "chips": [
       {
@@ -1214,8 +1214,8 @@ const CONTENT = {
       }
     ],
     "narration": {
-      "en": "In Kaohsiung and many places in Taiwan, a Tudigong temple does not have to be large. Some are found at street corners, beside roads, or inside neighborhoods. Besides being places of belief, these small temples can also become local landmarks and cultural points connected with community memory.",
-      "zh": "在高雄與臺灣許多地方，土地公廟不一定很大。有些位在街角、路旁，或就在社區之中。這些小廟除了是信仰的場所，也可能成為地方地標，以及與社區記憶相連的文化據點。"
+      "en": "In Kaohsiung and many other parts of Taiwan, a Tudigong temple does not have to be large. Some stand on street corners or beside roads, and others sit inside neighborhoods. These small temples are places of belief, but they can also become local landmarks that keep community memory.",
+      "zh": "在高雄以及臺灣許多地方，土地公廟不一定很大。有些位在街角或路旁，有些就藏身在社區之中。這些小廟是信仰的場所，也可能成為保存社區記憶的地方地標。"
     }
   },
   "p06": {
@@ -1266,8 +1266,18 @@ const CONTENT = {
       "zh": "尋找文化線索"
     },
     "clueNote": {
-      "en": "The land around it changed, but the small temple stayed in or near its earlier place. Places like this keep cultural memory.",
-      "zh": "周圍的土地改變了，小廟仍留在原處或附近。這樣的地方保存了文化記憶。"
+      "en": "The land around it has changed, but the small temple has stayed in or near the same spot. Places like this hold on to cultural memory.",
+      "zh": "周圍的土地改變了，小廟卻仍留在原處或附近。這樣的地方保存了文化記憶。"
+    },
+    "clueNotes": {
+      "temple": {
+        "en": "The land around it has changed, but the small temple has stayed in or near the same spot. Places like this hold on to cultural memory.",
+        "zh": "周圍的土地改變了，小廟卻仍留在原處或附近。這樣的地方保存了文化記憶。"
+      },
+      "tree": {
+        "en": "Fields became streets, but the old banyan tree still stands beside the small temple. In many Kaohsiung neighborhoods, people gather and rest under trees like this one. Over time, the tree becomes part of cultural memory.",
+        "zh": "田地變成了街道，老榕樹依然立在小廟旁。在高雄許多街坊，人們常在這樣的老樹下相聚、休息。久而久之，老樹也成了文化記憶的一部分。"
+      }
     },
     "task1": {
       "en": "Slide from Past to Present",
@@ -1322,8 +1332,8 @@ const CONTENT = {
       }
     ],
     "narration": {
-      "en": "Tudigong culture has long been connected with fields, settlements, and life on the land. As parts of Kaohsiung have changed, some fields have become roads, homes, or business areas, while some small temples have remained in or near their earlier locations. Comparing past and present maps can help us read local change and cultural memory.",
-      "zh": "土地公文化長久以來與田野、聚落以及土地上的生活緊密相連。隨著高雄部分地區的變遷，有些田地變成了道路、住家或商業區，而有些小廟仍留在原本的位置或附近。比較過去與現在的地圖，可以幫助我們解讀地方的變化與文化記憶。"
+      "en": "Tudigong culture has long been tied to fields, settlements, and life on the land. As parts of Kaohsiung changed, some fields became roads, homes, or business districts, yet some small temples stayed in or near their original locations. Comparing maps of the past and present helps us read how a place has changed and what cultural memory it keeps.",
+      "zh": "土地公文化長久以來與田野、聚落和土地上的生活緊密相連。隨著高雄部分地區的變遷，有些田地變成了道路、住家或商業區，但也有些小廟仍留在原本的位置或附近。比較過去與現在的地圖，能幫助我們解讀地方的變化，以及其中保留的文化記憶。"
     }
   },
   "p07": {
@@ -1410,8 +1420,8 @@ const CONTENT = {
       "zh": "物件任務完成"
     },
     "narration": {
-      "en": "When we observe a Tudigong temple, we can look beyond the deity image and study the building and its surroundings. The small temple, offering table, stone lions, and—where the local context supports it—old trees may all become part of a cultural landscape.",
-      "zh": "觀察土地公廟時，我們可以把目光放到神像以外，看看建築本身與周圍的環境。小廟、供桌、石獅，以及在地方脈絡相符時的老樹，都可能成為文化地景的一部分。"
+      "en": "When observing a Tudigong temple, we can look beyond the deity image and notice the building and the area around it. The small temple, the offering table, and the stone lions can all be part of a cultural landscape. In some places, an old tree nearby is part of it too.",
+      "zh": "觀察土地公廟時，我們可以把目光放到神像以外，留意建築本身和周圍的環境。小廟、供桌和石獅，都可以是文化地景的一部分。在有些地方，附近的老樹也是其中之一。"
     }
   },
   "p08": {
@@ -1474,8 +1484,8 @@ const CONTENT = {
       "zh": "你的街坊中，哪些地方應該出現在社區文化地圖上？"
     },
     "narration": {
-      "en": "Local culture does not exist in only one building. Starting with a simplified community culture map of Kaohsiung, we can see how schools, homes, markets, parks, old trees, and local temples form everyday living spaces. Then think about your own neighborhood: which places belong on a community culture map?",
-      "zh": "地方文化並不只存在於一棟建築之中。從一張簡化的高雄社區文化地圖開始，我們可以看到學校、住家、市場、公園、老樹與地方廟宇如何構成日常生活的空間。接著想一想你自己的社區：哪些地方應該出現在社區文化地圖上？"
+      "en": "Local culture lives in more than one building. This simple community culture map of Kaohsiung shows how schools, homes, markets, parks, old trees, and local temples come together in everyday life. Now think about your own neighborhood: which places belong on a community culture map?",
+      "zh": "地方文化不只存在於一棟建築裡。這張簡化的高雄社區文化地圖，呈現了學校、住家、市場、公園、老樹與地方廟宇如何在日常生活中連結在一起。現在想一想你自己的街坊：哪些地方應該出現在社區文化地圖上？"
     }
   },
   "p09": {
@@ -1554,8 +1564,8 @@ const CONTENT = {
       "zh": "完成 3 個詞彙配對"
     },
     "narration": {
-      "en": "Traditionally, Taiwanese folk culture includes zuoya observances on the second and sixteenth days of each lunar month. The second day of the second lunar month is called Touya, while the sixteenth day of the twelfth lunar month is called Weiya. Over time, Weiya also became a common term for year-end company meals.",
-      "zh": "傳統上，臺灣民間文化有在每個農曆月初二與十六「做牙」的習俗。農曆二月初二稱為「頭牙」，農曆十二月十六日則稱為「尾牙」。隨著時間演變，「尾牙」也成為公司年終聚餐的常見說法。"
+      "en": "In traditional Taiwanese folk culture, zuoya is observed on the second and sixteenth days of each lunar month. The second day of the second lunar month is called Touya, and the sixteenth day of the twelfth lunar month is called Weiya. Over time, Weiya has also become the everyday word for a company’s year-end dinner.",
+      "zh": "在臺灣傳統民間文化中，每個農曆月的初二與十六都有「做牙」的習俗。農曆二月初二稱為「頭牙」，十二月十六則稱為「尾牙」。隨著時間演變，「尾牙」也成為公司年終聚餐的常見說法。"
     }
   },
   "p10": {
@@ -1624,8 +1634,8 @@ const CONTENT = {
       "zh": "資料來源：高雄市立歷史博物館"
     },
     "narration": {
-      "en": "In Hakka communities such as Meinong in Kaohsiung, Tudigong is often called Bogong. Local language, history, and community life have shaped distinctive Bogong traditions. In Meinong's Yong'an area, a fuchang is a culture-specific festival space or structure; it is not simply another name for every Tudigong temple.",
-      "zh": "在高雄美濃等客家社區，土地公常被稱為「伯公」。在地的語言、歷史與社區生活，形塑出獨特的伯公傳統。在美濃永安地區，「福廠」是具有特定文化意義的節慶空間或結構，並不是所有土地公廟的另一個名稱。"
+      "en": "In Hakka communities such as Meinong in Kaohsiung, Tudigong is often called Bogong. Local language, history, and community life have given Bogong traditions their own local style. In the Yong’an area of Meinong, a fuchang is a special space or structure for a local festival. It is not just another name for a Tudigong temple.",
+      "zh": "在高雄美濃等客家社區，土地公常被稱為「伯公」。在地的語言、歷史與社區生活，讓伯公傳統有了自己的在地特色。在美濃永安地區，「福廠」是當地節慶使用的特別空間或結構，並不是土地公廟的另一個名稱。"
     }
   },
   "p11": {
@@ -1759,8 +1769,8 @@ const CONTENT = {
       "zh": "聆聽"
     },
     "narration": {
-      "en": "In this journey, we started from local living spaces in Kaohsiung and learned how Tudigong culture connects land, fields, street corners, markets, communities, and cultural memory. We also explored the local expression of Bogong culture in Meinong. Now, answer the core question in one English sentence.",
-      "zh": "在這段旅程中，我們從高雄在地的生活空間出發，認識土地公文化如何連結土地、田野、街角、市場、社區與文化記憶，也探索了美濃伯公文化的在地表現。現在，請用一句英文回答核心提問。"
+      "en": "On this journey, we started from everyday places in Kaohsiung and learned how Tudigong culture connects land, fields, street corners, markets, communities, and cultural memory. We also learned that in Meinong, Tudigong is called Bogong and has its own local traditions. Now, answer the core question in one English sentence.",
+      "zh": "在這段旅程中，我們從高雄的日常場所出發，認識了土地公文化如何連結土地、田野、街角、市場、社區與文化記憶。我們也認識到，在美濃，土地公被稱為「伯公」，並有自己的在地傳統。現在，請用一句英文回答核心提問。"
     }
   },
   "p12": {
@@ -1857,8 +1867,8 @@ const CONTENT = {
       }
     },
     "narration": {
-      "en": "You have completed a bilingual AR journey about Tudigong belief, life on the land, local communities, cultural landscapes, zuoya culture, and Bogong culture in Meinong. Return to the first question: why is Tudigong often found close to everyday life? One answer is that belief becomes connected with land use, community relationships, and local memory.",
-      "zh": "你已完成一段雙語 AR 旅程，認識了土地公信仰、土地上的生活、地方社區、文化地景、做牙文化，以及美濃的伯公文化。回到最初的問題：為什麼土地公常出現在日常生活附近？其中一個答案是：信仰逐漸與土地利用、社區關係以及地方記憶連結在一起。"
+      "en": "You have completed a bilingual AR journey through Tudigong belief, life on the land, local communities, cultural landscapes, zuoya culture, and Bogong culture in Meinong. Now let’s return to the first question: why is Tudigong so often found close to everyday life? One answer is that the belief has become connected with land use, community relationships, and local memory.",
+      "zh": "你已完成一段雙語 AR 旅程，認識了土地公信仰、土地上的生活、地方社區、文化地景、做牙文化，以及美濃的伯公文化。現在回到最初的問題：為什麼土地公常出現在日常生活附近？其中一個答案是：這份信仰逐漸與土地利用、社區關係和地方記憶連結在一起。"
     }
   },
   "vocab": [

@@ -138,7 +138,7 @@ export function render(stage, ctx) {
 
   function pickClue(n) {
     if (!compared) { clearToasts(); toast(c.notYet, 'hint'); return; }
-    notePopover(frame, { xPct: n.pin[0], yPct: n.pin[1], title: c.pins[n.id], body: c.clueNote });
+    notePopover(frame, { xPct: n.pin[0], yPct: n.pin[1], title: c.pins[n.id], body: c.clueNotes?.[n.id] || c.clueNote });
     Object.values(pins).forEach((p) => p.classList.remove('is-pulse-loop'));
     pins[n.id].classList.add('is-active');
     if (!clue) {
