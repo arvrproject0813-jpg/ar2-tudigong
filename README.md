@@ -43,6 +43,8 @@ Browsers only allow sound after the first tap. So on the first visit the welcome
 
 To use your own audio instead, upload `assets/audio/bgm.mp3` (looped background music) and/or `assets/audio/click.mp3` (button sound); the app uses them automatically. Volumes are `MUSIC_LEVEL`, `DUCK_LEVEL` and `CLICK_LEVEL` at the top of `js/sound.js`.
 
+Current background music: `assets/audio/bgm.mp3` is "When Peach Blossoms Bloom" (Song of Everlasting Sorrow ambient music), a 6 min 20 s section of the team's 65-minute file, cut so the end blends into the start, level-matched (-20 LUFS) and saved at 96 kbps (4.6 MB). It plays through a Web Audio gain node so fading, ducking and the music button also work on iPad/iPhone. To change it, replace that file.
+
 ## Full-screen mode
 
 The gold-framed arrow tab on the panel's left edge (or the frame icon in the top bar) slides the side panel away so the activity uses the whole screen; the same tab, now at the screen edge, brings it back. The choice is remembered, except on P02 (Scan): arriving there always slides the panel in from the right so the scan instructions are seen (`playPanelEnter()` in `js/app.js`).

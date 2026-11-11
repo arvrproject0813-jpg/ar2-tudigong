@@ -315,6 +315,7 @@ let ctx = null, bus = null, musicGain = null, sfxGain = null;
 let timer = null, nextBarTime = 0, barIndex = 0;
 let wanted = false, ducked = false;
 let fileMusic = null, clickFile = null;            // optional uploaded files
+let fileGain = null;                               // the music file plays through this (iPad/iPhone ignore audio.volume)
 let filesChecked = null;
 
 function ensureCtx() {
@@ -340,7 +341,16 @@ const exists = (url) => fetch(url, { method: 'HEAD', cache: 'no-cache' })
 function checkFiles() {
   if (!filesChecked) {
     filesChecked = Promise.all([exists(`${AUDIO_DIR}bgm.mp3`), exists(`${AUDIO_DIR}click.mp3`)]).then(async ([bgm, click]) => {
-      if (bgm) { fileMusic = new Audio(`${AUDIO_DIR}bgm.mp3`); fileMusic.loop = true; fileMusic.volume = 0; }
+      if (bgm) {
+        fileMusic = new Audio(`${AUDIO_DIR}bgm.mp3`); fileMusic.loop = true; fileMusic.preload = 'auto';
+        if (ensureCtx()) {                               // fade and duck it with a gain node, so it also works on iPad/iPhone
+          try {
+            fileGain = ctx.createGain(); fileGain.gain.value = 0;
+            ctx.createMediaElementSource(fileMusic).connect(fileGain); fileGain.connect(ctx.destination);
+          } catch (e) { fileGain = null; }
+        }
+        if (!fileGain) fileMusic.volume = 0;
+      }
       if (click && ensureCtx()) {
         try { clickFile = await ctx.decodeAudioData(await (await fetch(`${AUDIO_DIR}click.mp3`)).arrayBuffer()); } catch (e) { clickFile = null; }
       }
@@ -381,7 +391,7 @@ export async function startMusic() {
 
 export function stopMusic() {
   wanted = false;
-  if (fileMusic) { fadeFile(0, () => fileMusic.pause()); }
+  if (fileMusic) { fadeFile(0, () => { if (!wanted) fileMusic.pause(); }); }
   if (!ctx) return;
   musicGain.gain.cancelScheduledValues(ctx.currentTime);
   musicGain.gain.setTargetAtTime(0, ctx.currentTime, 0.25);
@@ -390,6 +400,13 @@ export function stopMusic() {
 
 function fadeFile(target, done) {
   const a = fileMusic; if (!a) return;
+  if (fileGain) {
+    fileGain.gain.cancelScheduledValues(ctx.currentTime);
+    fileGain.gain.setValueAtTime(fileGain.gain.value, ctx.currentTime);
+    fileGain.gain.linearRampToValueAtTime(target, ctx.currentTime + 0.8);
+    if (done) setTimeout(done, 820);
+    return;
+  }
   const from = a.volume, t0 = performance.now();
   const step = (now) => {
     const k = Math.min(1, (now - t0) / 800);
