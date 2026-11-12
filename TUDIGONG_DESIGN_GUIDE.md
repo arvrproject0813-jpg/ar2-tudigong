@@ -589,6 +589,26 @@ const CONTENT = {
       "en": "Close",
       "zh": "關閉"
     },
+    "skipTitle": {
+      "en": "You haven't finished this page yet",
+      "zh": "這一頁還沒完成"
+    },
+    "skipLeft": {
+      "en": "Still to do:",
+      "zh": "還沒完成："
+    },
+    "skipBody": {
+      "en": "You can keep exploring, or go on to the next page and come back later.",
+      "zh": "你可以繼續探索，或先前往下一頁，之後再回來。"
+    },
+    "skipStay": {
+      "en": "Keep Exploring",
+      "zh": "繼續探索"
+    },
+    "skipGo": {
+      "en": "Go to Next Page",
+      "zh": "前往下一頁"
+    },
     "language": {
       "en": "Language",
       "zh": "語言"
@@ -836,6 +856,18 @@ const CONTENT = {
     "task": {
       "en": "Scan the culture card",
       "zh": "掃描文化卡"
+    },
+    "skipTitle": {
+      "en": "You haven't scanned the card yet",
+      "zh": "你還沒有掃描文化卡"
+    },
+    "skipBody": {
+      "en": "Scan the culture card to see the neighborhood rise in AR, or go on to the next page and come back later.",
+      "zh": "掃描文化卡，就能看到街坊在 AR 中出現；也可以先前往下一頁，之後再回來。"
+    },
+    "skipStay": {
+      "en": "Continue Scanning",
+      "zh": "繼續掃描"
     },
     "hintSlow": {
       "en": "Hold the card flat, in good light, 20–30 cm from the camera.",

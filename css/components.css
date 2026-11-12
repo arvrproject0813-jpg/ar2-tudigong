@@ -378,3 +378,16 @@ button.chip:hover { background: var(--teal-50); }
   .arv-note { top: 62px; font-size: 12px; }
 }
 @media (prefers-reduced-motion: reduce) { .arv-spin { animation-duration: 3s; } .arv-cam { transition: none; } }
+
+/* "You haven't finished this page yet": stay, or go on anyway (app.js askSkip) */
+.modal.skip-dialog { width: min(520px, 100%); }
+.skip-left { padding: 10px 14px; border-radius: var(--radius-md); background: rgba(240, 207, 122, .18); box-shadow: inset 0 0 0 1px rgba(201, 149, 46, .45); }
+.skip-left-h { font-weight: 700; font-size: 14px; color: var(--wood-600); margin-bottom: 4px; }
+.skip-left ul { margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.45; }
+.skip-left li::marker { color: var(--gold-500); }
+.skip-body { font-size: 15px; line-height: 1.45; color: var(--wood-900); }
+.skip-dialog .btn-row { justify-content: flex-end; flex-wrap: wrap; }
+@media (max-height: 500px) {
+  .skip-left { padding: 6px 10px; }
+  .skip-left ul, .skip-body { font-size: 13px; }
+}

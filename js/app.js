@@ -1,7 +1,7 @@
 // app.js — page router, progress state, top bar and panel shell.
 import CONTENT from '../content/content.js';
 import { PAGES, STORE_KEY } from './config.js';
-import { el, bi, button, iconButton, checklist, toast, clearToasts, closeModal, openVocab, setLang, plain } from './ui.js';
+import { el, bi, button, iconButton, checklist, toast, clearToasts, closeModal, openVocab, setLang, plain, modal } from './ui.js';
 import { icon } from './icons.js';
 import { narrationControl, stopNarration } from './narration.js';
 import { startMusic, stopMusic, installClickSounds } from './sound.js';
@@ -150,7 +150,7 @@ function renderTopbar() {
 
 /* ---------- page context ---------- */
 function makeCtx(id) {
-  let primaryBtn = null, tasksHost = null, completed = !!state.done[id];
+  let primaryBtn = null, tasksHost = null, completed = !!state.done[id], tasks = [];
 
   const ctx = {
     id, state, content: CONTENT[id], CONTENT,
@@ -180,7 +180,9 @@ function makeCtx(id) {
       if (indexOf(id) > 0) nav.append(iconButton('back', plain(CONTENT.common.back), back, 'nav-back'));
       if (opts.primary !== false) {
         const p = opts.primary || { text: CONTENT.common.next, onClick: next };
-        primaryBtn = button(p.text, { variant: 'primary', onClick: p.onClick, disabled: p.alwaysEnabled ? false : !completed });
+        // Next always works: if the page isn't finished yet, a small dialog asks whether to stay or move on
+        primaryBtn = button(p.text, { variant: 'primary', onClick: () => (completed || p.alwaysEnabled ? p.onClick() : askSkip(p.onClick)) });
+        primaryBtn.classList.toggle('is-pending', !completed && !p.alwaysEnabled);
         nav.append(primaryBtn);
       }
       if (nav.childElementCount) actions.append(nav);
@@ -188,13 +190,13 @@ function makeCtx(id) {
       $panel.replaceChildren(inner);
     },
 
-    setTasks(items) { if (tasksHost) tasksHost.replaceChildren(checklist(items)); },
+    setTasks(items) { tasks = items || []; if (tasksHost) tasksHost.replaceChildren(checklist(items)); },
 
     /** Mark this page complete: unlocks the primary button and saves progress. */
     complete() {
       completed = true;
       state.done[id] = true; save();
-      if (primaryBtn) primaryBtn.disabled = false;
+      if (primaryBtn) primaryBtn.classList.remove('is-pending');
     },
     isComplete: () => completed,
 
@@ -206,6 +208,25 @@ function makeCtx(id) {
       return value;
     },
   };
+  // "You haven't finished this page yet": keep going here, or go on anyway
+  function askSkip(goOn) {
+    const c = CONTENT[id] || {}, k = CONTENT.common;
+    const left = tasks.filter((t) => !t.done);
+    let close = null;
+    const stay = button(c.skipStay || k.skipStay, { variant: 'primary', onClick: () => close() });
+    const go = button(k.skipGo, { variant: 'secondary', onClick: () => { close(); goOn(); } });
+    close = modal({
+      title: c.skipTitle || k.skipTitle,
+      body: [
+        left.length ? el('div', { class: 'skip-left' }, el('div', { class: 'skip-left-h' }, bi(k.skipLeft, { layout: 'inline' })),
+          el('ul', {}, left.map((t) => el('li', {}, bi(t.text, { layout: 'inline' }))))) : null,
+        el('p', { class: 'skip-body' }, bi(c.skipBody || k.skipBody)),
+      ].filter(Boolean),
+      actions: [go, stay],
+    });
+    document.querySelector('#modal-layer .modal')?.classList.add('skip-dialog');
+    stay.focus();
+  }
   return ctx;
 }
 
