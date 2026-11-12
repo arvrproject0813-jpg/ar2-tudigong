@@ -52,6 +52,10 @@ Current background music: `assets/audio/bgm.mp3` is "When Peach Blossoms Bloom" 
 - Audio: `assets/audio/guide/p01_en.mp3 … p12_zh.mp3`, made with the open-source Kokoro-82M voice model (Apache-2.0): English voice `af_sol`, Mandarin voice `zf_018`, spoken a little slower than normal (0.92), level-matched. To change a line, change the text and remake that page's two files (or record your own and save them under the same names).
 - Code: `js/guide.js`.
 
+**Into the shrine (P01 → P02).** Pressing Start Experience glides the view in through the shrine's doorway (on the right of the welcome scene) while a soft rush of air and a warm zither chord play; golden light fills the screen and P02 opens out of it (`enterShrine()` in `js/pages/p01-home.js`, `playEnter()` in `js/sound.js`, `.enter-veil` in `css/welcome.css`). With Reduce Motion on, it simply goes to P02.
+
+**"Not finished yet" pop-up.** Next always works; on an unfinished page it opens a pop-up with the page's badge and a ring showing how much is done (e.g. 1 / 2), the page's checklist (done ✓ / still to do), and two big choices: Go to Next Page, or stay (Continue Scanning / Keep Exploring). `askSkip()` in `js/app.js`, `.skd*` in `css/components.css`.
+
 **Camera setup (P02).** Before the scanner starts, a Camera Setup card shows four tips (Allow Camera, Fit the Card 30–50 cm, Good Light, Stay Safe) and a Start Camera button. The camera only turns on after that tap.
 
 ## Full-screen mode
@@ -96,7 +100,7 @@ Glazed-teal lacquer, temple gold trim and vermilion on warm paper, serif titles,
 
 ## Art
 
-The stage background is a semi-realistic dawn landscape of misty mountains and terraced rice paddies (`bg_mural.webp`; the welcome page uses `welcome_bg.webp` plus the transparent `sprite_shrine.webp` / `sprite_banyan.webp`) with two transparent cloud layers (`bg_clouds_far.webp`, `bg_clouds_near.webp`) that drift left on a loop, like clouds in the wind. Motion stops automatically when a device has Reduce Motion switched on.
+The stage background is a semi-realistic dawn landscape of misty mountains and terraced rice paddies (`bg_mural.webp`; the welcome page uses `welcome_bg.webp` plus the transparent `sprite_shrine.webp` / `sprite_banyan.webp`) with two transparent cloud layers (`bg_clouds_far.webp`, `bg_clouds_near.webp`, classic 祥雲 drawn by `assets/source-art/xiangyun_clouds.py`: round lobes with curls that start in the notches, a smooth underside and a tapering tail) that drift left on a loop, like clouds in the wind. Motion stops automatically when a device has Reduce Motion switched on.
 
 
 `assets/img/p01_home_hero.webp`, `assets/img/p04_culture_map.webp` and `assets/targets/tudigong-card.png` are in-house semi-realistic illustrations. Their editable SVG sources are in `assets/source-art/`. To use other art, change the paths in `js/config.js` → `ASSETS`:

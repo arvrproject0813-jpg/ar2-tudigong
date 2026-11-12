@@ -8,7 +8,8 @@ import { el, bi } from '../ui.js';
 import { ASSETS } from '../config.js';
 import { narrationControl } from '../narration.js';
 import { icon } from '../icons.js';
-import { playRise, soundUnlocked } from '../sound.js';
+import { playRise, playEnter, soundUnlocked } from '../sound.js';
+import { clearGuide } from '../guide.js';
 
 export const chrome = false;      // no top bar / side panel on this page
 
@@ -43,7 +44,7 @@ export function render(stage, ctx) {
     soil,
   );
 
-  const start = el('button', { class: 'btn btn-primary w-start', type: 'button', onclick: (e) => { e.stopPropagation(); ctx.go('p02'); } },
+  const start = el('button', { class: 'btn btn-primary w-start', type: 'button', onclick: (e) => { e.stopPropagation(); enterShrine(); } },
     bi(c.start));
 
   const title = el('div', { class: 'w-title' },
@@ -110,6 +111,34 @@ export function render(stage, ctx) {
   timers.push({ off: () => document.removeEventListener('voice-changed', syncVoice) });
   stage.append(root);
   ctx.complete();
+
+  /* Start → we glide in through the shrine's doorway; warm light fills the screen and P02 opens out of it.
+     The light veil lives on <body>, so it stays while the page changes underneath it. */
+  let entering = false;
+  function enterShrine() {
+    if (entering) return;
+    entering = true;
+    if (reduce || !root.animate) { ctx.go('p02'); return; }
+    finish();
+    const box = root.getBoundingClientRect();
+    const door = root.querySelector('.w-shrine').getBoundingClientRect();
+    const x = door.left + door.width * 0.5, y = door.top + door.height * 0.56;   // the middle of the doorway
+    root.style.transformOrigin = `${x - box.left}px ${y - box.top}px`;
+    root.classList.add('is-entering');
+    playEnter();
+    clearGuide();
+    const veil = el('div', { class: 'enter-veil', 'aria-hidden': 'true' });
+    veil.style.setProperty('--x', `${x}px`); veil.style.setProperty('--y', `${y}px`);
+    document.body.append(veil);
+    // zoom feels even when the scale grows exponentially (1 → 12)
+    root.animate([0, 0.2, 0.4, 0.6, 0.8, 1].map((t) => ({ offset: t, transform: `scale(${(12 ** t).toFixed(3)})` })),
+      { duration: 1600, easing: 'cubic-bezier(.45, 0, .7, 1)', fill: 'forwards' });
+    veil.animate([{ opacity: 0 }, { opacity: 0, offset: 0.5 }, { opacity: 1 }], { duration: 1600, easing: 'ease-in', fill: 'forwards' })
+      .finished.then(() => ctx.go('p02'))
+      .then(() => veil.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(1.06)' }],
+        { duration: 900, delay: 120, easing: 'cubic-bezier(.3, 0, .2, 1)', fill: 'forwards' }).finished)
+      .finally(() => veil.remove());
+  }
 }
 
 export function destroy() { timers.forEach((t) => (t && t.off ? t.off() : clearTimeout(t))); timers = []; }

@@ -379,17 +379,129 @@ button.chip:hover { background: var(--teal-50); }
 }
 @media (prefers-reduced-motion: reduce) { .arv-spin { animation-duration: 3s; } .arv-cam { transition: none; } }
 
-/* "You haven't finished this page yet": stay, or go on anyway (app.js askSkip) */
-.modal.skip-dialog { width: min(520px, 100%); }
-.skip-left { padding: 10px 14px; border-radius: var(--radius-md); background: rgba(240, 207, 122, .18); box-shadow: inset 0 0 0 1px rgba(201, 149, 46, .45); }
-.skip-left-h { font-weight: 700; font-size: 14px; color: var(--wood-600); margin-bottom: 4px; }
-.skip-left ul { margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.45; }
-.skip-left li::marker { color: var(--gold-500); }
-.skip-body { font-size: 15px; line-height: 1.45; color: var(--wood-900); }
-.skip-dialog .btn-row { justify-content: flex-end; flex-wrap: wrap; }
-@media (max-height: 500px) {
-  .skip-left { padding: 6px 10px; }
-  .skip-left ul, .skip-body { font-size: 13px; }
+/* ---------- "Not finished yet" pop-up (app.js askSkip) ----------
+   A lacquer-teal badge side with a progress ring, and a paper side with the checklist and two big choices. */
+.skd-scrim {
+  position: absolute; inset: 0; display: grid; place-items: center; padding: 16px;
+  background: radial-gradient(ellipse at 50% 45%, rgba(18, 63, 60, .38), rgba(18, 63, 60, .66));
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  animation: skd-fade .22s ease both;
+}
+.skd-scrim.is-closing { animation: skd-fade .2s ease reverse both; }
+.skd-scrim.is-closing .skd { animation: skd-out .2s ease both; }
+@keyframes skd-fade { from { opacity: 0; } }
+@keyframes skd-in { from { opacity: 0; transform: translateY(22px) scale(.9); } 60% { opacity: 1; transform: translateY(-4px) scale(1.015); } to { transform: none; } }
+@keyframes skd-out { to { opacity: 0; transform: translateY(10px) scale(.96); } }
+.skd {
+  position: relative; width: min(680px, 100%); max-height: 100%; display: grid; grid-template-columns: 196px 1fr;
+  border-radius: 24px; overflow: hidden; background: var(--tex-paper), var(--beige-50);
+  box-shadow: 0 0 0 2px var(--gold-500), 0 0 0 6px rgba(255, 251, 243, .9), 0 0 0 7px rgba(201, 149, 46, .55), 0 26px 60px rgba(18, 40, 36, .45);
+  animation: skd-in .5s cubic-bezier(.2, .9, .3, 1.2) both;
+}
+/* left: the badge */
+.skd-hero {
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 26px 14px 30px;
+  color: var(--beige-50); overflow: hidden;
+  background: var(--tex-clouds), radial-gradient(circle at 50% 36%, #2E8C85 0, #1F6B66 45%, #123F3C 100%);
+  box-shadow: inset -2px 0 0 var(--gold-500), inset -6px 0 0 rgba(255, 251, 243, .15);
+}
+.skd-hero::before {        /* a soft sunburst behind the badge */
+  content: ''; position: absolute; left: 50%; top: 40%; width: 260px; height: 260px; transform: translate(-50%, -50%);
+  background: repeating-conic-gradient(rgba(240, 207, 122, .13) 0 9deg, transparent 9deg 22.5deg);
+  -webkit-mask-image: radial-gradient(circle, #000 25%, transparent 68%); mask-image: radial-gradient(circle, #000 25%, transparent 68%);
+  animation: skd-spin 40s linear infinite;
+}
+@keyframes skd-spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+.skd-ring { position: relative; width: 128px; height: 128px; display: grid; place-items: center; }
+.skd-ring > svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+.skd-track { fill: none; stroke: rgba(255, 251, 243, .18); stroke-width: 9; }
+.skd-arc { fill: none; stroke: var(--gold-300); stroke-width: 9; stroke-linecap: round; stroke-dasharray: var(--c); stroke-dashoffset: var(--to);
+  filter: drop-shadow(0 0 6px rgba(240, 207, 122, .55)); animation: skd-arc 1s cubic-bezier(.3, .7, .2, 1) .25s both; }
+@keyframes skd-arc { from { stroke-dashoffset: var(--c); } }
+.skd-badge {
+  width: 86px; height: 86px; border-radius: 50%; display: grid; place-items: center; color: var(--teal-800);
+  background: radial-gradient(circle at 35% 30%, #FFF6DA, #F0CF7A 55%, #C9952E);
+  box-shadow: inset 0 0 0 3px rgba(255, 251, 243, .7), inset 0 -6px 10px rgba(138, 100, 22, .35), 0 6px 14px rgba(0, 0, 0, .25);
+  animation: skd-bob 2.6s ease-in-out .6s infinite;
+}
+.skd-badge svg { width: 40px; height: 40px; }
+@keyframes skd-bob { 0%, 100% { transform: translateY(0) rotate(0); } 25% { transform: translateY(-4px) rotate(-6deg); } 50% { transform: translateY(0) rotate(0); } 75% { transform: translateY(-2px) rotate(5deg); } }
+.skd-count { position: relative; font-family: var(--font-display); line-height: 1; margin-top: 6px; }
+.skd-count b { font-size: 34px; font-weight: 800; color: var(--gold-300); }
+.skd-count span { font-size: 20px; font-weight: 700; color: rgba(255, 251, 243, .85); }
+.skd-done { position: relative; font-size: 13px; font-weight: 700; letter-spacing: .04em; color: var(--teal-100); }
+.skd-done .zh { margin-left: 4px; color: var(--gold-100); }
+.skd-spark { position: absolute; width: 14px; height: 14px; background: var(--gold-300);
+  clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); animation: skd-twinkle 2.4s ease-in-out infinite; }
+.skd-spark.s1 { left: 22%; top: 16%; }
+.skd-spark.s2 { right: 18%; top: 30%; width: 10px; height: 10px; animation-delay: .8s; }
+.skd-spark.s3 { left: 18%; top: 58%; width: 8px; height: 8px; animation-delay: 1.5s; }
+@keyframes skd-twinkle { 0%, 100% { opacity: .2; transform: scale(.6) rotate(0); } 50% { opacity: 1; transform: scale(1.1) rotate(45deg); } }
+/* right: what's left, and the two choices */
+.skd-main { display: flex; flex-direction: column; gap: 12px; padding: 24px 26px 22px 24px; min-width: 0; }
+.skd-eyebrow { align-self: flex-start; padding: 4px 12px 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 800; letter-spacing: .03em;
+  color: var(--beige-50); background: var(--grad-vermilion); box-shadow: 0 2px 6px rgba(126, 36, 24, .3); animation: skd-wiggle .6s ease .45s both; }
+.skd-eyebrow .zh { margin-left: 6px; font-weight: 700; color: var(--gold-100); }
+@keyframes skd-wiggle { 0% { transform: rotate(0) scale(.8); opacity: 0; } 40% { transform: rotate(-4deg) scale(1.05); opacity: 1; } 70% { transform: rotate(3deg); } 100% { transform: none; } }
+.skd-title { margin: 0; padding-right: 34px; line-height: 1.2; }
+.skd-title .en { display: block; font-family: var(--font-display); font-size: 23px; font-weight: 800; color: var(--teal-800); }
+.skd-title .zh { display: block; margin-top: 3px; font-family: var(--font-display-zh); font-size: 17px; font-weight: 700; color: var(--red-700); }
+.skd-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.skd-list li { display: flex; align-items: center; gap: 10px; padding: 8px 12px 8px 8px; border-radius: 14px; font-size: 15px; line-height: 1.3;
+  animation: skd-row .4s ease both; animation-delay: calc(.3s + var(--i) * .08s); }
+@keyframes skd-row { from { opacity: 0; transform: translateX(14px); } }
+.skd-list li.is-todo { background: rgba(240, 207, 122, .22); box-shadow: inset 0 0 0 1.5px rgba(201, 149, 46, .55); font-weight: 700; color: var(--wood-900); }
+.skd-list li.is-done { background: rgba(110, 159, 78, .14); color: var(--green-700); }
+.skd-list li.is-done .bi { text-decoration: line-through; text-decoration-color: rgba(63, 106, 43, .45); }
+.skd-list .zh { margin-left: 6px; font-weight: 500; color: inherit; opacity: .85; }
+.skd-tick { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; }
+.is-todo .skd-tick { border: 2px dashed var(--gold-500); background: var(--beige-50); position: relative; }
+.is-todo .skd-tick::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--gold-500); animation: skd-pulse 1.4s ease-in-out infinite; }
+@keyframes skd-pulse { 50% { transform: scale(.5); opacity: .5; } }
+.is-done .skd-tick { background: var(--green-500); color: #fff; }
+.is-done .skd-tick svg { width: 15px; height: 15px; }
+.skd-body { margin: 0; font-size: 14.5px; line-height: 1.45; color: var(--wood-600); }
+.skd-body .zh { display: block; margin-top: 2px; font-size: 13.5px; }
+.skd-actions { display: flex; gap: 12px; align-items: stretch; margin-top: 4px; }
+.skd-actions > * { flex: 1 1 0; min-height: 58px; }
+.skd-go { flex-direction: row; gap: 8px; font-size: 15px; }
+.skd-go .ic { display: grid; flex: none; transition: transform .2s; }
+.skd-go .ic svg { width: 20px; height: 20px; }
+.skd-go:hover .ic { transform: translateX(3px); }
+.skd-stay { position: relative; overflow: hidden; display: flex; flex-direction: row; align-items: center; justify-content: center; border-radius: 16px; gap: 10px; font-size: 16px; box-shadow: 0 6px 16px rgba(31, 107, 102, .35), inset 0 0 0 2px var(--gold-300); }
+.skd-stay .ic { display: grid; flex: none; }
+.skd-stay .ic svg { width: 22px; height: 22px; }
+.skd-stay .bi { text-align: left; }
+.skd-stay::after {        /* a shine that sweeps across now and then */
+  content: ''; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%; transform: skewX(-20deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 251, 243, .38), transparent); animation: skd-shine 3.2s ease-in-out 1s infinite;
+}
+@keyframes skd-shine { 0% { left: -60%; } 35%, 100% { left: 130%; } }
+.skd-x { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+  border: 0; color: var(--wood-600); background: rgba(234, 220, 194, .7); transition: background .15s, transform .15s; }
+.skd-x:hover { background: var(--beige-200); transform: rotate(90deg); }
+.skd-x svg { width: 18px; height: 18px; }
+.skd :focus-visible { outline: 3px solid var(--gold-500); outline-offset: 2px; }
+@media (max-height: 500px), (max-width: 620px) {
+  .skd { grid-template-columns: 132px 1fr; border-radius: 18px; }
+  .skd-hero { padding: 14px 8px; gap: 2px; }
+  .skd-hero::before { width: 190px; height: 190px; }
+  .skd-ring { width: 92px; height: 92px; }
+  .skd-badge { width: 60px; height: 60px; } .skd-badge svg { width: 28px; height: 28px; }
+  .skd-count b { font-size: 26px; } .skd-count span { font-size: 16px; }
+  .skd-main { padding: 14px 16px 14px 16px; gap: 7px; }
+  .skd-eyebrow { font-size: 11.5px; padding: 3px 10px 3px 8px; }
+  .skd-title .en { font-size: 18px; } .skd-title .zh { font-size: 14px; margin-top: 1px; }
+  .skd-list li { padding: 5px 10px 5px 6px; font-size: 13px; gap: 8px; }
+  .skd-tick { width: 22px; height: 22px; }
+  .skd-body { font-size: 12.5px; line-height: 1.35; } .skd-body .zh { font-size: 12px; }
+  .skd-actions > * { min-height: 46px; }
+  .skd-go { font-size: 13.5px; } .skd-go .zh { font-size: 12px; } .skd-stay { font-size: 14px; }
+  .skd-x { top: 8px; right: 8px; width: 30px; height: 30px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skd, .skd-scrim, .skd-arc, .skd-list li, .skd-eyebrow { animation: none; }
+  .skd-hero::before, .skd-badge, .skd-spark, .skd-stay::after, .is-todo .skd-tick::after { animation: none; }
 }
 
 /* ---------- voice guide bar (js/guide.js): what to do on this page, spoken and written ---------- */

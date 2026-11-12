@@ -228,26 +228,70 @@ function makeCtx(id) {
     },
   };
   // "You haven't finished this page yet": keep going here, or go on anyway
+  /* "Not finished yet" pop-up: a friendly stop sign before leaving an unfinished page.
+     Left: the page's badge with a ring showing how much is done (e.g. 1 / 2). Right: the checklist,
+     and two big choices: stay and finish (main), or go on anyway. */
   function askSkip(goOn) {
     const c = CONTENT[id] || {}, k = CONTENT.common;
-    const left = tasks.filter((t) => !t.done);
-    let close = null;
-    const stay = button(c.skipStay || k.skipStay, { variant: 'primary', onClick: () => close() });
-    const go = button(k.skipGo, { variant: 'secondary', onClick: () => { close(); goOn(); } });
-    close = modal({
-      title: c.skipTitle || k.skipTitle,
-      body: [
-        left.length ? el('div', { class: 'skip-left' }, el('div', { class: 'skip-left-h' }, bi(k.skipLeft, { layout: 'inline' })),
-          el('ul', {}, left.map((t) => el('li', {}, bi(t.text, { layout: 'inline' }))))) : null,
-        el('p', { class: 'skip-body' }, bi(c.skipBody || k.skipBody)),
-      ].filter(Boolean),
-      actions: [go, stay],
-    });
-    document.querySelector('#modal-layer .modal')?.classList.add('skip-dialog');
-    stay.focus();
+    const all = tasks.length ? tasks : [{ text: k.skipTitle, done: false }];
+    const done = all.filter((t) => t.done).length, total = all.length;
+    const layer = document.getElementById('modal-layer');
+    const opener = document.activeElement;
+    const R = 50, C = 2 * Math.PI * R;
+    const ring = el('div', { class: 'skd-ring', html: `<svg viewBox="0 0 120 120" aria-hidden="true">
+        <circle class="skd-track" cx="60" cy="60" r="${R}"/>
+        <circle class="skd-arc" cx="60" cy="60" r="${R}" style="--c:${C.toFixed(1)};--to:${(C * (1 - done / total)).toFixed(1)}"/>
+      </svg>` },
+      el('span', { class: 'skd-badge', html: icon(PAGE_ICON[id] || 'check') }));
+    const stay = el('button', { class: 'btn btn-primary skd-stay', type: 'button' },
+      el('span', { class: 'ic', html: icon(PAGE_ICON[id] || 'check') }), bi(c.skipStay || k.skipStay, { layout: 'stack' }));
+    const goBtn = el('button', { class: 'btn btn-secondary skd-go', type: 'button' },
+      bi(k.skipGo, { layout: 'stack' }), el('span', { class: 'ic', html: icon('chevRight') }));
+    const x = el('button', { class: 'skd-x', type: 'button', 'aria-label': plain(k.close), html: icon('close') });
+    const titleId = `skd-t-${Date.now()}`;
+    const card = el('div', { class: 'skd', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': titleId },
+      el('div', { class: 'skd-hero' },
+        el('span', { class: 'skd-spark s1', 'aria-hidden': 'true' }), el('span', { class: 'skd-spark s2', 'aria-hidden': 'true' }), el('span', { class: 'skd-spark s3', 'aria-hidden': 'true' }),
+        ring,
+        el('div', { class: 'skd-count' }, el('b', {}, `${done}`), el('span', {}, ` / ${total}`)),
+        el('div', { class: 'skd-done' }, bi(k.skipDone, { layout: 'inline' }))),
+      el('div', { class: 'skd-main' },
+        el('div', { class: 'skd-eyebrow' }, bi(k.skipEyebrow, { layout: 'inline' })),
+        el('h2', { class: 'skd-title', id: titleId }, bi(c.skipTitle || k.skipTitle)),
+        el('ul', { class: 'skd-list', 'aria-label': plain(k.skipProgress) }, all.map((t, i) =>
+          el('li', { class: t.done ? 'is-done' : 'is-todo', style: { '--i': i } },
+            el('span', { class: 'skd-tick', html: t.done ? icon('check') : '' }), bi(t.text, { layout: 'inline' })))),
+        el('p', { class: 'skd-body' }, bi(c.skipBody || k.skipBody)),
+        el('div', { class: 'skd-actions' }, goBtn, stay)),
+      x);
+    const scrim = el('div', { class: 'skd-scrim' }, card);
+    let closed = false;
+    const close = (after) => {
+      if (closed) return; closed = true;
+      document.removeEventListener('keydown', onKey);
+      scrim.classList.add('is-closing');
+      setTimeout(() => { scrim.remove(); if (after) after(); else if (opener && document.contains(opener)) opener.focus?.(); }, 200);
+    };
+    const onKey = (e) => {
+      if (e.key === 'Escape') close();
+      if (e.key === 'Tab') {                         // keep focus inside the pop-up
+        const f = [x, goBtn, stay]; const i = f.indexOf(document.activeElement);
+        if (e.shiftKey && i <= 0) { e.preventDefault(); stay.focus(); } else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); x.focus(); }
+      }
+    };
+    scrim.addEventListener('click', (e) => { if (e.target === scrim) close(); });
+    x.addEventListener('click', () => close());
+    stay.addEventListener('click', () => close());
+    goBtn.addEventListener('click', () => close(goOn));
+    layer.replaceChildren(scrim);
+    document.addEventListener('keydown', onKey);
+    stay.focus({ preventScroll: true });
   }
   return ctx;
 }
+
+// the badge shown on each page's "not finished yet" pop-up
+const PAGE_ICON = { p02: 'scan', p03: 'tap', p04: 'map', p05: 'corner', p06: 'fields', p07: 'cards', p08: 'map', p09: 'temple', p10: 'fields', p11: 'puzzle', p12: 'check' };
 
 /* ---------- start ---------- */
 // Developer shortcuts: open index.html#p04 to jump to a page, #reset to clear progress,

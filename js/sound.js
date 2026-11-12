@@ -491,3 +491,17 @@ export function playFlourish() {
   const t = ctx.currentTime + 0.02;
   ['D4', 'E4', 'F#4', 'A4', 'B4', 'D5', 'E5', 'F#5', 'A5', 'B5', 'D6'].forEach((n, i) => zither(ctx, out, t + i * 0.055, NOTE[n], 0.6 - i * 0.025, 0.55));
 }
+
+/** P01 → P02: a soft rush of air as we glide in through the shrine's doorway, then a warm zither chord
+ *  as we arrive (about 1.5 s). No bells or temple instruments (storyboard rule). */
+export function playEnter() {
+  const out = sfxOut(); if (!out) return;
+  const t = ctx.currentTime + 0.02;
+  const n = noiseSrc(ctx, t, 1.9);
+  const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.9;
+  bp.frequency.setValueAtTime(260, t); bp.frequency.exponentialRampToValueAtTime(1500, t + 1.15); bp.frequency.exponentialRampToValueAtTime(500, t + 1.85);
+  const g = env(ctx, t, [[0.5, 0.16], [1.1, 0.34], [1.45, 0.2], [1.9, 0]]);
+  n.connect(bp).connect(g).connect(out);
+  ['D4', 'A4', 'D5', 'F#5', 'A5'].forEach((k, i) => zither(ctx, out, t + 1.3 + i * 0.07, NOTE[k], 0.5 - i * 0.05, 0.5));
+}
+

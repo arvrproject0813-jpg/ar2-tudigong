@@ -60,6 +60,22 @@ const CONTENT = {
       "en": "Still to do:",
       "zh": "還沒完成："
     },
+    "skipEyebrow": {
+      "en": "Wait a moment!",
+      "zh": "等一下！"
+    },
+    "skipProgress": {
+      "en": "Your progress on this page",
+      "zh": "這一頁的進度"
+    },
+    "skipDone": {
+      "en": "done",
+      "zh": "已完成"
+    },
+    "skipLater": {
+      "en": "You can come back anytime.",
+      "zh": "隨時都可以回來。"
+    },
     "skipBody": {
       "en": "You can keep exploring, or go on to the next page and come back later.",
       "zh": "你可以繼續探索，或先前往下一頁，之後再回來。"

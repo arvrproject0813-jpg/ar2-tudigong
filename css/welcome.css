@@ -205,3 +205,14 @@ body.is-fullbleed #toast-layer { right: 0; top: var(--space-4); }
   .w-start { min-width: 190px; min-height: 44px; }
   .w-clouds.near { opacity: .55; }
 }
+
+/* ---------- Start → into the shrine (js/pages/p01-home.js enterShrine) ---------- */
+/* the title and buttons step back while we glide in through the doorway */
+.welcome.is-entering .w-title, .welcome.is-entering .w-corner, .welcome.is-entering .w-skip { opacity: 0; transition: opacity .35s ease; pointer-events: none; }
+.welcome.is-entering { will-change: transform; }
+/* warm light from the doorway: the inner glow of the shrine, then soft paper-gold that P02 opens out of */
+.enter-veil {
+  position: fixed; inset: 0; z-index: 400; pointer-events: none; opacity: 0;
+  background:
+    radial-gradient(circle at var(--x) var(--y), rgba(255, 246, 222, 1) 0, rgba(250, 226, 170, .96) 22vmax, rgba(233, 196, 120, .9) 55vmax, rgba(214, 170, 92, .88) 100vmax);
+}
