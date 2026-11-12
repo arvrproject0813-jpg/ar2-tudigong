@@ -189,7 +189,7 @@ export function render(stage, ctx) {
   if (compared) showClueButton(false);
   if (clue) { ctx.complete(); frame.classList.add('is-clues'); }
   if (!compared) {
-    timers.push(setTimeout(() => toast(c.slideHint, 'hint', 4500), 700));
+    // (what to do here is said by the voice guide at the bottom of the stage)
     // a small hint that the handle moves: it nudges right and back once
     if (!reduce) timers.push(setTimeout(() => knob.classList.add('is-hinting'), 1200));
   }

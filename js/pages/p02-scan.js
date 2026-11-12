@@ -1,5 +1,7 @@
-// P02 · Scan Activation — MindAR image target, with a "Continue without AR" fallback.
+// P02 · Scan Activation — first a short camera setup (allow camera, fit the card, light, safety),
+// then the MindAR image target, with a "Continue without AR" fallback.
 import { el, bi, button, toast } from '../ui.js';
+import { icon } from '../icons.js';
 import { startAR, stopAR } from '../ar.js';
 import { registerDiorama } from '../ar-diorama.js';
 
@@ -81,6 +83,7 @@ export function render(stage, ctx) {
 
   async function begin() {
     clearTimers();
+    stage.querySelector('.scan-setup')?.remove();
     errorBox.hidden = true; overlay.hidden = false;
     setStatus('loading');
     await startAR(stage, {
@@ -95,8 +98,23 @@ export function render(stage, ctx) {
     if (!alive) stopAR();          // the user left the page while libraries were loading
   }
 
+  /* ---------- camera setup first ---------- */
+  const setupCard = (s) => el('div', { class: 'setup-step' },
+    el('span', { class: 'setup-ic', 'aria-hidden': 'true', html: icon(s.icon) }),
+    el('div', {}, el('h3', {}, bi(s.title, { layout: 'stack' })), el('p', {}, bi(s.text))));
+  const startBtn = button(c.setup.start, { variant: 'primary', onClick: () => { setup.remove(); begin(); } });
+  startBtn.prepend(el('span', { class: 'ic', html: icon('camera'), 'aria-hidden': 'true' }));
+  startBtn.classList.add('setup-start');
+  const setup = el('div', { class: 'scan-setup' },
+    el('div', { class: 'scan-setup-card', role: 'region', 'aria-label': c.setup.title.en },
+      el('h2', {}, bi(c.setup.title, { layout: 'stack' })),
+      el('p', { class: 'setup-intro' }, bi(c.setup.intro)),
+      el('div', { class: 'setup-steps' }, c.setup.steps.map(setupCard)),
+      el('div', { class: 'btn-row' }, startBtn)));
+  overlay.hidden = true;
   setStatus('idle');
-  begin();
+  stage.append(setup);
+  startBtn.focus();
 }
 
 export function destroy() {

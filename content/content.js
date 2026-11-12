@@ -40,6 +40,22 @@ const CONTENT = {
       "en": "You haven't finished this page yet",
       "zh": "這一頁還沒完成"
     },
+    "voiceOn": {
+      "en": "Turn on voice guide",
+      "zh": "開啟語音導覽"
+    },
+    "voiceOff": {
+      "en": "Turn off voice guide",
+      "zh": "關閉語音導覽"
+    },
+    "guideReplay": {
+      "en": "Listen again",
+      "zh": "再聽一次"
+    },
+    "guideHide": {
+      "en": "Hide",
+      "zh": "隱藏"
+    },
     "skipLeft": {
       "en": "Still to do:",
       "zh": "還沒完成："
@@ -164,6 +180,10 @@ const CONTENT = {
     }
   },
   "p01": {
+    "guide": {
+      "en": "Welcome to Tudigong's Neighborhood. Take a breath, and when you're ready, tap Start Experience to begin our journey together.",
+      "zh": "歡迎來到土地公的街坊。深呼吸一下，準備好了，就點「開始體驗」，我們一起出發吧。"
+    },
     "eyebrow": {
       "en": "P01 · Home",
       "zh": "P01 · 首頁"
@@ -250,6 +270,10 @@ const CONTENT = {
     }
   },
   "p02": {
+    "guide": {
+      "en": "First, let's set up the camera. Read the four tips, tap Start Camera, and choose Allow. Then hold the culture card inside the frame, about thirty to fifty centimeters away.",
+      "zh": "我們先來設定相機。看看四個小提示，點「開啟相機」，再按「允許」。接著把文化卡放進框框裡，距離大約三十到五十公分。"
+    },
     "eyebrow": {
       "en": "P02 · Enter AR",
       "zh": "P02 · 進入 AR"
@@ -316,6 +340,66 @@ const CONTENT = {
       "en": "Continue Scanning",
       "zh": "繼續掃描"
     },
+    "setup": {
+      "title": {
+        "en": "Camera Setup",
+        "zh": "相機設定"
+      },
+      "intro": {
+        "en": "Before scanning the culture card, let's get the camera ready.",
+        "zh": "掃描文化卡之前，我們先把相機準備好。"
+      },
+      "steps": [
+        {
+          "icon": "camera",
+          "title": {
+            "en": "Allow Camera",
+            "zh": "允許相機"
+          },
+          "text": {
+            "en": "When the browser asks, tap Allow. The camera is only used to find the culture card. Nothing is recorded or uploaded.",
+            "zh": "瀏覽器詢問時請點「允許」。相機只用來尋找文化卡，不會錄影，也不會上傳。"
+          }
+        },
+        {
+          "icon": "scan",
+          "title": {
+            "en": "Fit the Card",
+            "zh": "對準卡片"
+          },
+          "text": {
+            "en": "Keep the whole card inside the frame, about 30–50 cm away.",
+            "zh": "讓整張文化卡留在框線內，距離大約 30 到 50 公分。"
+          }
+        },
+        {
+          "icon": "bulb",
+          "title": {
+            "en": "Good Light",
+            "zh": "光線充足"
+          },
+          "text": {
+            "en": "Find good light and hold the device steady.",
+            "zh": "找一個光線充足的地方，拿穩裝置。"
+          }
+        },
+        {
+          "icon": "hand",
+          "title": {
+            "en": "Stay Safe",
+            "zh": "注意安全"
+          },
+          "text": {
+            "en": "Stay where you are and keep an eye on the people and things around you.",
+            "zh": "請待在原地，留意身邊的人和物品。"
+          }
+        }
+      ],
+      "start": {
+        "en": "Start Camera",
+        "zh": "開啟相機"
+      }
+    },
     "hintSlow": {
       "en": "Hold the card flat, in good light, 20–30 cm from the camera.",
       "zh": "將卡片平放、光線充足，距離鏡頭 20–30 公分。"
@@ -330,6 +414,10 @@ const CONTENT = {
     }
   },
   "p03": {
+    "guide": {
+      "en": "Here is how this journey works. Read the tips, and tap Got It whenever you're ready.",
+      "zh": "這裡說明這趟旅程怎麼進行。看完小提示，準備好了就點「我知道了」。"
+    },
     "eyebrow": {
       "en": "P03 · How to Use",
       "zh": "P03 · 使用說明"
@@ -424,6 +512,10 @@ const CONTENT = {
     }
   },
   "p04": {
+    "guide": {
+      "en": "Let's explore the map. Turn it with one finger, pinch to zoom, and tap at least three places to learn about them.",
+      "zh": "我們來探索地圖吧。用一根手指轉動，用兩根手指縮放，再點選至少三個地點，認識它們。"
+    },
     "eyebrow": {
       "en": "P04 · Introduction",
       "zh": "P04 · 導論"
@@ -506,6 +598,10 @@ const CONTENT = {
     }
   },
   "p05": {
+    "guide": {
+      "en": "Read each riddle, then drag the card to the right place on the map. When all four are placed, find the spot where everyone meets.",
+      "zh": "讀一讀謎題，再把卡片拖到地圖上正確的地方。四張都放好之後，找出大家交會的地方。"
+    },
     "eyebrow": {
       "en": "P05 · Scene 1",
       "zh": "P05 · 場景一"
@@ -698,6 +794,10 @@ const CONTENT = {
     }
   },
   "p06": {
+    "guide": {
+      "en": "Slide the timeline slowly from Past to Present, and watch how the land changes. Then look for the cultural clues that stayed the same.",
+      "zh": "把時間軸慢慢從過去滑到現在，看看土地怎麼改變。然後找一找，哪些文化線索一直沒有改變。"
+    },
     "eyebrow": {
       "en": "P06 · Scene 2",
       "zh": "P06 · 場景二"
@@ -816,6 +916,10 @@ const CONTENT = {
     }
   },
   "p07": {
+    "guide": {
+      "en": "Take a close look at the small temple and the things around it: the building, the offering table, and the stone lions.",
+      "zh": "仔細看看小廟和它周圍的東西：建築、供桌，還有石獅。"
+    },
     "eyebrow": {
       "en": "P07 · Scene 3",
       "zh": "P07 · 場景三"
@@ -904,6 +1008,10 @@ const CONTENT = {
     }
   },
   "p08": {
+    "guide": {
+      "en": "Look at the community culture map, and find the places where everyday life and local culture meet.",
+      "zh": "看看社區文化地圖，找出日常生活和在地文化相遇的地方。"
+    },
     "eyebrow": {
       "en": "P08 · Scene 4",
       "zh": "P08 · 場景四"
@@ -968,6 +1076,10 @@ const CONTENT = {
     }
   },
   "p09": {
+    "guide": {
+      "en": "Let's learn about Touya and Weiya, and how they follow the gentle rhythm of everyday life.",
+      "zh": "我們來認識頭牙和尾牙，看看它們怎麼跟著日常生活的節奏。"
+    },
     "eyebrow": {
       "en": "P09 · Scene 5",
       "zh": "P09 · 場景五"
@@ -1048,6 +1160,10 @@ const CONTENT = {
     }
   },
   "p10": {
+    "guide": {
+      "en": "Let's visit Bogong in Meinong, and see how one belief can be shared in different local ways.",
+      "zh": "我們一起去認識美濃的伯公，看看同一個信仰，如何有不同的在地表現。"
+    },
     "eyebrow": {
       "en": "P10 · Scene 6",
       "zh": "P10 · 場景六"
@@ -1118,6 +1234,10 @@ const CONTENT = {
     }
   },
   "p11": {
+    "guide": {
+      "en": "Now it's your turn. Put the words in order to introduce Tudigong and community culture in English. Take your time.",
+      "zh": "現在輪到你了。把字詞組合起來，用英文介紹土地公與社區文化。慢慢來，不用急。"
+    },
     "eyebrow": {
       "en": "P11 · Ending",
       "zh": "P11 · 結尾"
@@ -1253,6 +1373,10 @@ const CONTENT = {
     }
   },
   "p12": {
+    "guide": {
+      "en": "Well done! You've completed the journey. Look back at what you learned, and come back anytime.",
+      "zh": "做得很好！你完成了這趟旅程。回顧一下學到的東西，歡迎隨時再回來。"
+    },
     "eyebrow": {
       "en": "P12 · Project Information",
       "zh": "P12 · 專案資訊"

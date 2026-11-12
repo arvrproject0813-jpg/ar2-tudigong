@@ -391,3 +391,46 @@ button.chip:hover { background: var(--teal-50); }
   .skip-left { padding: 6px 10px; }
   .skip-left ul, .skip-body { font-size: 13px; }
 }
+
+/* ---------- voice guide bar (js/guide.js): what to do on this page, spoken and written ---------- */
+.guide-bar {
+  position: absolute; z-index: 30; left: 50%; bottom: max(14px, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+  width: max-content; max-width: min(600px, calc(100% - 28px)); display: flex; align-items: center; gap: 12px;
+  padding: 9px 9px 9px 10px; border-radius: 16px; color: var(--beige-50);
+  background: rgba(16, 44, 41, .86); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  box-shadow: inset 0 0 0 1px rgba(240, 207, 122, .45), 0 10px 24px rgba(10, 20, 18, .35);
+  pointer-events: none;                                  /* taps go through to the page underneath… */
+  transition: opacity .45s var(--ease), transform .45s var(--ease);
+  animation: guide-in .5s var(--ease) both;
+}
+.guide-bar .guide-btn { pointer-events: auto; }        /* …except on its own buttons */
+.guide-bar.is-hidden { opacity: 0; transform: translate(-50%, 14px); }
+.guide-bar.is-hidden .guide-btn { pointer-events: none; }
+@keyframes guide-in { from { opacity: 0; transform: translate(-50%, 14px); } }
+.guide-ic { width: 40px; height: 40px; flex: none; border-radius: 50%; display: grid; place-items: center; color: var(--gold-100); box-shadow: inset 0 0 0 1.5px var(--gold-300); }
+.guide-ic svg { width: 20px; height: 20px; }
+.guide-bar.is-speaking .guide-ic { animation: guide-pulse 1.6s ease-in-out infinite; }
+@keyframes guide-pulse { 0%, 100% { box-shadow: inset 0 0 0 1.5px var(--gold-300), 0 0 0 0 rgba(240, 207, 122, .45); } 50% { box-shadow: inset 0 0 0 1.5px var(--gold-300), 0 0 0 7px rgba(240, 207, 122, 0); } }
+.guide-text { min-width: 0; font-size: 15px; line-height: 1.35; font-weight: 600; }
+.guide-text .zh { font-size: 14px; font-weight: 500; color: var(--gold-100); margin-top: 2px; }
+.guide-btn { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 10px; border: 0; cursor: pointer; color: var(--beige-50); background: rgba(255, 255, 255, .06); box-shadow: inset 0 0 0 1px rgba(255, 251, 243, .3); }
+.guide-btn svg { width: 18px; height: 18px; }
+.guide-btn:hover { background: rgba(255, 255, 255, .14); }
+.guide-btn:focus-visible { outline: 3px solid var(--gold-300); outline-offset: 2px; }
+.guide-bar.is-blocked .guide-btn:first-of-type { box-shadow: inset 0 0 0 2px var(--gold-300); }
+.voice-btn.is-off { opacity: .7; }
+@media (max-height: 500px) {
+  .guide-bar { gap: 8px; padding: 6px 6px 6px 7px; border-radius: 12px; bottom: 8px; }
+  .guide-ic, .guide-btn { width: 32px; height: 32px; }
+  .guide-ic svg { width: 16px; height: 16px; }
+  .guide-text { font-size: 12.5px; line-height: 1.3; }
+  .guide-text .zh { font-size: 11.5px; }
+}
+@media (max-height: 500px) {
+  /* bilingual mode on a phone: only the line being spoken, so the bar stays small */
+  .guide-bar[data-line='en'] .guide-text .bi > .zh:not(.solo),
+  .guide-bar[data-line='zh'] .guide-text .bi > .en { display: none; }
+  .guide-bar[data-line='zh'] .guide-text .zh { margin-top: 0; font-size: 13px; color: var(--beige-50); }
+  .guide-bar { max-width: min(560px, calc(100% - 20px)); }
+}
+@media (prefers-reduced-motion: reduce) { .guide-bar { animation: none; transition: none; } .guide-bar.is-speaking .guide-ic { animation: none; } }

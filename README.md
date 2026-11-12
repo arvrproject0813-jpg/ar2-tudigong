@@ -45,6 +45,15 @@ To use your own audio instead, upload `assets/audio/bgm.mp3` (looped background 
 
 Current background music: `assets/audio/bgm.mp3` is "When Peach Blossoms Bloom" (Song of Everlasting Sorrow ambient music), a 6 min 20 s section of the team's 65-minute file, cut so the end blends into the start, level-matched (-20 LUFS) and saved at 96 kbps (4.6 MB). It plays through a Web Audio gain node so fading, ducking and the music button also work on iPad/iPhone. To change it, replace that file.
 
+## Voice guide and camera setup
+
+**Voice guide.** When a page opens, a calm voice says what to do there (for P01, after the welcome tap). The words also show in a small dark bar at the bottom of the stage, which fades away after a few seconds; ↻ plays it again and × hides it. English mode speaks English, 中文 mode speaks Mandarin, 雙語 mode speaks English and then Mandarin (on phones the bar shows only the line being spoken). Music goes quiet while it speaks. The speaker button in the top bar (and in the P01 corner) turns the voice off and on.
+- Words: `guide` on every page in `content/content.js` (from the content sheet).
+- Audio: `assets/audio/guide/p01_en.mp3 … p12_zh.mp3`, made with the open-source Kokoro-82M voice model (Apache-2.0): English voice `af_sol`, Mandarin voice `zf_018`, spoken a little slower than normal (0.92), level-matched. To change a line, change the text and remake that page's two files (or record your own and save them under the same names).
+- Code: `js/guide.js`.
+
+**Camera setup (P02).** Before the scanner starts, a Camera Setup card shows four tips (Allow Camera, Fit the Card 30–50 cm, Good Light, Stay Safe) and a Start Camera button. The camera only turns on after that tap.
+
 ## Full-screen mode
 
 The gold-framed arrow tab on the panel's left edge (or the frame icon in the top bar) slides the side panel away so the activity uses the whole screen; the same tab, now at the screen edge, brings it back. The choice is remembered, except on P02 (Scan): arriving there always slides the panel in from the right so the scan instructions are seen (`playPanelEnter()` in `js/app.js`).

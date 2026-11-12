@@ -59,6 +59,7 @@ export function render(stage, ctx) {
 
   const corner = el('div', { class: 'w-corner' },
     c.narration ? narrationControl('p01', lang, 'mini') : null,
+    el('span', { class: 'w-voice' }, ctx.voiceButton('w-round')),
     el('span', { class: 'w-music' }, ctx.musicButton('w-round')),
     el('button', { class: 'w-lang', type: 'button', onclick: (e) => { e.stopPropagation(); ctx.cycleLang(); }, html: icon('lang') },
       { bi: '雙語', en: 'EN', zh: '中文' }[lang]));
@@ -90,19 +91,23 @@ export function render(stage, ctx) {
     root.classList.remove('is-playing'); root.classList.add('is-done');
     stopSound();
     ctx.musicIfOn();
+    timers.push(setTimeout(() => ctx.guide(), 700));           // then the voice guide says what to do
   };
   root.addEventListener('click', (e) => {
     if (e.target.closest('.w-start, .w-corner')) return;
     if (root.classList.contains('is-waiting')) begin(); else finish();
   });
   if (!waitForTouch) {
-    if (reduce) { root.classList.remove('is-playing'); root.classList.add('is-done'); }
+    if (reduce) { root.classList.remove('is-playing'); root.classList.add('is-done'); ctx.guide(); }
     else begin();
   }
   // keep the corner music button in sync when it is toggled
   const syncMusic = () => corner.querySelector('.w-music')?.replaceChildren(ctx.musicButton('w-round'));
   document.addEventListener('music-changed', syncMusic);
   timers.push({ off: () => document.removeEventListener('music-changed', syncMusic) });
+  const syncVoice = () => corner.querySelector('.w-voice')?.replaceChildren(ctx.voiceButton('w-round'));
+  document.addEventListener('voice-changed', syncVoice);
+  timers.push({ off: () => document.removeEventListener('voice-changed', syncVoice) });
   stage.append(root);
   ctx.complete();
 }

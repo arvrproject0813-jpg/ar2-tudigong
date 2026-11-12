@@ -306,7 +306,7 @@ export function render(stage, ctx) {
   else if (placed.size === ZONES.length) askMeetingPoint();
   progress();
   if (nodeDone) ctx.complete();
-  if (!placed.size) timers.push(setTimeout(() => toast(c.dragHint, 'hint'), 600));
+  // (what to do here is said by the voice guide at the bottom of the stage)
 }
 
 export function destroy() {

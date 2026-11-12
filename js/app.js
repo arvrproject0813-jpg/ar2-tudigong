@@ -5,11 +5,12 @@ import { el, bi, button, iconButton, checklist, toast, clearToasts, closeModal, 
 import { icon } from './icons.js';
 import { narrationControl, stopNarration } from './narration.js';
 import { startMusic, stopMusic, installClickSounds } from './sound.js';
+import { playGuide, clearGuide, stopGuide } from './guide.js';
 
 /* ---------- state ---------- */
 const freshState = () => ({
   lang: 'bi', page: 'p01', done: {}, seen: {},
-  p08Route: [], p11Sentences: [], badges: [], arAvailable: false, panelCollapsed: false, music: true,
+  p08Route: [], p11Sentences: [], badges: [], arAvailable: false, panelCollapsed: false, music: true, voice: true,
 });
 // Progress lives only in memory: moving between pages keeps it, but reloading the page (or
 // opening the link again) always starts fresh from the welcome page. Nothing is stored on the device.
@@ -33,7 +34,7 @@ async function go(id) {
   if (indexOf(id) < 0) id = 'p01';
   const token = ++navToken;
   if (current?.mod?.destroy) { try { current.mod.destroy(); } catch (e) { console.error(e); } }
-  clearToasts(); closeModal(); stopNarration();
+  clearToasts(); closeModal(); stopNarration(); clearGuide();
   const page = PAGES[indexOf(id)];
   let mod;
   try { mod = await import(`./pages/${page.file}.js`); }
@@ -53,6 +54,7 @@ async function go(id) {
   document.body.classList.toggle('is-fullbleed', mod.chrome === false);
   mod.render($stage, makeCtx(id));
   if (slidePanel) playPanelEnter();
+  if (id !== 'p01') startGuide(id);                 // the welcome page starts its own guide once the title is written
 }
 let prevId = null;
 
@@ -104,6 +106,21 @@ function firstTouch() {
 }
 document.addEventListener('pointerdown', firstTouch, true);
 const musicIfOn = () => { if (state.music) startMusic(); };
+
+/* ---------- voice guide ---------- */
+function startGuide(id = current?.id) { if (id) playGuide(id, { host: $stage, lang: state.lang, voiceOn: state.voice !== false }); }
+function toggleVoice() {
+  state.voice = state.voice === false; save();
+  if (state.voice) startGuide(); else stopGuide();
+  if (current) { renderTopbar(); document.dispatchEvent(new CustomEvent('voice-changed')); }
+}
+function voiceButton(cls = '') {
+  const on = state.voice !== false;
+  const label = plain(on ? CONTENT.common.voiceOff : CONTENT.common.voiceOn);
+  const b = iconButton(on ? 'speaker' : 'speakerOff', label, toggleVoice, `voice-btn ${on ? '' : 'is-off'} ${cls}`.trim());
+  b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.title = label;
+  return b;
+}
 function toggleMusic() {
   state.music = !state.music; save();
   if (state.music) startMusic(); else stopMusic();
@@ -141,6 +158,7 @@ function renderTopbar() {
       el('div', { class: 'progress-dots', role: 'progressbar', 'aria-valuemin': '1', 'aria-valuemax': '12', 'aria-valuenow': String(i + 1) },
         PAGES.map((p, j) => el('span', { class: j < i ? 'is-done' : j === i ? 'is-current' : '' })))),
     el('div', { class: 'tb-right' },
+      voiceButton(),
       musicButton(),
       iconButton(state.panelCollapsed ? 'sidebar' : 'expand', plain(state.panelCollapsed ? CONTENT.common.showPanel : CONTENT.common.fullScreen),
         () => setPanelCollapsed(!state.panelCollapsed), 'panel-toggle'),
@@ -154,7 +172,8 @@ function makeCtx(id) {
 
   const ctx = {
     id, state, content: CONTENT[id], CONTENT,
-    go, next, back, rerender, save, toast, openVocab, cycleLang, musicButton, musicIfOn, resetAll: () => resetAll(),
+    go, next, back, rerender, save, toast, openVocab, cycleLang, musicButton, voiceButton, musicIfOn, resetAll: () => resetAll(),
+    guide: () => startGuide(id),
 
     /**
      * Build the right-hand panel.

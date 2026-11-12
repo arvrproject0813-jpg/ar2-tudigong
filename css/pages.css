@@ -555,3 +555,48 @@
   .p06-in, .p06-knob.is-hinting { animation: none; }
   .p06-frame.is-gliding .p06-present, .p06-frame.is-gliding .p06-divider, .p06-frame.is-gliding .p06-knob { transition: none; }
 }
+
+/* P02 camera setup, shown before the scanner starts */
+.scan-setup { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; padding: var(--space-4); overflow: auto; background: var(--img-mural) center / cover, var(--color-bg); }
+.scan-setup-card {
+  width: min(760px, 100%); background: var(--tex-paper), var(--color-surface); border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 0 2px var(--gold-500), inset 0 0 0 6px var(--beige-50), inset 0 0 0 7px rgba(201, 149, 46, .5), var(--shadow-card);
+  padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3);
+  font-family: 'Alegreya Sans', var(--font-ui);
+}
+.scan-setup-card h2 { margin: 0; font-family: 'Alegreya', var(--font-display); font-size: 26px; line-height: 1.15; color: var(--wood-900); }
+.scan-setup-card h2 .zh { font-family: 'Chiron Sung HK', var(--font-zh); font-size: 18px; color: var(--red-700); }
+.setup-intro { margin: 0; font-size: 15px; color: var(--wood-600); }
+.setup-intro .zh { font-family: 'Chiron Sung HK', var(--font-zh); }
+.setup-steps { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.setup-step { display: flex; gap: 12px; align-items: flex-start; padding: 12px; border-radius: var(--radius-md); background: rgba(255, 251, 243, .7); box-shadow: inset 0 0 0 1.5px rgba(201, 149, 46, .45); }
+.setup-ic { width: 44px; height: 44px; flex: none; border-radius: 12px; display: grid; place-items: center; color: var(--beige-50); background: var(--grad-lacquer); box-shadow: 0 0 0 2px var(--gold-300); }
+.setup-ic svg { width: 22px; height: 22px; }
+.setup-step h3 { margin: 0 0 4px; font-family: 'Alegreya', var(--font-display); font-size: 17px; line-height: 1.15; color: var(--wood-900); }
+.setup-step h3 .zh { font-family: 'Chiron Sung HK', var(--font-zh); font-size: 14px; color: var(--teal-600); }
+.setup-step p { margin: 0; font-size: 14px; line-height: 1.38; color: var(--wood-900); }
+.setup-step p .zh { font-family: 'Chiron Sung HK', var(--font-zh); font-size: 13px; color: var(--wood-600); margin-top: 3px; }
+.scan-setup .btn-row { justify-content: center; }
+.btn.setup-start { flex-direction: row; gap: 10px; min-width: 240px; }
+.btn.setup-start .ic, .btn.setup-start .ic svg { width: 22px; height: 22px; }
+#stage:has(.scan-overlay) .guide-bar { top: 14px; bottom: auto; }
+/* while the Camera Setup card is open it already shows the steps: the guide shrinks to a small speaker pill in the corner */
+#stage:has(.scan-setup) .guide-bar { top: 12px; bottom: auto; left: auto; right: 12px; transform: none; gap: 6px; padding: 5px; border-radius: 999px; }
+#stage:has(.scan-setup) .guide-bar .guide-text { display: none; }
+#stage:has(.scan-setup) .guide-bar.is-hidden { transform: translateY(-10px); }
+@media (max-height: 500px) {
+  .scan-setup { padding: var(--space-2); place-items: start center; }
+  .scan-setup-card { padding: var(--space-3) var(--space-4); gap: var(--space-2); }
+  .scan-setup-card h2 { font-size: 19px; }
+  .scan-setup-card h2 .zh { font-size: 14px; }
+  .setup-intro { display: none; }
+  .setup-steps { gap: 6px; }
+  .setup-step { padding: 7px 8px; gap: 8px; }
+  .setup-ic { width: 32px; height: 32px; border-radius: 9px; }
+  .setup-ic svg { width: 17px; height: 17px; }
+  .setup-step h3 { font-size: 14px; margin-bottom: 2px; }
+  .setup-step h3 .zh { font-size: 12px; }
+  .setup-step p { font-size: 11.5px; line-height: 1.3; }
+  .setup-step p .zh { font-size: 11px; }
+  .btn.setup-start { min-width: 200px; }
+}
