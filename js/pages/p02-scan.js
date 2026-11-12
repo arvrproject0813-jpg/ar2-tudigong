@@ -121,11 +121,11 @@ export function render(stage, ctx) {
   startBtn.prepend(el('span', { class: 'ic', html: icon('camera'), 'aria-hidden': 'true' }));
   startBtn.classList.add('setup-start');
   const setup = el('div', { class: 'scan-setup' },
-    el('div', { class: 'cs-card', role: 'region', 'aria-label': S.title.en, 'data-guide-host': '' },
+    el('div', { class: 'cs-card', role: 'region', 'aria-label': S.title.en },
       scene,
       el('div', { class: 'cs-main' },
         el('div', { class: 'cs-eyebrow' }, bi(S.eyebrow, { layout: 'inline' })),
-        el('h2', {}, bi(S.title, { layout: 'stack' })),
+        el('div', { class: 'cs-head' }, el('h2', {}, bi(S.title, { layout: 'stack' })), el('div', { class: 'cs-voice', 'data-guide-host': '' })),
         el('p', { class: 'cs-intro' }, bi(S.intro)),
         el('div', { class: 'cs-steps' }, rows),
         el('div', { class: 'cs-go' }, el('div', { class: 'cs-ready' }, bi(S.ready, { layout: 'inline' })), startBtn))));

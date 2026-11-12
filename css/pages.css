@@ -564,6 +564,7 @@
 /* ---------- P02 camera setup: an animated scene + four steps that light up in turn ---------- */
 .scan-setup {
   position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; padding: var(--space-4); overflow: auto; container-type: size;
+  padding-right: max(var(--space-4), 40px);            /* keep clear of the panel's edge tab */
   background: linear-gradient(180deg, rgba(18, 63, 60, .15), rgba(18, 63, 60, .45)), var(--img-mural) center / cover, var(--color-bg);
 }
 .cs-card {
@@ -650,7 +651,7 @@
 .cs-eyebrow { align-self: flex-start; padding: 3px 11px; border-radius: 999px; font-size: 13px; font-weight: 800; letter-spacing: .03em;
   color: var(--gold-700); background: rgba(240, 207, 122, .3); box-shadow: inset 0 0 0 1px rgba(201, 149, 46, .5); }
 .cs-eyebrow .zh { margin-left: 6px; }
-.cs-main h2 { margin: 0; line-height: 1.1; padding-right: 110px; }
+.cs-main h2 { margin: 0; line-height: 1.1; }
 .cs-main h2 .en { font-family: 'Alegreya', var(--font-display); font-size: 30px; font-weight: 800; color: var(--teal-800); }
 .cs-main h2 .zh { font-family: 'Chiron Sung HK', var(--font-display-zh); font-size: 19px; font-weight: 700; color: var(--red-700); margin-top: 2px; }
 .cs-intro { margin: 0; font-size: 15px; line-height: 1.4; color: var(--wood-600); }
@@ -688,12 +689,18 @@
 .btn.setup-start { flex-direction: row; gap: 10px; min-width: 220px; animation: cs-glow 2.6s ease-in-out 1s infinite; }
 .btn.setup-start .ic, .btn.setup-start .ic svg { width: 22px; height: 22px; }
 @keyframes cs-glow { 50% { filter: drop-shadow(0 0 10px rgba(240, 207, 122, .75)); } }
-/* the voice guide sits as a small speaker pill in the card's corner (the card already shows the words) */
-.cs-card > .guide-bar { top: 14px; right: 14px; bottom: auto; left: auto; transform: none; gap: 6px; padding: 5px; border-radius: 999px; animation: none; }
-.cs-card > .guide-bar .guide-text { display: none; }
-.cs-card > .guide-bar.is-hidden { transform: translateY(-8px); }
+/* the voice guide sits as a small speaker pill beside the title (the card already shows the words) */
+.cs-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.cs-voice { flex: none; }
+.cs-voice > .guide-bar { position: static; transform: none; animation: none; width: auto; max-width: none; gap: 4px; padding: 4px; border-radius: 999px; }
+.cs-voice > .guide-bar .guide-text { display: none; }
+.cs-voice > .guide-bar .guide-ic, .cs-voice > .guide-bar .guide-btn { width: 32px; height: 32px; }
+.cs-voice > .guide-bar .guide-ic svg, .cs-voice > .guide-bar .guide-btn svg { width: 16px; height: 16px; }
+.cs-voice > .guide-bar .guide-btn { border-radius: 50%; }
+.cs-voice > .guide-bar.is-hidden { opacity: 1; transform: none; }          /* small enough to stay */
+.cs-voice > .guide-bar.is-hidden .guide-btn { pointer-events: auto; }
 @media (max-height: 500px), (max-width: 640px) {
-  .scan-setup { padding: var(--space-2); place-items: start center; }
+  .scan-setup { padding: var(--space-2) 36px var(--space-2) var(--space-2); place-items: start center; }
   .cs-card { grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); border-radius: 16px; }
   .cs-scene { padding: 14px 10px 36px; min-height: 0; }
   .cs-tablet { width: 92%; padding: 6px; border-radius: 14px; }
@@ -703,7 +710,6 @@
   .cs-dist { bottom: 10px; } .cs-dist b { font-size: 12px; }
   .cs-main { padding: 12px 14px; gap: 6px; }
   .cs-eyebrow, .cs-intro, .cs-ready { display: none; }
-  .cs-main h2 { padding-right: 90px; }
   .cs-main h2 .en { font-size: 20px; } .cs-main h2 .zh { font-size: 14px; }
   .cs-steps { gap: 4px; }
   .cs-step { grid-template-columns: 22px 30px 1fr; gap: 7px; padding: 5px 10px 5px 7px; border-radius: 11px; }
@@ -712,9 +718,9 @@
   .cs-t { font-size: 14px; } .cs-t .zh { font-size: 12px; }
   .cs-d { font-size: 11.5px; line-height: 1.3; } .cs-d .zh { font-size: 11px; }
   .btn.setup-start { min-height: 44px; min-width: 0; }
-  .cs-card > .guide-bar { top: 8px; right: 8px; padding: 3px; }
-  .cs-card > .guide-bar .guide-ic, .cs-card > .guide-bar .guide-btn:last-child { display: none; }   /* just the "listen again" button */
-  .cs-main h2 { padding-right: 44px; }
+  .cs-voice > .guide-bar { padding: 3px; }
+  .cs-voice > .guide-bar .guide-ic, .cs-voice > .guide-bar .guide-btn:last-child { display: none; }   /* just the "listen again" button */
+  .cs-voice > .guide-bar .guide-btn { width: 28px; height: 28px; }
   .cs-main { gap: 3px; padding: 8px 10px; }
   .cs-step { padding: 3px 9px 3px 6px; }
   .cs-d { font-size: 11px; line-height: 1.25; } .cs-d .zh { font-size: 10.5px; margin-top: 1px; }
