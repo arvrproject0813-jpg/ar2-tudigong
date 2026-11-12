@@ -507,10 +507,10 @@ button.chip:hover { background: var(--teal-50); }
 /* ---------- voice guide bar (js/guide.js): what to do on this page, spoken and written ---------- */
 .guide-bar {
   position: absolute; z-index: 30; left: 50%; bottom: max(14px, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
-  width: max-content; max-width: min(600px, calc(100% - 28px)); display: flex; align-items: center; gap: 12px;
-  padding: 9px 9px 9px 10px; border-radius: 16px; color: var(--beige-50);
-  background: rgba(16, 44, 41, .86); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-  box-shadow: inset 0 0 0 1px rgba(240, 207, 122, .45), 0 10px 24px rgba(10, 20, 18, .35);
+  width: max-content; max-width: min(560px, calc(100% - 28px)); display: flex; align-items: center; gap: 12px;
+  padding: 8px 8px 8px 9px; border-radius: 20px; color: var(--beige-50);
+  background: linear-gradient(135deg, rgba(31, 107, 102, .93), rgba(18, 63, 60, .95)); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  box-shadow: inset 0 0 0 1.5px rgba(240, 207, 122, .55), inset 0 0 0 4px rgba(18, 63, 60, .5), 0 10px 24px rgba(10, 20, 18, .3);
   pointer-events: none;                                  /* taps go through to the page underneath… */
   transition: opacity .45s var(--ease), transform .45s var(--ease);
   animation: guide-in .5s var(--ease) both;
@@ -538,11 +538,20 @@ button.chip:hover { background: var(--teal-50); }
   .guide-text { font-size: 12.5px; line-height: 1.3; }
   .guide-text .zh { font-size: 11.5px; }
 }
+/* bilingual mode: only the line being spoken is shown, so the bar stays small (both lines when the voice is off) */
+.guide-bar[data-line='en'] .guide-text .bi > .zh:not(.solo),
+.guide-bar[data-line='zh'] .guide-text .bi > .en { display: none; }
+.guide-bar[data-line='zh'] .guide-text .zh { margin-top: 0; font-size: 15px; color: var(--beige-50); }
+.guide-text .bi > * { animation: guide-line .35s ease both; }
+@keyframes guide-line { from { opacity: 0; transform: translateY(4px); } }
 @media (max-height: 500px) {
-  /* bilingual mode on a phone: only the line being spoken, so the bar stays small */
-  .guide-bar[data-line='en'] .guide-text .bi > .zh:not(.solo),
-  .guide-bar[data-line='zh'] .guide-text .bi > .en { display: none; }
-  .guide-bar[data-line='zh'] .guide-text .zh { margin-top: 0; font-size: 13px; color: var(--beige-50); }
   .guide-bar { max-width: min(560px, calc(100% - 20px)); }
+  .guide-bar[data-line='zh'] .guide-text .zh { font-size: 13px; }
 }
 @media (prefers-reduced-motion: reduce) { .guide-bar { animation: none; transition: none; } .guide-bar.is-speaking .guide-ic { animation: none; } }
+
+/* vocabulary words inside the panel text (app.js markKeywords): bold with a soft gold highlighter; tap = word card */
+.narration .kw { font-weight: 800; color: var(--teal-800); cursor: pointer; border-radius: 3px; padding: 0 1px;
+  background: linear-gradient(transparent 60%, rgba(240, 207, 122, .6) 60%, rgba(240, 207, 122, .6) 92%, transparent 92%); transition: background .2s; }
+.narration .zh .kw { color: var(--red-700); font-weight: 700; }
+.narration .kw:hover, .narration .kw:focus-visible { background: rgba(240, 207, 122, .55); outline: none; }

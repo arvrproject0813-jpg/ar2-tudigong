@@ -112,32 +112,64 @@ export function render(stage, ctx) {
   stage.append(root);
   ctx.complete();
 
-  /* Start → we glide in through the shrine's doorway; warm light fills the screen and P02 opens out of it.
-     The light veil lives on <body>, so it stays while the page changes underneath it. */
+  /* Start → we walk into the shrine.
+     1. The view glides toward the shrine and stops for a breath at its doorway, warm lamplight glowing inside.
+     2. We pass through: the doorway opens around us (the scene is cut by an arch-shaped hole that grows past
+        the screen) and P02 is waiting inside, settling into place as the warm light fades.
+     For a smooth ride the scene is moved into its own layer first and only transformed (no repainting),
+     and its own animations are paused. */
   let entering = false;
   function enterShrine() {
     if (entering) return;
     entering = true;
     if (reduce || !root.animate) { ctx.go('p02'); return; }
     finish();
-    const box = root.getBoundingClientRect();
-    const door = root.querySelector('.w-shrine').getBoundingClientRect();
-    const x = door.left + door.width * 0.5, y = door.top + door.height * 0.56;   // the middle of the doorway
-    root.style.transformOrigin = `${x - box.left}px ${y - box.top}px`;
-    root.classList.add('is-entering');
-    playEnter();
     clearGuide();
-    const veil = el('div', { class: 'enter-veil', 'aria-hidden': 'true' });
-    veil.style.setProperty('--x', `${x}px`); veil.style.setProperty('--y', `${y}px`);
-    document.body.append(veil);
-    // zoom feels even when the scale grows exponentially (1 → 12)
-    root.animate([0, 0.2, 0.4, 0.6, 0.8, 1].map((t) => ({ offset: t, transform: `scale(${(12 ** t).toFixed(3)})` })),
-      { duration: 1600, easing: 'cubic-bezier(.45, 0, .7, 1)', fill: 'forwards' });
-    veil.animate([{ opacity: 0 }, { opacity: 0, offset: 0.5 }, { opacity: 1 }], { duration: 1600, easing: 'ease-in', fill: 'forwards' })
-      .finished.then(() => ctx.go('p02'))
-      .then(() => veil.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(1.06)' }],
-        { duration: 900, delay: 120, easing: 'cubic-bezier(.3, 0, .2, 1)', fill: 'forwards' }).finished)
-      .finally(() => veil.remove());
+    const img = root.querySelector('.w-shrine');
+    const box = root.getBoundingClientRect(), r = img.getBoundingClientRect();
+    // the doorway in the shrine picture (fractions of the sprite), a little inside its gold frame
+    const D = { l: 0.405, r: 0.597, top: 0.43, spring: 0.5, bottom: 0.662 };
+    const X = (f) => r.left - box.left + r.width * f, Y = (f) => r.top - box.top + r.height * f;
+    const dl = X(D.l), dr = X(D.r), dt = Y(D.top), ds = Y(D.spring), db = Y(D.bottom);
+    const cx = (dl + dr) / 2, cy = (ds + db) / 2;
+    const W = box.width, H = box.height;
+    const arch = `M${dl} ${db} L${dl} ${ds} C${dl} ${dt + (ds - dt) * 0.15} ${cx - (dr - dl) * 0.3} ${dt} ${cx} ${dt} C${cx + (dr - dl) * 0.3} ${dt} ${dr} ${dt + (ds - dt) * 0.15} ${dr} ${ds} L${dr} ${db} Z`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><path fill-rule="evenodd" d="M0 0H${W}V${H}H0Z ${arch}"/></svg>`;
+    // how far to zoom: a doorway about 45% of the screen tall, then far enough that it covers everything
+    const sMid = Math.max(2.2, (H * 0.45) / (db - dt));
+    const sEnd = 1.35 * Math.max(cx / ((dr - dl) / 2), (W - cx) / ((dr - dl) / 2), cy / ((db - dt) / 2), (H - cy) / ((db - dt) / 2));
+
+    // lift the scene into a layer above everything; the warm light of the shrine's inside goes behind it
+    const host = el('div', { class: 'enter-host', 'aria-hidden': 'true' });
+    const glow = el('div', { class: 'enter-glow' });
+    glow.style.setProperty('--x', `${box.left + cx}px`); glow.style.setProperty('--y', `${box.top + cy}px`);
+    host.append(glow);
+    document.body.append(host);
+    root.classList.add('is-entering');
+    host.append(root);
+    const url = `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+    root.style.webkitMaskImage = url; root.style.maskImage = url;
+    root.style.transformOrigin = `${cx}px ${cy}px`;
+    playEnter();
+
+    const T = 1950;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const walk = root.animate([
+        { transform: 'scale(1)', easing: 'cubic-bezier(.4, 0, .45, .95)' },
+        { offset: 0.5, transform: `scale(${sMid.toFixed(3)})`, easing: 'cubic-bezier(.5, .12, .9, .5)' },
+        { transform: `scale(${sEnd.toFixed(3)})` },
+      ], { duration: T, fill: 'forwards' });
+      // P02 is made inside, behind the light, while we step over the threshold
+      setTimeout(() => {
+        ctx.go('p02');
+        const app = document.getElementById('app');
+        setTimeout(() => {
+          glow.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 750, easing: 'ease-out', fill: 'forwards' });
+          app.animate([{ transform: 'scale(1.09)' }, { transform: 'scale(1)' }], { duration: 1300, easing: 'cubic-bezier(.2, .7, .2, 1)' });
+        }, 380);
+      }, T * 0.55);
+      walk.finished.then(() => setTimeout(() => host.remove(), 600)).catch(() => host.remove());
+    }));
   }
 }
 

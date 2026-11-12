@@ -64,10 +64,11 @@ export function playGuide(pageId, { host, lang, voiceOn }) {
   clearGuide();
   const g = CONTENT[pageId]?.guide;
   if (!g || !host) return;
+  host = host.querySelector('[data-guide-host]') || host;      // a page can offer a better spot (P02's camera setup card)
   const files = (lang === 'zh' ? ['zh'] : lang === 'en' ? ['en'] : ['en', 'zh']).map((l) => `${DIR}${pageId}_${l}.mp3`);
   const replay = el('button', { class: 'guide-btn', type: 'button', 'aria-label': plain(CONTENT.common.guideReplay), title: plain(CONTENT.common.guideReplay), html: icon('recenter') });
   const hide = el('button', { class: 'guide-btn', type: 'button', 'aria-label': plain(CONTENT.common.guideHide), title: plain(CONTENT.common.guideHide), html: icon('close') });
-  bar = el('div', { class: 'guide-bar', role: 'status', 'data-line': 'en' },
+  bar = el('div', { class: 'guide-bar', role: 'status', 'data-line': voiceOn ? 'en' : 'both' },
     el('span', { class: 'guide-ic', 'aria-hidden': 'true', html: icon('speaker') }),
     el('div', { class: 'guide-text' }, bi(g, { layout: 'stack' })),
     replay, hide);

@@ -497,11 +497,11 @@ export function playFlourish() {
 export function playEnter() {
   const out = sfxOut(); if (!out) return;
   const t = ctx.currentTime + 0.02;
-  const n = noiseSrc(ctx, t, 1.9);
-  const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.9;
-  bp.frequency.setValueAtTime(260, t); bp.frequency.exponentialRampToValueAtTime(1500, t + 1.15); bp.frequency.exponentialRampToValueAtTime(500, t + 1.85);
-  const g = env(ctx, t, [[0.5, 0.16], [1.1, 0.34], [1.45, 0.2], [1.9, 0]]);
+  const n = noiseSrc(ctx, t, 2.4);
+  const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.8;
+  bp.frequency.setValueAtTime(240, t); bp.frequency.exponentialRampToValueAtTime(700, t + 1.0); bp.frequency.exponentialRampToValueAtTime(1600, t + 1.6); bp.frequency.exponentialRampToValueAtTime(450, t + 2.35);
+  const g = env(ctx, t, [[0.6, 0.12], [1.05, 0.16], [1.55, 0.32], [1.95, 0.14], [2.4, 0]]);
   n.connect(bp).connect(g).connect(out);
-  ['D4', 'A4', 'D5', 'F#5', 'A5'].forEach((k, i) => zither(ctx, out, t + 1.3 + i * 0.07, NOTE[k], 0.5 - i * 0.05, 0.5));
+  ['D4', 'A4', 'D5', 'F#5', 'A5'].forEach((k, i) => zither(ctx, out, t + 1.6 + i * 0.08, NOTE[k], 0.5 - i * 0.05, 0.5));
 }
 

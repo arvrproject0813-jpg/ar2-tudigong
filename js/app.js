@@ -186,7 +186,7 @@ function makeCtx(id) {
       if (title) inner.append(el('h1', { class: `panel-title ${opts.display ? 'display' : ''}`, style: { margin: 0 } }, bi(title)));
       if (c.narration) inner.append(narrationControl(id, state.lang, 'full'));
       const body = el('div', { class: 'panel-body' });
-      if (opts.narration !== false && c.narration) body.append(el('div', { class: 'narration' }, bi(c.narration)));
+      if (opts.narration !== false && c.narration) body.append(markKeywords(el('div', { class: 'narration' }, bi(c.narration)), c.chips));
       (opts.body || []).forEach((n) => body.append(n));
       inner.append(body);
       tasksHost = el('div', { class: 'panel-tasks' });
@@ -288,6 +288,42 @@ function makeCtx(id) {
     stay.focus({ preventScroll: true });
   }
   return ctx;
+}
+
+/* Make the page's vocabulary words stand out in the panel text: bold, with a gold underline; tapping one
+   opens its vocabulary card (the same as the word chips below). chips = [{en, zh}] (zh may list
+   alternatives split by ／). English matches also catch plurals ("cultural landscapes"). */
+function markKeywords(root, chips) {
+  if (!chips?.length) return root;
+  const esc = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const enTerms = chips.map((v) => v.en).sort((a, b) => b.length - a.length);
+  const zhTerms = chips.flatMap((v) => (v.zh || '').split(/[／/]/)).map((t) => t.trim()).filter(Boolean).sort((a, b) => b.length - a.length);
+  const reEn = new RegExp(`\\b(${enTerms.map(esc).join('|')})(e?s)?\\b`, 'gi');
+  const reZh = zhTerms.length ? new RegExp(`(${zhTerms.map(esc).join('|')})`, 'g') : null;
+  const termFor = (hit, zh) => (zh ? chips.find((v) => (v.zh || '').split(/[／/]/).map((t) => t.trim()).includes(hit)) : chips.find((v) => hit.toLowerCase().startsWith(v.en.toLowerCase())))?.en;
+  const walk = (node, re, zh) => {
+    [...node.childNodes].forEach((n) => {
+      if (n.nodeType !== 3) { if (n.nodeType === 1 && !n.classList.contains('kw')) walk(n, re, zh); return; }
+      const text = n.nodeValue; re.lastIndex = 0;
+      if (!re.test(text)) return;
+      re.lastIndex = 0;
+      const frag = document.createDocumentFragment(); let last = 0, m;
+      while ((m = re.exec(text))) {
+        frag.append(text.slice(last, m.index));
+        const term = termFor(m[0], zh);
+        const kw = el('b', { class: 'kw', role: 'button', tabindex: '0', title: term || '' }, m[0]);
+        const open = () => term && openVocab(term);
+        kw.addEventListener('click', open);
+        kw.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+        frag.append(kw); last = m.index + m[0].length;
+      }
+      frag.append(text.slice(last));
+      n.replaceWith(frag);
+    });
+  };
+  root.querySelectorAll('.en').forEach((n) => walk(n, reEn, false));
+  if (reZh) root.querySelectorAll('.zh').forEach((n) => walk(n, reZh, true));
+  return root;
 }
 
 // the badge shown on each page's "not finished yet" pop-up

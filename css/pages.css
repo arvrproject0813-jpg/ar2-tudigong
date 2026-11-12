@@ -523,7 +523,10 @@
 .p06-compare { flex: none; min-height: 40px; gap: 6px; font-family: 'Alegreya Sans', var(--font-ui); font-size: 13.5px; }
 .p06-compare .ic, .p06-clues .ic { width: 20px; height: 20px; display: grid; place-items: center; }
 .p06-compare .ic svg, .p06-clues .ic svg { width: 18px; height: 18px; }
-.p06-clues { position: absolute; right: 12px; bottom: 10px; z-index: 6; flex-direction: row; gap: 8px; min-height: 44px; padding-inline: 16px; }
+.p06-clues { position: absolute; right: 12px; bottom: 10px; z-index: 6; flex-direction: row; gap: 8px; min-height: 40px; padding: 5px 14px 5px 12px; --cut: 8px; }
+.p06-clues .en { font-size: 14.5px; }
+.p06-clues .zh { font-size: 11.5px; letter-spacing: .05em; margin-top: 0; }
+.p06-clues .zh.solo { font-size: 14px; }
 .p06-clues[hidden] { display: none; }
 .p06-in { animation: p05-pop .45s cubic-bezier(.3, 1.6, .5, 1) both, p06-glow 2s ease-in-out .5s 3; }
 @keyframes p06-glow { 0%, 100% { filter: none; } 50% { filter: drop-shadow(0 0 8px rgba(240, 207, 122, .95)); } }
@@ -544,7 +547,8 @@
   .p06-range { height: 40px; }
   .p06-range::-webkit-slider-thumb { width: 36px; height: 36px; margin-top: -13px; }
   .p06-compare { min-height: 34px; font-size: 11.5px; padding: 2px 10px; }
-  .p06-clues { min-height: 34px; padding-inline: 10px; right: 6px; bottom: 6px; }
+  .p06-clues { min-height: 32px; padding: 3px 10px 3px 8px; right: 6px; bottom: 6px; }
+  .p06-clues .en { font-size: 12.5px; } .p06-clues .zh { font-size: 10.5px; }
   .p06-knob { width: 38px; height: 38px; }
   .p06-era { top: 6px; font-size: 10.5px; padding: 2px 7px; }
   .p06-era .zh { font-size: 10px; }
@@ -557,46 +561,162 @@
 }
 
 /* P02 camera setup, shown before the scanner starts */
-.scan-setup { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; padding: var(--space-4); overflow: auto; background: var(--img-mural) center / cover, var(--color-bg); }
-.scan-setup-card {
-  width: min(760px, 100%); background: var(--tex-paper), var(--color-surface); border-radius: var(--radius-lg);
-  box-shadow: inset 0 0 0 2px var(--gold-500), inset 0 0 0 6px var(--beige-50), inset 0 0 0 7px rgba(201, 149, 46, .5), var(--shadow-card);
-  padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3);
+/* ---------- P02 camera setup: an animated scene + four steps that light up in turn ---------- */
+.scan-setup {
+  position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; padding: var(--space-4); overflow: auto;
+  background: linear-gradient(180deg, rgba(18, 63, 60, .15), rgba(18, 63, 60, .45)), var(--img-mural) center / cover, var(--color-bg);
+}
+.cs-card {
+  position: relative; width: min(980px, 100%); display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1.25fr);
+  border-radius: 22px; overflow: hidden; background: var(--tex-paper), var(--beige-50);
+  box-shadow: 0 0 0 2px var(--gold-500), 0 0 0 6px rgba(255, 251, 243, .92), 0 0 0 7px rgba(201, 149, 46, .55), 0 22px 50px rgba(18, 40, 36, .35);
   font-family: 'Alegreya Sans', var(--font-ui);
+  animation: cs-in .6s cubic-bezier(.2, .9, .3, 1.1) both;
 }
-.scan-setup-card h2 { margin: 0; font-family: 'Alegreya', var(--font-display); font-size: 26px; line-height: 1.15; color: var(--wood-900); }
-.scan-setup-card h2 .zh { font-family: 'Chiron Sung HK', var(--font-zh); font-size: 18px; color: var(--red-700); }
-.setup-intro { margin: 0; font-size: 15px; color: var(--wood-600); }
-.setup-intro .zh { font-family: 'Chiron Sung HK', var(--font-zh); }
-.setup-steps { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.setup-step { display: flex; gap: 12px; align-items: flex-start; padding: 12px; border-radius: var(--radius-md); background: rgba(255, 251, 243, .7); box-shadow: inset 0 0 0 1.5px rgba(201, 149, 46, .45); }
-.setup-ic { width: 44px; height: 44px; flex: none; border-radius: 12px; display: grid; place-items: center; color: var(--beige-50); background: var(--grad-lacquer); box-shadow: 0 0 0 2px var(--gold-300); }
-.setup-ic svg { width: 22px; height: 22px; }
-.setup-step h3 { margin: 0 0 4px; font-family: 'Alegreya', var(--font-display); font-size: 17px; line-height: 1.15; color: var(--wood-900); }
-.setup-step h3 .zh { font-family: 'Chiron Sung HK', var(--font-zh); font-size: 14px; color: var(--teal-600); }
-.setup-step p { margin: 0; font-size: 14px; line-height: 1.38; color: var(--wood-900); }
-.setup-step p .zh { font-family: 'Chiron Sung HK', var(--font-zh); font-size: 13px; color: var(--wood-600); margin-top: 3px; }
-.scan-setup .btn-row { justify-content: center; }
-.btn.setup-start { flex-direction: row; gap: 10px; min-width: 240px; }
+@keyframes cs-in { from { opacity: 0; transform: translateY(18px) scale(.97); } }
+/* left: the scene */
+.cs-scene {
+  position: relative; display: grid; place-items: center; padding: 34px 22px 58px; overflow: hidden; min-height: 300px;
+  background: var(--tex-clouds), radial-gradient(circle at 50% 42%, #2E8C85 0, #1F6B66 48%, #123F3C 100%);
+  box-shadow: inset -2px 0 0 var(--gold-500), inset -6px 0 0 rgba(255, 251, 243, .12);
+}
+.cs-scene::before {   /* soft light behind the tablet */
+  content: ''; position: absolute; left: 50%; top: 46%; width: 120%; aspect-ratio: 1; transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(240, 207, 122, .28), transparent 60%); transition: opacity .6s;
+}
+.cs-tablet {
+  position: relative; z-index: 1; width: 82%; aspect-ratio: 4 / 3; padding: 9px; border-radius: 22px;
+  background: linear-gradient(160deg, #3A4B48, #17211F); box-shadow: 0 0 0 2px rgba(240, 207, 122, .55), 0 18px 30px rgba(0, 0, 0, .35), inset 0 0 0 1px rgba(255, 255, 255, .08);
+  transform: rotate(-4deg); animation: cs-float 5s ease-in-out infinite;
+}
+@keyframes cs-float { 50% { transform: rotate(-2deg) translateY(-7px); } }
+.cs-screen { position: relative; height: 100%; border-radius: 14px; overflow: hidden; display: grid; place-items: center;
+  background: radial-gradient(circle at 50% 45%, #2C3B37, #121A19); transition: background .6s; }
+.cs-screen img { width: 70%; border-radius: 3px; box-shadow: 0 4px 10px rgba(0, 0, 0, .4); transition: filter .6s, transform .6s; filter: brightness(.82) saturate(.9); }
+.cs-br { position: absolute; width: 16%; aspect-ratio: 1; border: 3px solid var(--gold-300); opacity: .5; transition: opacity .4s, inset .5s; }
+.cs-br.tl { left: 9%; top: 11%; border-right: 0; border-bottom: 0; border-radius: 6px 0 0 0; }
+.cs-br.tr { right: 9%; top: 11%; border-left: 0; border-bottom: 0; border-radius: 0 6px 0 0; }
+.cs-br.bl { left: 9%; bottom: 11%; border-right: 0; border-top: 0; border-radius: 0 0 0 6px; }
+.cs-br.br { right: 9%; bottom: 11%; border-left: 0; border-top: 0; border-radius: 0 0 6px 0; }
+.cs-beam { position: absolute; left: 10%; right: 10%; top: 14%; height: 3px; border-radius: 3px; opacity: 0;
+  background: linear-gradient(90deg, transparent, #FFF0B8, transparent); box-shadow: 0 0 12px 3px rgba(240, 207, 122, .7); }
+.cs-allow { position: absolute; z-index: 2; display: flex; align-items: center; gap: 8px; padding: 8px 14px 8px 10px; border-radius: 12px;
+  background: var(--beige-50); color: var(--teal-800); font-weight: 800; font-size: 14px; box-shadow: 0 8px 18px rgba(0, 0, 0, .35);
+  opacity: 0; transform: scale(.7); transition: opacity .35s, transform .45s cubic-bezier(.2, .9, .3, 1.3); }
+.cs-allow > span:first-child { display: grid; width: 26px; height: 26px; place-items: center; border-radius: 8px; color: var(--beige-50); background: var(--grad-lacquer); }
+.cs-allow > span:first-child svg { width: 15px; height: 15px; }
+.cs-allow .zh { margin-left: 4px; font-weight: 700; color: var(--teal-600); }
+.cs-tap { position: absolute; z-index: 3; left: 58%; top: 58%; width: 26px; height: 26px; border-radius: 50%; opacity: 0;
+  background: rgba(255, 251, 243, .85); box-shadow: 0 0 0 0 rgba(255, 251, 243, .6); }
+.cs-sun { position: absolute; z-index: 2; top: 16px; right: 18px; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%;
+  color: var(--teal-800); background: radial-gradient(circle at 40% 35%, #FFF6DA, #F0CF7A 60%, #C9952E); opacity: .3; transform: scale(.85); transition: opacity .5s, transform .5s; }
+.cs-sun::before { content: ''; position: absolute; inset: -14px; border-radius: 50%; z-index: -1;
+  background: repeating-conic-gradient(rgba(240, 207, 122, .55) 0 8deg, transparent 8deg 30deg);
+  -webkit-mask-image: radial-gradient(circle, transparent 42%, #000 44%, transparent 72%); mask-image: radial-gradient(circle, transparent 42%, #000 44%, transparent 72%);
+  opacity: 0; transition: opacity .5s; animation: cs-spin 14s linear infinite; }
+@keyframes cs-spin { to { transform: rotate(360deg); } }
+.cs-sun span, .cs-sun svg { display: grid; width: 22px; height: 22px; }
+.cs-safe { position: absolute; z-index: 0; left: 50%; top: 46%; width: 92%; aspect-ratio: 1; transform: translate(-50%, -50%) scale(.85); border-radius: 50%;
+  border: 2.5px dashed rgba(240, 207, 122, .9); opacity: 0; transition: opacity .5s, transform .6s; }
+.cs-dist { position: absolute; left: 14%; right: 14%; bottom: 18px; display: flex; align-items: center; gap: 8px; color: var(--teal-100); opacity: .55; transition: opacity .4s, color .4s; }
+.cs-dist i { flex: 1; height: 2px; background: currentColor; position: relative; }
+.cs-dist i:first-child::before, .cs-dist i:last-child::after { content: ''; position: absolute; top: -4px; width: 8px; height: 8px; border: 2px solid currentColor; border-width: 2px 2px 0 0; }
+.cs-dist i:first-child::before { left: 0; transform: rotate(-135deg); }
+.cs-dist i:last-child::after { right: 0; transform: rotate(45deg); }
+.cs-dist b { font-family: 'Alegreya', var(--font-display); font-size: 15px; white-space: nowrap; }
+/* the scene acts out the step in focus */
+.cs-scene[data-step='0'] .cs-allow { opacity: 1; transform: scale(1); }
+.cs-scene[data-step='0'] .cs-tap { animation: cs-tap 1.6s ease-out .6s infinite; }
+.cs-scene[data-step='0'] .cs-screen img { filter: brightness(.45) blur(1.5px); }
+@keyframes cs-tap { 0% { opacity: 0; transform: translate(14px, 14px) scale(1.4); } 30% { opacity: 1; transform: none; } 45% { box-shadow: 0 0 0 0 rgba(255, 251, 243, .7); transform: scale(.85); }
+  80% { opacity: 0; box-shadow: 0 0 0 16px rgba(255, 251, 243, 0); transform: scale(1); } 100% { opacity: 0; } }
+.cs-scene[data-step='1'] .cs-br { opacity: 1; animation: cs-snap 1.6s ease-in-out infinite; }
+.cs-scene[data-step='1'] .cs-beam { animation: cs-beam 1.8s ease-in-out infinite; }
+.cs-scene[data-step='1'] .cs-dist { opacity: 1; color: var(--gold-300); }
+.cs-scene[data-step='1'] .cs-screen img { filter: none; transform: scale(1.05); }
+@keyframes cs-snap { 50% { transform: scale(.88); } }
+@keyframes cs-beam { 0% { top: 14%; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { top: 84%; opacity: 0; } }
+.cs-scene[data-step='2'] .cs-sun { opacity: 1; transform: scale(1.05); }
+.cs-scene[data-step='2'] .cs-sun::before { opacity: 1; }
+.cs-scene[data-step='2'] .cs-screen { background: radial-gradient(circle at 70% 20%, #6E7F6A, #2A3633); }
+.cs-scene[data-step='2'] .cs-screen img { filter: brightness(1.12) saturate(1.1); }
+.cs-scene[data-step='2']::before { opacity: 1.6; }
+.cs-scene[data-step='3'] .cs-safe { opacity: 1; transform: translate(-50%, -50%) scale(1); animation: cs-ring 9s linear infinite; }
+.cs-scene[data-step='3'] .cs-tablet { animation-play-state: paused; }
+.cs-scene[data-step='3'] .cs-screen img { filter: none; }
+@keyframes cs-ring { to { transform: translate(-50%, -50%) rotate(360deg); } }
+/* right: the steps */
+.cs-main { display: flex; flex-direction: column; gap: 10px; padding: 26px 28px 24px; min-width: 0; }
+.cs-eyebrow { align-self: flex-start; padding: 3px 11px; border-radius: 999px; font-size: 13px; font-weight: 800; letter-spacing: .03em;
+  color: var(--gold-700); background: rgba(240, 207, 122, .3); box-shadow: inset 0 0 0 1px rgba(201, 149, 46, .5); }
+.cs-eyebrow .zh { margin-left: 6px; }
+.cs-main h2 { margin: 0; line-height: 1.1; padding-right: 110px; }
+.cs-main h2 .en { font-family: 'Alegreya', var(--font-display); font-size: 30px; font-weight: 800; color: var(--teal-800); }
+.cs-main h2 .zh { font-family: 'Chiron Sung HK', var(--font-display-zh); font-size: 19px; font-weight: 700; color: var(--red-700); margin-top: 2px; }
+.cs-intro { margin: 0; font-size: 15px; line-height: 1.4; color: var(--wood-600); }
+.cs-intro .zh { font-family: 'Chiron Sung HK', var(--font-zh); }
+.cs-steps { display: flex; flex-direction: column; gap: 7px; }
+.cs-step {
+  position: relative; overflow: hidden; display: grid; grid-template-columns: 26px 40px 1fr; align-items: center; gap: 10px; width: 100%;
+  padding: 8px 14px 8px 10px; border: 0; border-radius: 14px; cursor: pointer; text-align: left; font: inherit; color: var(--wood-900);
+  background: rgba(255, 251, 243, .65); box-shadow: inset 0 0 0 1.5px rgba(201, 149, 46, .35);
+  transition: background .3s, box-shadow .3s, transform .3s; animation: skd-row .45s ease both;
+}
+.cs-step:nth-child(2) { animation-delay: .08s; } .cs-step:nth-child(3) { animation-delay: .16s; } .cs-step:nth-child(4) { animation-delay: .24s; }
+.cs-step:hover { background: #fff; }
+.cs-num { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-family: 'Alegreya', var(--font-display); font-weight: 800; font-size: 14px;
+  color: var(--gold-700); box-shadow: inset 0 0 0 2px var(--gold-500); transition: background .3s, color .3s; }
+.cs-ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; color: var(--beige-50); background: var(--grad-lacquer); box-shadow: 0 0 0 2px rgba(240, 207, 122, .6); transition: transform .3s; }
+.cs-ic svg { width: 20px; height: 20px; }
+.cs-txt { min-width: 0; }
+.cs-t { display: block; font-family: 'Alegreya', var(--font-display); font-size: 17px; font-weight: 800; line-height: 1.2; color: var(--teal-800); }
+.cs-t .zh { margin-left: 6px; font-family: 'Chiron Sung HK', var(--font-zh); font-size: 14px; font-weight: 700; color: var(--teal-600); }
+.cs-d { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .4s ease, opacity .4s ease, margin .4s; font-size: 14px; line-height: 1.38; color: var(--wood-900); }
+.cs-d > .bi { overflow: hidden; min-height: 0; }
+.cs-d .zh { display: block; font-family: 'Chiron Sung HK', var(--font-zh); font-size: 13px; color: var(--wood-600); margin-top: 2px; }
+.cs-step.is-on { background: linear-gradient(90deg, rgba(240, 207, 122, .3), rgba(255, 251, 243, .95) 60%); box-shadow: inset 0 0 0 2px var(--gold-500), 0 6px 14px rgba(138, 100, 22, .16); transform: translateX(4px); }
+.cs-step.is-on .cs-num { background: var(--grad-gold); color: var(--teal-800); box-shadow: none; }
+.cs-step.is-on .cs-ic { transform: scale(1.08) rotate(-4deg); }
+.cs-step.is-on .cs-d { grid-template-rows: 1fr; opacity: 1; margin-top: 3px; }
+.cs-step.is-on::after { content: ''; position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--gold-300), var(--gold-500)); animation: cs-timer 3.4s linear both; }
+@keyframes cs-timer { from { transform: scaleX(0); } }
+.cs-step.is-past .cs-num { background: var(--teal-600); color: var(--beige-50); box-shadow: none; }
+.cs-go { display: flex; flex-direction: column; align-items: stretch; gap: 6px; margin-top: 4px; }
+.cs-ready { text-align: center; font-size: 14px; font-weight: 700; color: var(--teal-600); }
+.cs-ready .zh { margin-left: 6px; font-family: 'Chiron Sung HK', var(--font-zh); font-weight: 600; color: var(--wood-600); }
+.btn.setup-start { flex-direction: row; gap: 10px; min-width: 220px; animation: cs-glow 2.6s ease-in-out 1s infinite; }
 .btn.setup-start .ic, .btn.setup-start .ic svg { width: 22px; height: 22px; }
-#stage:has(.scan-overlay) .guide-bar { top: 14px; bottom: auto; }
-/* while the Camera Setup card is open it already shows the steps: the guide shrinks to a small speaker pill in the corner */
-#stage:has(.scan-setup) .guide-bar { top: 12px; bottom: auto; left: auto; right: 12px; transform: none; gap: 6px; padding: 5px; border-radius: 999px; }
-#stage:has(.scan-setup) .guide-bar .guide-text { display: none; }
-#stage:has(.scan-setup) .guide-bar.is-hidden { transform: translateY(-10px); }
-@media (max-height: 500px) {
+@keyframes cs-glow { 50% { filter: drop-shadow(0 0 10px rgba(240, 207, 122, .75)); } }
+/* the voice guide sits as a small speaker pill in the card's corner (the card already shows the words) */
+.cs-card > .guide-bar { top: 14px; right: 14px; bottom: auto; left: auto; transform: none; gap: 6px; padding: 5px; border-radius: 999px; animation: none; }
+.cs-card > .guide-bar .guide-text { display: none; }
+.cs-card > .guide-bar.is-hidden { transform: translateY(-8px); }
+@media (max-height: 500px), (max-width: 640px) {
   .scan-setup { padding: var(--space-2); place-items: start center; }
-  .scan-setup-card { padding: var(--space-3) var(--space-4); gap: var(--space-2); }
-  .scan-setup-card h2 { font-size: 19px; }
-  .scan-setup-card h2 .zh { font-size: 14px; }
-  .setup-intro { display: none; }
-  .setup-steps { gap: 6px; }
-  .setup-step { padding: 7px 8px; gap: 8px; }
-  .setup-ic { width: 32px; height: 32px; border-radius: 9px; }
-  .setup-ic svg { width: 17px; height: 17px; }
-  .setup-step h3 { font-size: 14px; margin-bottom: 2px; }
-  .setup-step h3 .zh { font-size: 12px; }
-  .setup-step p { font-size: 11.5px; line-height: 1.3; }
-  .setup-step p .zh { font-size: 11px; }
-  .btn.setup-start { min-width: 200px; }
+  .cs-card { grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); border-radius: 16px; }
+  .cs-scene { padding: 14px 10px 36px; min-height: 0; }
+  .cs-tablet { width: 92%; padding: 6px; border-radius: 14px; }
+  .cs-screen { border-radius: 9px; }
+  .cs-allow { font-size: 11px; padding: 5px 8px 5px 6px; gap: 5px; } .cs-allow > span:first-child { width: 20px; height: 20px; }
+  .cs-sun { width: 32px; height: 32px; top: 8px; right: 8px; } .cs-sun span, .cs-sun svg { width: 16px; height: 16px; }
+  .cs-dist { bottom: 10px; } .cs-dist b { font-size: 12px; }
+  .cs-main { padding: 12px 14px; gap: 6px; }
+  .cs-eyebrow, .cs-intro, .cs-ready { display: none; }
+  .cs-main h2 { padding-right: 90px; }
+  .cs-main h2 .en { font-size: 20px; } .cs-main h2 .zh { font-size: 14px; }
+  .cs-steps { gap: 4px; }
+  .cs-step { grid-template-columns: 22px 30px 1fr; gap: 7px; padding: 5px 10px 5px 7px; border-radius: 11px; }
+  .cs-num { width: 22px; height: 22px; font-size: 12px; }
+  .cs-ic { width: 30px; height: 30px; border-radius: 9px; } .cs-ic svg { width: 16px; height: 16px; }
+  .cs-t { font-size: 14px; } .cs-t .zh { font-size: 12px; }
+  .cs-d { font-size: 11.5px; line-height: 1.3; } .cs-d .zh { font-size: 11px; }
+  .btn.setup-start { min-height: 44px; min-width: 0; }
+  .cs-card > .guide-bar { top: 8px; right: 8px; padding: 3px; }
+  .cs-card > .guide-bar .guide-ic, .cs-card > .guide-bar .guide-btn:last-child { display: none; }   /* just the "listen again" button */
+  .cs-main h2 { padding-right: 44px; }
+  .cs-main { gap: 4px; padding: 10px 12px; }
+  .cs-step { padding: 4px 9px 4px 6px; }
 }
+@media (prefers-reduced-motion: reduce) { .cs-card, .cs-step, .cs-tablet, .btn.setup-start, .cs-sun::before { animation: none; } }
+#stage:has(.scan-overlay) .guide-bar { top: 14px; bottom: auto; }

@@ -158,9 +158,9 @@ body.is-fullbleed #toast-layer { right: 0; top: var(--space-4); }
 
 /* ---------- waiting for the first touch (sound needs a tap) ---------- */
 /* everything holds at the first frame of the opening: dim dawn, no shrine, no title */
-.welcome.is-waiting *:not(.w-gate):not(.w-gate *),
-.welcome.is-waiting *:not(.w-gate):not(.w-gate *)::before,
-.welcome.is-waiting *:not(.w-gate):not(.w-gate *)::after,
+.welcome.is-waiting *:not(.w-gate):not(.w-gate *):not(.w-clouds),
+.welcome.is-waiting *:not(.w-gate):not(.w-gate *):not(.w-clouds)::before,
+.welcome.is-waiting *:not(.w-gate):not(.w-gate *):not(.w-clouds)::after,
 .welcome.is-waiting::before { animation-play-state: paused !important; }
 .welcome.is-waiting .w-skip { display: none; }
 .w-gate {
@@ -207,12 +207,16 @@ body.is-fullbleed #toast-layer { right: 0; top: var(--space-4); }
 }
 
 /* ---------- Start → into the shrine (js/pages/p01-home.js enterShrine) ---------- */
-/* the title and buttons step back while we glide in through the doorway */
-.welcome.is-entering .w-title, .welcome.is-entering .w-corner, .welcome.is-entering .w-skip { opacity: 0; transition: opacity .35s ease; pointer-events: none; }
-.welcome.is-entering { will-change: transform; }
-/* warm light from the doorway: the inner glow of the shrine, then soft paper-gold that P02 opens out of */
-.enter-veil {
-  position: fixed; inset: 0; z-index: 400; pointer-events: none; opacity: 0;
-  background:
-    radial-gradient(circle at var(--x) var(--y), rgba(255, 246, 222, 1) 0, rgba(250, 226, 170, .96) 22vmax, rgba(233, 196, 120, .9) 55vmax, rgba(214, 170, 92, .88) 100vmax);
+/* the title and buttons step back while we walk in */
+.welcome.is-entering .w-title, .welcome.is-entering .w-corner, .welcome.is-entering .w-skip { opacity: 0; transition: opacity .3s ease; pointer-events: none; }
+/* the scene lives in its own layer above the next page while we walk through the doorway */
+.enter-host { position: fixed; inset: 0; z-index: 400; pointer-events: none; container-type: size; overflow: hidden; }
+.enter-host .welcome { will-change: transform; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+/* hold still while moving: no cloud drift or shadows to repaint */
+.welcome.is-entering *, .welcome.is-entering *::before, .welcome.is-entering *::after { animation-play-state: paused !important; }
+.welcome.is-entering .w-shrine { filter: none; }
+/* the lamplight inside the shrine, seen through the doorway, then fading to show P02 */
+.enter-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at var(--x) var(--y), #FFF6DC 0, #F9DFA0 9vmax, #EDB866 26vmax, #C98A3E 60vmax, #9A5E2A 110vmax);
 }

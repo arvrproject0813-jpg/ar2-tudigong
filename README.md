@@ -52,11 +52,15 @@ Current background music: `assets/audio/bgm.mp3` is "When Peach Blossoms Bloom" 
 - Audio: `assets/audio/guide/p01_en.mp3 … p12_zh.mp3`, made with the open-source Kokoro-82M voice model (Apache-2.0): English voice `af_sol`, Mandarin voice `zf_018`, spoken a little slower than normal (0.92), level-matched. To change a line, change the text and remake that page's two files (or record your own and save them under the same names).
 - Code: `js/guide.js`.
 
-**Into the shrine (P01 → P02).** Pressing Start Experience glides the view in through the shrine's doorway (on the right of the welcome scene) while a soft rush of air and a warm zither chord play; golden light fills the screen and P02 opens out of it (`enterShrine()` in `js/pages/p01-home.js`, `playEnter()` in `js/sound.js`, `.enter-veil` in `css/welcome.css`). With Reduce Motion on, it simply goes to P02.
+**Into the shrine (P01 → P02).** Pressing Start Experience walks you into the shrine: the view glides toward it and pauses at the doorway, where warm lamplight glows inside; then you pass through: the scene is cut by an arch-shaped hole the shape of the doorway, which grows past the screen, and P02 is waiting inside, settling into place as the light fades (about 2 s, with a soft rush of air and a zither chord). For smoothness the scene is lifted into its own layer and only scaled, with its own animations paused (`enterShrine()` in `js/pages/p01-home.js`, `.enter-host` / `.enter-glow` in `css/welcome.css`, `playEnter()` in `js/sound.js`). With Reduce Motion on, it simply goes to P02.
+
+**P04 camera flights.** Tapping a place on the 3D map glides the camera in to it, then its note opens; tapping another place pulls back to the whole neighbourhood first, then glides in to the new one; closing the note pulls back out (`focusHook` in `js/pages/p04-intro.js`).
+
+**Vocabulary in the panel text.** The page's vocabulary words (its word chips) are bold with a soft gold highlight wherever they appear in the panel text, in English and Chinese, and tapping one opens its word card (`markKeywords()` in `js/app.js`).
 
 **"Not finished yet" pop-up.** Next always works; on an unfinished page it opens a pop-up with the page's badge and a ring showing how much is done (e.g. 1 / 2), the page's checklist (done ✓ / still to do), and two big choices: Go to Next Page, or stay (Continue Scanning / Keep Exploring). `askSkip()` in `js/app.js`, `.skd*` in `css/components.css`.
 
-**Camera setup (P02).** Before the scanner starts, a Camera Setup card shows four tips (Allow Camera, Fit the Card 30–50 cm, Good Light, Stay Safe) and a Start Camera button. The camera only turns on after that tap.
+**Camera setup (P02).** Before the scanner starts, a Camera Setup card shows a small animated scene (a tablet framing the culture card) and four steps: Allow Camera, Fit the Card (30–50 cm), Good Light, Stay Safe. The steps light up one after another and the scene acts each one out (the Allow button being tapped, the scan frame and beam, the light coming on, a safety ring); tap a step to see it. The camera only turns on after Start Camera. The voice guide shows as a small speaker pill in the card's corner.
 
 ## Full-screen mode
 

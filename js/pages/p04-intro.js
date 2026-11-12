@@ -40,6 +40,7 @@ export function render(stage, ctx) {
   };
 
   /** Shared: build a pin + label for a node. position(pin, tag) is called by the 2D or 3D view. */
+  let focusHook = null;        // 3D view: fly the camera to a place before its note opens
   const makePin = (node, getPct) => {
     const data = c.nodes[node.id];
     const pin = el('button', {
@@ -52,8 +53,12 @@ export function render(stage, ctx) {
       pin.classList.add('is-active');
       pin.classList.remove('is-pulse-loop');
       pin.classList.add('is-done');
-      const { x, y } = getPct();
-      notePopover(frame, { xPct: x, yPct: y, title: data.label, body: data.note, onClose: () => pin.classList.remove('is-active') });
+      const open = () => {
+        if (!alive) return;
+        const { x, y } = getPct();
+        notePopover(frame, { xPct: x, yPct: y, title: data.label, body: data.note, onClose: () => { pin.classList.remove('is-active'); focusHook?.closed(node.id); } });
+      };
+      if (focusHook) focusHook.go(node.id, open); else open();
       const before = seen.size;
       seen.add(node.id);
       ctx.seen('nodes', [...seen]);
@@ -157,17 +162,69 @@ export function render(stage, ctx) {
     const tools = el('div', { class: 'map3d-tools' },
       iconButton('plus', plain(CONTENT.common.zoomIn), () => { controls.autoRotate = false; dolly(0.8); }),
       iconButton('minus', plain(CONTENT.common.zoomOut), () => { controls.autoRotate = false; dolly(1.25); }),
-      iconButton('recenter', plain(CONTENT.common.resetView), () => { flyBack = { from: camera.position.clone(), t: 0 }; }));
+      iconButton('recenter', plain(CONTENT.common.resetView), () => { frame.querySelector('.culture-note')?.__close?.(); clearTimeout(backTimer); focusId = null; startFly([{ target: () => OVER_T.clone(), r: OVER_R, phi: OVER_PHI, dur: 800, toT: OVER_T.clone(), toP: new THREE.Vector3(...VIEW.pos) }]); }));
     view.append(tools);
 
     frame.classList.remove('is-loading');
     frame.classList.add('is-3d');
     frame.replaceChildren(view);
 
-    // the first touch stops the slow turn and closes any open note
-    controls.addEventListener('start', () => {
+    /* Tapping a place flies the camera to it, so students see what they picked: it glides in close to the
+       place, then the note opens. Tapping another place first pulls back to the whole neighbourhood, then
+       glides in to the new one. Closing the note pulls back out again. */
+    const OVER_T = new THREE.Vector3(...VIEW.target);
+    const OVER_R = new THREE.Vector3(...VIEW.pos).sub(OVER_T).length();
+    const OVER_PHI = new THREE.Spherical().setFromVector3(new THREE.Vector3(...VIEW.pos).sub(OVER_T)).phi;
+    const sph = new THREE.Spherical();
+    const posAround = (tgt, r, phi) => {
+      sph.setFromVector3(camera.position.clone().sub(controls.target));   // keep the way the map is turned
+      sph.radius = r; sph.phi = phi;
+      return tgt.clone().add(new THREE.Vector3().setFromSpherical(sph));
+    };
+    const ease = (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+    let fly = null, focusId = null, backTimer = 0, switching = false;
+    const startFly = (legs, done) => {
       controls.autoRotate = false; flyBack = null;
+      fly = { legs, i: 0, t0: performance.now(), fromP: camera.position.clone(), fromT: controls.target.clone(), done };
+    };
+    const stepFly = (now) => {
+      const leg = fly.legs[fly.i];
+      if (!leg.toP) { leg.toT = leg.target(); leg.toP = posAround(leg.toT, leg.r, leg.phi); }
+      const k = Math.min(1, (now - fly.t0) / leg.dur), e = ease(k);
+      camera.position.lerpVectors(fly.fromP, leg.toP, e);
+      controls.target.lerpVectors(fly.fromT, leg.toT, e);
+      if (k >= 1) {
+        fly.i++; fly.t0 = now; fly.fromP = camera.position.clone(); fly.fromT = controls.target.clone();
+        if (fly.i >= fly.legs.length) { const d = fly.done; fly = null; d && d(); }
+      }
+    };
+    const placeOf = (id) => { const a = n.anchors[id]; return new THREE.Vector3(a.x, a.y * 0.42, a.z); };   // aim at the middle of the place, so its pin stays in view
+    const overview = (dur) => ({ target: () => OVER_T.clone(), r: OVER_R, phi: OVER_PHI, dur });
+    const closeUp = (id, dur) => ({ target: () => placeOf(id), r: Math.max(0.62, n.anchors[id].y * 2.6), phi: Math.min(1.05, Math.max(0.8, OVER_PHI - 0.15)), dur });
+    focusHook = {
+      go(id, open) {
+        clearTimeout(backTimer);
+        if (reduce) { focusId = id; open(); return; }
+        if (frame.querySelector('.culture-note')) { switching = true; frame.querySelector('.culture-note').__close(); switching = false; }
+        const legs = focusId && focusId !== id ? [overview(650), closeUp(id, 900)] : focusId === id ? [] : [closeUp(id, 950)];
+        focusId = id;
+        if (!legs.length) { open(); return; }
+        startFly(legs, open);
+      },
+      closed() {
+        if (switching || reduce) return;
+        clearTimeout(backTimer);
+        backTimer = setTimeout(() => { focusId = null; startFly([overview(850)]); }, 90);   // (a drag right away cancels this)
+      },
+    };
+
+    // the first touch stops the slow turn and any flight, and closes any open note
+    controls.addEventListener('start', () => {
+      controls.autoRotate = false; flyBack = null; fly = null; focusId = null;
+      switching = true;                              // the student is turning the map: don't pull back on close
       frame.querySelector('.culture-note')?.__close?.();
+      switching = false;
+      clearTimeout(backTimer);
     });
 
     const resize = () => {
@@ -186,6 +243,7 @@ export function render(stage, ctx) {
       raf = requestAnimationFrame(loop);
       const t = (now - t0) / 1000;
       tickNeighborhood(n, t, { entrance: !reduce });
+      if (fly) stepFly(now);
       if (flyBack) {
         flyBack.t = Math.min(1, flyBack.t + 0.04);
         const k = 1 - Math.pow(1 - flyBack.t, 3);
@@ -229,6 +287,7 @@ export function render(stage, ctx) {
     if (!seen.size) setTimeout(() => alive && toast(c.spinHint, 'hint'), 1400);
 
     stop3D = () => {
+      clearTimeout(backTimer); focusHook = null;
       cancelAnimationFrame(raf);
       ro.disconnect();
       controls.dispose();

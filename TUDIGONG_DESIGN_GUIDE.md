@@ -967,6 +967,18 @@ const CONTENT = {
       "start": {
         "en": "Start Camera",
         "zh": "開啟相機"
+      },
+      "eyebrow": {
+        "en": "4 quick steps",
+        "zh": "4 個小步驟"
+      },
+      "allow": {
+        "en": "Allow",
+        "zh": "允許"
+      },
+      "ready": {
+        "en": "Ready? Let's find the card!",
+        "zh": "準備好了嗎？一起找文化卡吧！"
       }
     },
     "hintSlow": {

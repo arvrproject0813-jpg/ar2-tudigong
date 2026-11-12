@@ -83,7 +83,7 @@ export function render(stage, ctx) {
 
   async function begin() {
     clearTimers();
-    stage.querySelector('.scan-setup')?.remove();
+    cleanupSetup?.(); stage.querySelector('.scan-setup')?.remove();
     errorBox.hidden = true; overlay.hidden = false;
     setStatus('loading');
     await startAR(stage, {
@@ -98,27 +98,58 @@ export function render(stage, ctx) {
     if (!alive) stopAR();          // the user left the page while libraries were loading
   }
 
-  /* ---------- camera setup first ---------- */
-  const setupCard = (s) => el('div', { class: 'setup-step' },
-    el('span', { class: 'setup-ic', 'aria-hidden': 'true', html: icon(s.icon) }),
-    el('div', {}, el('h3', {}, bi(s.title, { layout: 'stack' })), el('p', {}, bi(s.text))));
-  const startBtn = button(c.setup.start, { variant: 'primary', onClick: () => { setup.remove(); begin(); } });
+  /* ---------- camera setup first ----------
+     Left: a little animated scene (a tablet framing the culture card) that acts out the step in focus.
+     Right: the four steps; they light up one after another (tap one to see it), then Start Camera. */
+  const S = c.setup;
+  const scene = el('div', { class: 'cs-scene', 'data-step': '0', 'aria-hidden': 'true' },
+    el('div', { class: 'cs-sun' }, el('span', { html: icon('bulb') })),
+    el('div', { class: 'cs-safe' }),
+    el('div', { class: 'cs-tablet' },
+      el('div', { class: 'cs-screen' },
+        el('img', { src: 'assets/img/card_thumb.webp', alt: '' }),
+        el('i', { class: 'cs-br tl' }), el('i', { class: 'cs-br tr' }), el('i', { class: 'cs-br bl' }), el('i', { class: 'cs-br br' }),
+        el('i', { class: 'cs-beam' }),
+        el('div', { class: 'cs-allow' }, el('span', { html: icon('camera') }), bi(S.allow, { layout: 'inline' })),
+        el('i', { class: 'cs-tap' }))),
+    el('div', { class: 'cs-dist' }, el('i'), el('b', {}, '30–50 cm'), el('i')));
+  const rows = S.steps.map((st, i) => el('button', { class: 'cs-step', type: 'button', 'data-i': String(i) },
+    el('span', { class: 'cs-num' }, String(i + 1)),
+    el('span', { class: 'cs-ic', html: icon(st.icon) }),
+    el('span', { class: 'cs-txt' }, el('span', { class: 'cs-t' }, bi(st.title, { layout: 'inline' })), el('span', { class: 'cs-d' }, bi(st.text)))));
+  const startBtn = button(S.start, { variant: 'primary', onClick: () => { clearInterval(cycle); setup.remove(); begin(); } });
   startBtn.prepend(el('span', { class: 'ic', html: icon('camera'), 'aria-hidden': 'true' }));
   startBtn.classList.add('setup-start');
   const setup = el('div', { class: 'scan-setup' },
-    el('div', { class: 'scan-setup-card', role: 'region', 'aria-label': c.setup.title.en },
-      el('h2', {}, bi(c.setup.title, { layout: 'stack' })),
-      el('p', { class: 'setup-intro' }, bi(c.setup.intro)),
-      el('div', { class: 'setup-steps' }, c.setup.steps.map(setupCard)),
-      el('div', { class: 'btn-row' }, startBtn)));
+    el('div', { class: 'cs-card', role: 'region', 'aria-label': S.title.en, 'data-guide-host': '' },
+      scene,
+      el('div', { class: 'cs-main' },
+        el('div', { class: 'cs-eyebrow' }, bi(S.eyebrow, { layout: 'inline' })),
+        el('h2', {}, bi(S.title, { layout: 'stack' })),
+        el('p', { class: 'cs-intro' }, bi(S.intro)),
+        el('div', { class: 'cs-steps' }, rows),
+        el('div', { class: 'cs-go' }, el('div', { class: 'cs-ready' }, bi(S.ready, { layout: 'inline' })), startBtn))));
+  let step = 0, cycle = 0, resume = 0;
+  const show = (i) => {
+    step = i;
+    scene.dataset.step = String(i);
+    rows.forEach((r, k) => { r.classList.toggle('is-on', k === i); r.classList.toggle('is-past', k < i); r.setAttribute('aria-pressed', String(k === i)); });
+  };
+  const auto = () => { clearInterval(cycle); cycle = setInterval(() => show((step + 1) % rows.length), 3400); };
+  rows.forEach((r, i) => r.addEventListener('click', () => { show(i); clearInterval(cycle); clearTimeout(resume); resume = setTimeout(auto, 9000); }));
+  show(0);
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) auto();
+  cleanupSetup = () => { clearInterval(cycle); clearTimeout(resume); };
   overlay.hidden = true;
   setStatus('idle');
   stage.append(setup);
   startBtn.focus();
 }
 
+let cleanupSetup = null;
 export function destroy() {
   alive = false;
+  cleanupSetup?.(); cleanupSetup = null;
   timers.forEach(clearTimeout); timers = [];
   stopAR();
 }
