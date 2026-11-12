@@ -869,6 +869,10 @@ export function lifeClip(THREE, n, { length = 12, fps = 12 } = {}) {
    assets/models/kit/*.glb, made web-ready (about 1 MB each). loadKit() loads them once per three.js build
    (A-Frame's THREE in AR, the three module on P04) and buildNeighborhood(THREE, { kit }) puts them in place.
    To swap a model, replace the file with one that faces +Z and stands on the ground (any size: it is fitted). */
+/** Start downloading the kit files in the background (fills the browser cache, so P02 and P04 open fast). */
+export function prefetchKit() {
+  Object.values(KIT_FILES).forEach((u) => fetch(u, { priority: 'low' }).catch(() => {}));
+}
 export const KIT_FILES = {
   temple: 'assets/models/kit/temple.glb', shrine: 'assets/models/kit/corner-shrine.glb', statue: 'assets/models/kit/tudigong-statue.glb',
   lion: 'assets/models/kit/stone-lion.glb', burner: 'assets/models/kit/incense-burner.glb', banyan: 'assets/models/kit/banyan.glb',
@@ -876,7 +880,7 @@ export const KIT_FILES = {
   roadStraight: 'assets/models/kit/road-straight.glb', roadCorner: 'assets/models/kit/road-corner.glb',
 };
 const kits = new WeakMap();
-export function loadKit(THREE, GLTFLoader, { timeout = 20000 } = {}) {
+export function loadKit(THREE, GLTFLoader, { timeout = 60000, onProgress } = {}) {
   if (kits.has(THREE)) return kits.get(THREE);
   const loader = new GLTFLoader();
   const prep = (scene) => {                                     // centre it, stand it on y = 0, soften metal (no environment map in AR)
@@ -893,7 +897,10 @@ export function loadKit(THREE, GLTFLoader, { timeout = 20000 } = {}) {
     });
     const g = new THREE.Group(); g.add(scene); g.userData.size = size; return g;
   };
-  const all = Promise.all(Object.entries(KIT_FILES).map(([k, url]) => loader.loadAsync(url).then((gl) => [k, prep(gl.scene)])))
+  const entries = Object.entries(KIT_FILES);
+  let done = 0;
+  const one = (url) => loader.loadAsync(url).catch(() => loader.loadAsync(url));   // a slow or dropped download gets a second try
+  const all = Promise.all(entries.map(([k, url]) => one(url).then((gl) => { done++; onProgress?.(done / entries.length); return [k, prep(gl.scene)]; })))
     .then(Object.fromEntries);
   const p = Promise.race([all, new Promise((_, no) => setTimeout(() => no(new Error('model kit timed out')), timeout))])
     .catch((e) => { console.warn('Model kit not loaded, using the built-in models.', e); kits.delete(THREE); return null; });
@@ -1028,9 +1035,9 @@ export function registerDiorama() {
             .catch((e) => { console.warn('Own model failed to load, using the built-in one.', e); return buildNeighborhood(A.THREE); }).then(use);
           return;
         }
-        // show the built-in neighbourhood at once, then switch to the team's 3D models as soon as they have loaded
-        use(buildNeighborhood(A.THREE));
-        loadKit(A.THREE, A.THREE.GLTFLoader, { timeout: 45000 }).then((kit) => { if (kit) use(buildNeighborhood(A.THREE, { kit })); });
+        // the team's 3D models (already downloading in the background since the welcome page); the simple
+        // built-in models are only a last resort if they cannot be loaded at all
+        loadKit(A.THREE, A.THREE.GLTFLoader, { timeout: 60000 }).then((kit) => use(buildNeighborhood(A.THREE, kit ? { kit } : {})));
       });
     },
     tick(time) {

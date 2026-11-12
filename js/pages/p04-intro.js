@@ -103,7 +103,8 @@ export function render(stage, ctx) {
     // otherwise the built-in layout, with the team's 3D models (temple, shrine, banyan, roads…) when they load
     let kit = null;
     if (!n) {
-      try { const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js'); kit = await loadKit(THREE, GLTFLoader, { timeout: 12000 }); }
+      const bar = frame.querySelector('.map-loading i');
+      try { const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js'); kit = await loadKit(THREE, GLTFLoader, { timeout: 60000, onProgress: (k) => bar?.style.setProperty('--k', k) }); }
       catch (e) { console.warn('P04: model kit failed to load.', e); }
     }
     if (!alive) return;
@@ -301,6 +302,11 @@ export function render(stage, ctx) {
   };
 
   frame.classList.add('is-loading');
+  // while the 3D neighbourhood is being built: a small ink-and-gold loader
+  frame.append(el('div', { class: 'map-loading', role: 'status' },
+    el('span', { class: 'map-loading-ic', html: icon('temple') }),
+    bi(CONTENT.common.loading3d, { layout: 'stack' }),
+    el('span', { class: 'map-loading-bar' }, el('i'))));
   mount3D().catch((e) => {
     console.warn('P04: 3D view not available, showing the flat map.', e);
     if (alive) mount2D();

@@ -347,6 +347,8 @@ function fromHash() {
 window.addEventListener('hashchange', () => { const h = fromHash(); if (h) go(h); });
 applyPanelState();
 go(fromHash() || state.page || 'p01');
+// download the 3D models in the background while students are on the first pages (P02 AR, P04 map)
+setTimeout(() => import('./ar-diorama.js').then((m) => m.prefetchKit()).catch(() => {}), 2500);
 
 // Expose for "Experience Again" on later pages
 export function resetAll() { Object.assign(state, freshState()); save(); setLang(state.lang); go('p01'); }

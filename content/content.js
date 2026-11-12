@@ -64,6 +64,10 @@ const CONTENT = {
       "en": "Wait a moment!",
       "zh": "等一下！"
     },
+    "loading3d": {
+      "en": "Building the neighborhood…",
+      "zh": "正在建立街坊…"
+    },
     "skipProgress": {
       "en": "Your progress on this page",
       "zh": "這一頁的進度"

@@ -563,7 +563,7 @@
 /* P02 camera setup, shown before the scanner starts */
 /* ---------- P02 camera setup: an animated scene + four steps that light up in turn ---------- */
 .scan-setup {
-  position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; padding: var(--space-4); overflow: auto;
+  position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; padding: var(--space-4); overflow: auto; container-type: size;
   background: linear-gradient(180deg, rgba(18, 63, 60, .15), rgba(18, 63, 60, .45)), var(--img-mural) center / cover, var(--color-bg);
 }
 .cs-card {
@@ -715,8 +715,43 @@
   .cs-card > .guide-bar { top: 8px; right: 8px; padding: 3px; }
   .cs-card > .guide-bar .guide-ic, .cs-card > .guide-bar .guide-btn:last-child { display: none; }   /* just the "listen again" button */
   .cs-main h2 { padding-right: 44px; }
-  .cs-main { gap: 4px; padding: 10px 12px; }
-  .cs-step { padding: 4px 9px 4px 6px; }
+  .cs-main { gap: 3px; padding: 8px 10px; }
+  .cs-step { padding: 3px 9px 3px 6px; }
+  .cs-d { font-size: 11px; line-height: 1.25; } .cs-d .zh { font-size: 10.5px; margin-top: 1px; }
+  .cs-main h2 .en { font-size: 18px; } .cs-main h2 .zh { font-size: 13px; }
+}
+/* shorter screens (laptops with display scaling, small tablets): a compact card that fits without scrolling */
+@container (max-height: 760px) and (min-height: 421px) {
+  .cs-eyebrow, .cs-ready { display: none; }
+  .cs-main { padding: 18px 22px 18px; gap: 8px; }
+  .cs-main h2 .en { font-size: 25px; } .cs-main h2 .zh { font-size: 16px; }
+  .cs-intro { font-size: 14px; line-height: 1.3; }
+  .cs-step { padding: 6px 12px 6px 9px; grid-template-columns: 24px 34px 1fr; }
+  .cs-ic { width: 34px; height: 34px; border-radius: 10px; } .cs-ic svg { width: 18px; height: 18px; }
+  .cs-t { font-size: 16px; } .cs-d { font-size: 13px; } .cs-d .zh { font-size: 12.5px; }
+  .cs-scene { min-height: 0; padding: 22px 16px 44px; }
+  .btn.setup-start { min-height: 50px; }
+}
+@container (max-height: 600px) and (min-height: 421px) {
+  .scan-setup { padding: var(--space-2); }
+  .cs-intro { display: none; }
+  .cs-main { padding: 14px 18px; gap: 6px; }
+  .cs-main h2 .en { font-size: 22px; } .cs-main h2 .zh { font-size: 15px; }
+  .cs-step { padding: 4px 10px 4px 8px; }
+  .cs-d { font-size: 12.5px; line-height: 1.3; } .cs-d .zh { font-size: 12px; }
+  .cs-tablet { width: 76%; }
 }
 @media (prefers-reduced-motion: reduce) { .cs-card, .cs-step, .cs-tablet, .btn.setup-start, .cs-sun::before { animation: none; } }
 #stage:has(.scan-overlay) .guide-bar { top: 14px; bottom: auto; }
+
+/* P04: loader while the 3D neighbourhood is being built */
+.map-loading { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center;
+  font-family: 'Alegreya', var(--font-display); color: var(--teal-800); font-weight: 700; font-size: 17px; }
+.map-loading .zh { font-family: 'Chiron Sung HK', var(--font-zh); font-size: 14px; color: var(--red-700); }
+.map-loading-ic { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; color: var(--beige-50); background: var(--grad-vermilion);
+  box-shadow: 0 0 0 3px var(--gold-300), 0 8px 18px rgba(126, 36, 24, .25); animation: ml-bob 1.8s ease-in-out infinite; }
+.map-loading-ic svg { width: 30px; height: 30px; }
+@keyframes ml-bob { 50% { transform: translateY(-6px); } }
+.map-loading-bar { width: min(220px, 60%); height: 6px; border-radius: 6px; overflow: hidden; background: rgba(201, 149, 46, .2); box-shadow: inset 0 0 0 1px rgba(201, 149, 46, .4); }
+.map-loading-bar i { display: block; height: 100%; width: calc(8% + var(--k, 0) * 92%); background: var(--grad-gold-h); border-radius: 6px; transition: width .4s ease; }
+@media (prefers-reduced-motion: reduce) { .map-loading-ic { animation: none; } }

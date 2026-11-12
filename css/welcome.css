@@ -220,3 +220,5 @@ body.is-fullbleed #toast-layer { right: 0; top: var(--space-4); }
   position: absolute; inset: 0;
   background: radial-gradient(circle at var(--x) var(--y), #FFF6DC 0, #F9DFA0 9vmax, #EDB866 26vmax, #C98A3E 60vmax, #9A5E2A 110vmax);
 }
+/* the sharp shrine (doorway cut out) that moves with the scene during the walk-in */
+.enter-shrine { position: absolute; max-width: none; pointer-events: none; }
