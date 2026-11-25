@@ -94,11 +94,11 @@ export function toast(text, type = 'hint', ms = 3500) {
   const layer = document.getElementById('toast-layer');
   const t = el('div', { class: `toast ${type}`, role: 'status', html: icon(type === 'success' ? 'check' : 'bulb') }, bi(text, { layout: 'inline' }));
   layer.append(t);
-  while (layer.children.length > 2) layer.firstElementChild.remove();
+  const all = layer.querySelectorAll('.toast'); if (all.length > 2) all[0].remove();     // (badge pop-ups stay)
   setTimeout(() => { t.classList.add('is-leaving'); setTimeout(() => t.remove(), 300); }, ms);
   return t;
 }
-export function clearToasts() { document.getElementById('toast-layer').replaceChildren(); }
+export function clearToasts() { document.getElementById('toast-layer').querySelectorAll('.toast').forEach((t) => t.remove()); }
 
 /* ---------- modal ---------- */
 export function modal({ title, body = [], actions = [] }) {

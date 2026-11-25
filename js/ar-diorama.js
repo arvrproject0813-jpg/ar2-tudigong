@@ -29,7 +29,7 @@ const COL = {
  * Every "random" detail comes from a seeded generator, so the same options always build the same scene
  * (the two P05 renders line up exactly).
  */
-export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows = false, street = false, mood = 'day', place = null, life = false, era = null, kit = null } = {}) {
+export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows = false, street = false, mood = 'day', place = null, life = false, era = null, kit = null, scene = null } = {}) {
   const dawn = mood === 'dawn', people = mood === 'awake' || !!place;
   let seed = 20261022;
   const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
@@ -409,9 +409,9 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
     host.kitInner.add(o); return o;
   };
   // the small red-brick street-corner shrine: the Tudigong statue in its niche, stone lions either side, an incense burner to one side
-  function kitShrine(width, { lions = true, burner = true } = {}) {
+  function kitShrine(width, { lions = true, burner = true, statue = true } = {}) {
     const g = kitPiece('shrine', { width });                     // model: 2.19 wide, 2.5 tall; niche x ±0.34, y 0.215–1.45, z −0.06–0.24
-    putIn(g, 'statue', 0.5, 0, 0.215, 0.06);                       // small, inside the niche: a background element
+    if (statue) putIn(g, 'statue', 0.5, 0, 0.215, 0.06);           // small, inside the niche: a background element
     // the stone lions guard the front: one at each front corner, facing out (never out in the road)
     if (lions) { putIn(g, 'lion', 0.6, -0.92, 0, 1.0, 0.12); putIn(g, 'lion', 0.6, 0.92, 0, 1.0, -0.12, true); }
     if (burner) putIn(g, 'burner', 0.5, -1.5, 0, 0.35);              // off to the side, in the background
@@ -456,6 +456,13 @@ export function buildNeighborhood(THREE, { markers: withMarkers = true, shadows 
   const kitMat = (name, matName) => { let m = null; kit[name].traverse((o) => { if (o.isMesh && !m && (o.material.name || '').toLowerCase() === matName) m = o.material; }); return m || M.stone; };
   const roadsG = new THREE.Group();
   const kitBanyan = (width) => kitPiece('banyan', { width });
+
+  /* ---------- extra scenes for the offline art (assets/source-art/render/scenes.js): the builder gets the parts ---------- */
+  if (typeof scene === 'function') {
+    return scene({ THREE, M, TEX, COL, std, mesh, box, rnd, setSeed: (v) => { seed = v; }, kit, kitPiece, putIn, kitShrine, kitTemple, kitBanyan,
+      tileRoad, tileCrossing, roadsG, kitMat, shrine, banyan, smallTree, scooter, pottedPlant, lamp, person, clothes, house, stall, canopy,
+      brickMat, tileMat, canvasTex, speckle, shadows, dawn });
+  }
 
   /* ---------- one place on its own small plinth (P05 AR camera: temple, residential, market, road, park) ---------- */
   if (place) return buildPlace(place);

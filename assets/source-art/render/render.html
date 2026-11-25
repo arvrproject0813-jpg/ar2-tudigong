@@ -1,0 +1,97 @@
+<!doctype html>
+<!-- Offline render harness for the 3D art (open through a local web server at the repo root:
+     http://localhost:8000/assets/source-art/render/render.html). Driven by render.py (Playwright).
+     window.shot(opts) renders one scene and returns a PNG data URL; window.glb(opts) exports a GLB (base64). -->
+<html><head><meta charset="utf-8"><base href="/">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<style>html,body{margin:0;background:#888}canvas{display:block}</style></head>
+<body>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
+import { buildNeighborhood, loadKit } from './js/ar-diorama.js';
+import * as SCENES from './assets/source-art/render/scenes.js';
+// 'p07.table' → SCENES.P07.table
+const sceneFn = (name) => name.split('.').reduce((o, k) => o?.[k.toUpperCase() === k ? k : k], { p07: SCENES.P07, p08: SCENES.P08, p09: SCENES.P09, p10: SCENES.P10, debug: SCENES.DEBUG });
+
+let kit = null;
+window.ready = loadKit(THREE, GLTFLoader, { timeout: 120000 }).then((k) => { kit = k; return !!k; });
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setPixelRatio(1);
+document.body.append(renderer.domElement);
+
+function build(o) {
+  const opts = { ...o.build };
+  if (typeof opts.scene === 'string') opts.scene = sceneFn(opts.scene);
+  const n = buildNeighborhood(THREE, { markers: false, shadows: true, kit, ...opts });
+  const root = n.root;
+  // finish the pop-up: every part at full size (the AR model normally grows them in)
+  (n.parts || []).forEach((p) => p.obj.scale.setScalar(1));
+  return { n, root };
+}
+
+// opts: { build:{…buildNeighborhood options}, w, h, cam:{pos:[x,y,z], target:[x,y,z], fov} | ortho:{pos, target, half (half-height in units)},
+//         catcher: shadow-catcher plane size (transparent ground that only shows shadows), lights: 'studio' adds a studio rig }
+window.shot = async (o) => {
+  const { n, root } = build(o);
+  const scene = new THREE.Scene();
+  scene.add(root);
+  if (o.lights === 'studio') {
+    scene.add(new THREE.HemisphereLight('#FFF6E6', '#7A6448', 0.75));
+    const key = new THREE.DirectionalLight('#FFE7C2', 1.25); key.position.set(0.9, 1.4, 1.1); key.castShadow = true;
+    key.shadow.mapSize.set(4096, 4096); key.shadow.bias = -0.0003; key.shadow.normalBias = 0.003; key.shadow.radius = 6;
+    Object.assign(key.shadow.camera, { left: -0.6, right: 0.6, top: 0.6, bottom: -0.6, near: 0.05, far: 4 }); scene.add(key);
+    const fill = new THREE.DirectionalLight('#D6ECE9', 0.38); fill.position.set(-1.1, 0.7, 0.6); scene.add(fill);
+    const rim = new THREE.DirectionalLight('#FFF1D6', 0.45); rim.position.set(-0.4, 0.9, -1.2); scene.add(rim);
+  }
+  if (o.catcher) {
+    const g = new THREE.Mesh(new THREE.PlaneGeometry(o.catcher, o.catcher), new THREE.ShadowMaterial({ opacity: o.catcherOpacity ?? 0.28 }));
+    g.rotation.x = -Math.PI / 2; g.position.y = 0.0002; g.receiveShadow = true; scene.add(g);
+  }
+  scene.traverse((m) => { if (m.isMesh && !(m.material instanceof THREE.ShadowMaterial)) { m.castShadow = true; m.receiveShadow = true; } });
+  const W = o.w, H = o.h;
+  renderer.setSize(W, H, false);
+  let camera;
+  if (o.ortho) {
+    const a = W / H, hh = o.ortho.half;
+    camera = new THREE.OrthographicCamera(-hh * a, hh * a, hh, -hh, 0.01, 20);
+    camera.position.set(...o.ortho.pos); camera.lookAt(new THREE.Vector3(...o.ortho.target));
+  } else {
+    camera = new THREE.PerspectiveCamera(o.cam.fov || 30, W / H, 0.01, 20);
+    camera.position.set(...o.cam.pos); camera.lookAt(new THREE.Vector3(...o.cam.target));
+  }
+  if (o.bg) scene.background = new THREE.Color(o.bg);
+  renderer.setClearColor(0x000000, 0);
+  renderer.render(scene, camera);
+  // optional: project points of interest to pixel coordinates (for pins and slots)
+  const pts = {};
+  Object.entries(o.project || {}).forEach(([k, v]) => {
+    const p = new THREE.Vector3(...v).project(camera);
+    pts[k] = [((p.x + 1) / 2) * W, ((1 - p.y) / 2) * H];
+  });
+  const anchors = {};
+  Object.entries(n.anchors || {}).forEach(([k, v]) => {
+    const p = v.clone().project(camera); anchors[k] = [((p.x + 1) / 2) * W, ((1 - p.y) / 2) * H];
+  });
+  const url = renderer.domElement.toDataURL('image/png');
+  scene.remove(root);
+  return { url, pts, anchors, extra: n.info || null };
+};
+
+window.glb = async (o) => {
+  const { n, root } = build(o);
+  const scene = new THREE.Scene(); scene.add(root);
+  root.traverse((m) => { if (m.isLight) m.visible = false; });
+  const lights = []; root.traverse((m) => { if (m.isLight) lights.push(m); });
+  lights.forEach((l) => l.parent.remove(l));
+  if (o.scale) root.scale.setScalar(o.scale);
+  const ab = await new GLTFExporter().parseAsync(scene, { binary: true, onlyVisible: true, animations: o.animations || [] });
+  let bin = ''; const bytes = new Uint8Array(ab);
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+};
+</script>
+</body></html>

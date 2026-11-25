@@ -41,6 +41,17 @@ export const ICONS = {
   chevLeft: s('<path d="M14 6l-6 6 6 6"/>'),
   chevRight: s('<path d="M10 6l6 6-6 6"/>'),
   book: s('<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h7"/>'),
+  calendar: s('<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01" stroke-width="2.6"/>'),
+  route: s('<circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.3 17.2c4-1.5 1-6.2 4.7-7.7 1.8-.7 3-.8 3.4-2.1" stroke-dasharray="2.4 2.6"/>'),
+  table: s('<path d="M3 8h18"/><path d="M4.5 8v12M19.5 8v12"/><path d="M6 8v6h12V8" fill="currentColor" fill-opacity=".22"/><path d="M10 11h4"/>'),
+  lion: s('<path d="M7 20v-3a5 5 0 0 1 10 0v3z"/><circle cx="12" cy="9" r="4.2"/><path d="M8.2 6.2a2 2 0 1 1-1.8 3M15.8 6.2a2 2 0 1 0 1.8 3M10.4 8.6h.01M13.6 8.6h.01M10.6 11h2.8" stroke-width="1.9"/>'),
+  undo: s('<path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/>'),
+  chat: s('<path d="M4 5h16v11H10l-5 4v-4H4z"/><path d="M8 9.5h8M8 12.5h5"/>'),
+  link: s('<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'),
+  compare: s('<rect x="3" y="4" width="8" height="16" rx="1.5"/><rect x="13" y="4" width="8" height="16" rx="1.5"/><path d="M5.5 9h3M15.5 9h3M5.5 13h3M15.5 13h3"/>'),
+  star: s('<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8L3.5 9.7l5.9-.9z"/>'),
+  harbor: s('<path d="M3 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M6 14V5h3l7 4H6M13 14V9"/>'),
+  medal: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.5a8 8 0 0 0-8 8c0 5.8 8 13 8 13s8-7.2 8-13a8 8 0 0 0-8-8z"/></svg>`,
 };
 
 // Icon names used by the How-to tiles (content.js uses Phosphor-style names)

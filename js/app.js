@@ -327,7 +327,7 @@ function markKeywords(root, chips) {
 }
 
 // the badge shown on each page's "not finished yet" pop-up
-const PAGE_ICON = { p02: 'scan', p03: 'tap', p04: 'map', p05: 'corner', p06: 'fields', p07: 'cards', p08: 'map', p09: 'temple', p10: 'fields', p11: 'puzzle', p12: 'check' };
+const PAGE_ICON = { p02: 'scan', p03: 'tap', p04: 'map', p05: 'corner', p06: 'fields', p07: 'lion', p08: 'route', p09: 'calendar', p10: 'compare', p11: 'chat', p12: 'star' };
 
 /* ---------- start ---------- */
 // Developer shortcuts: open index.html#p04 to jump to a page, #reset to clear progress,

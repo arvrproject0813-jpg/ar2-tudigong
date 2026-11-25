@@ -1,6 +1,6 @@
 // ar-place.js — "See it in AR": one place of the neighbourhood standing in front of the camera.
 //
-//   openPlaceAR({ id: 'temple', title: {en, zh}, fact: {en, zh} })
+//   openPlaceAR({ id: 'temple', title: {en, zh}, fact: {en, zh}, src? })   (src: another .glb, e.g. the P07 exhibits)
 //
 // Opens a full-screen camera view (rear camera on tablets and phones, the webcam on laptops) with the
 // place's 3D model on top. Students drag to turn it and pinch to zoom. On devices that support real AR
@@ -34,7 +34,7 @@ export function loadModelViewer() {
 
 let current = null;
 
-export function openPlaceAR({ id, title, fact }) {
+export function openPlaceAR({ id, title, fact, src }) {
   closePlaceAR();
   const c = CONTENT.p05;
   const opener = document.activeElement;
@@ -87,7 +87,7 @@ export function openPlaceAR({ id, title, fact }) {
   loadModelViewer().then(() => {
     if (closed) return;
     mv = el('model-viewer', {
-      class: 'arv-mv', src: PLACE_MODELS(id), alt: plain(title),
+      class: 'arv-mv', src: src || PLACE_MODELS(id), alt: plain(title),
       'camera-controls': true, 'touch-action': 'none', 'interaction-prompt': 'none',
       autoplay: true, 'auto-rotate': true, 'auto-rotate-delay': '2500', 'rotation-per-second': '14deg',
       'camera-orbit': `24deg 62deg ${matchMedia('(max-height: 500px)').matches ? 150 : 125}%`, 'min-camera-orbit': 'auto 15deg auto', 'max-camera-orbit': 'auto 88deg auto',

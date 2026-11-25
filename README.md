@@ -14,7 +14,12 @@ Built from the team build guide (`TUDIGONG_DESIGN_GUIDE.md`).
 | P04 Introduction | Done: 3D neighborhood (drag to turn 360°, pinch/scroll to zoom) with 4 attached info pins; flat map as fallback | B |
 | P05 Street Corner | Done: riddle cards, misty map that wakes up, vertical Neighborhood Passport, meeting-point question; afterwards every place opens in the AR camera | B |
 | P06 Land Use | Done: the same land long ago and today (aligned 3D renders), timeline + handle on the map, layer chips, Compare Land Use, Find Cultural Clues (temple + old tree stay) | C |
-| P07–P12 | Stubs: show "planned for a later milestone" and let you tap Next | see guide |
+| P07 Cultural Objects | Done: a small museum of the four allowed objects (small temple, offering table, stone lions, old tree): look closely (picture, what to notice, View in AR), then fix each meaning card to its exhibit like a brass label; the four come together as one cultural landscape (also in AR). Badge: Landscape Observer | C |
+| P08 Community Map | Done: a schematic map of Kaohsiung zooms into "My Neighborhood"; put places on empty lots (any place on any lot), then tap them in order to draw a cultural route (saved for P11/P12). Badge: Route Builder | C |
+| P09 Touya and Weiya | Done: a lunar-year strip with two ya days a month; match Zuoya, Touya and Weiya to their date cards (red seals, the year lights up), story cards with pictures, then two context cards to flip. Badge: Calendar Matcher | C |
+| P10 Bogong in Meinong | Done: map from downtown Kaohsiung to Meinong (with a note) and a farmland illustration; match Tudigong, Bogong and the fuchang case to their meanings (culture notes, hints); Compare Cultural Expressions card with the Yong'an fuchang case and its source. Badge: Local Variation | C |
+| P11 Ending | Done: the core question, three sentence frames with word cards (gentle hints, no "wrong"), the Chinese line, a culture recap and Listen (recorded voice); the student's own route map behind the card. Badge: Culture Introducer | C |
+| P12 Project Information | Done: my route map, my 7 badges (tap one for how it was earned, or go back for a locked one), words learned today; panel: back to the core question, my sentences, Story / Further Reading / Teacher Questions, a 1–5 feedback rating, Back to Home and Experience Again (asks first) | C |
 
 ## Run it
 
@@ -112,11 +117,29 @@ The stage background is a semi-realistic dawn landscape of misty mountains and t
 `assets/img/p01_home_hero.webp`, `assets/img/p04_culture_map.webp` and `assets/targets/tudigong-card.png` are in-house semi-realistic illustrations. Their editable SVG sources are in `assets/source-art/`. To use other art, change the paths in `js/config.js` → `ASSETS`:
 
 - `welcomeBg`, `shrine`, `banyan`: the welcome scene. Shrine/banyan positions are `.w-shrine` / `.w-banyan` in `css/welcome.css` (% of the 16:9 scene).
-- Model kit (`assets/models/kit/`): the team's 3D models (ornate temple, corner shrine, Tudigong statue, stone lion, incense burner, banyan, storefront, food and accessories stalls, road tiles), made web-ready (about 1 MB each, from 67 MB originals). `loadKit()` in `js/ar-diorama.js` loads them and `buildNeighborhood(THREE, { kit })` places them: P02 AR (shows the built-in model first, then switches), P04, and the P05/P06 renders and AR models. Following the storyboard's Object Usage Rules, the statue sits small inside the shrine/temple doorway and the incense burner stands to one side: background only, never tappable. To swap a model, replace its file with one that faces +Z and stands on the ground; any size is fitted. After changing the kit, re-render the P05/P06 pictures and the P05 AR models.
+- Model kit (`assets/models/kit/`): the team's 3D models (ornate temple, corner shrine, Tudigong statue, stone lion, incense burner, banyan, storefront, food and accessories stalls, road tiles), made web-ready (about 1 MB each, from 67 MB originals). `loadKit()` in `js/ar-diorama.js` loads them and `buildNeighborhood(THREE, { kit })` places them: P02 AR (shows the built-in model first, then switches), P04, and the P05/P06 renders and AR models. Following the storyboard's Object Usage Rules, the statue sits small inside the shrine/temple doorway and the incense burner stands to one side: background only, never tappable. To swap a model, replace its file with one that faces +Z and stands on the ground; any size is fitted. After changing the kit, re-render the P05–P10 pictures and the P05/P07 AR models.
 - P06 maps: `assets/img/p06_map_past.webp` and `p06_map_present.webp` (1500 × 1000) are rendered from `buildNeighborhood(THREE, { era: 'past' | 'present' })` with the same camera as P05, so the shrine and banyan line up exactly; pin and road positions are in `NODES` and the CSS keyframes in `js/pages/p06-land-use.js` / `css/pages.css`.
 - P05 Market in AR: `assets/models/p05/market.glb` is the team's All-in-One night market (12 stalls, lanterns, 13 people, clip "Market_Loop"), scaled to 60 cm across for tabletop AR. It is not re-exported by the render scripts.
 - P05 AR models: `assets/models/p05/{temple,residential,market,road,park}.glb`, about 40 cm across in AR, exported from `buildNeighborhood(THREE, { place: id })`. To use your own model for a place, export a GLB (Y up, metres, base at y = 0) with the same file name.
 - P04 shows the 3D neighborhood from `js/ar-diorama.js` (`buildNeighborhood()`, the same model that rises from the card in AR) using three.js 0.160 from jsDelivr (mapped as `three` in the import map in `index.html`). The pins are attached to `anchors` in `buildNeighborhood()`; the start view and zoom limits are `VIEW` in `js/pages/p04-intro.js`. If WebGL is not available, the flat map `p04Map` is shown instead, with pin positions in `NODES` (% of the 3:2 image).
+
+## Scenes 3–6 and the ending (P07–P12)
+
+All six pages share `css/scenes.css` (loaded after `pages.css`) and the same look as P05/P06: carved wood frames, paper cards with gold hairlines, the panel's typefaces, chimes for right answers, a soft clapper and a gold hint for "not yet" (never "wrong"), and the zither flourish when a task is done.
+
+- **Badges.** Seven learning badges (`js/badges.js`): a map-pin medallion with a gold ring and the badge's icon (never a charm, amulet or seal). P07–P11 give theirs with a short "Badge earned" pop-up at the top of the stage; P05 and P06 count as earned once those pages are finished. P12 shows all seven.
+- **The neighbourhood board** (`js/community-board.js`): one picture of the harbour neighbourhood with six empty lots (`assets/img/p08_board.webp`, 1700 × 1000) and one picture per place (`p08_node_*.webp`), all rendered with the same orthographic camera, so any place fits on any lot (each place picture has an anchor that sits on the lot's point). Used on P08 (building), P11 (faded background) and P12 (my map). The route is kept in `state.p08Route`.
+- **Kaohsiung map** (`js/kaohsiung-map.js`): a simplified SVG map of Kaohsiung (coast, Kaoping River, Love River, Cijin, northern border, hills), labelled "Simplified map, not to scale". P08 shows the whole city, P10 a crop from downtown to Meinong.
+- **Voice for P11.** Listen plays `assets/audio/p11/t<frame>_<words>.mp3` (all 23 possible sentences, Kokoro voice `af_sol`); if a file is missing, the browser's own English voice reads it.
+- **Feedback (P12)** is not sent anywhere yet: Submit only shows the thank-you message. Link a form here if the team wants to collect answers. The credits line appears once `p12.credits` in `content/content.js` has the team's names.
+
+### Making the pictures and AR models (P07–P10)
+
+The P07 exhibits and landscape, the P08 board and places, the P09 street and meal and the P10 Meinong farmland are rendered from the same 3D kit as the rest of the app, so everything matches:
+
+- `assets/source-art/render/scenes.js` builds each scene with the kit (`P07`, `P08`, `P09`, `P10`); `render.html` renders one in the browser; `render.py jobs.json` (Playwright) saves the pictures (`{"out": "assets/img/x.webp", "ss": 2, "opts": {...}}`) or a GLB for AR (`{"glb": "assets/models/p07/x.glb", "opts": {...}}`). Compress new GLBs with `gltf-transform optimize --texture-compress webp --texture-size 1024`.
+- P07 AR models: `assets/models/p07/{temple,table,lions,tree,landscape}.glb`. The shrine's niche is empty and there is no incense burner (Object Usage Rules); the offering table is always empty.
+- Voice guide and P11 audio: `assets/source-art/tts/make.py` (setup and model links are at the top of the file): `make.py guide p07 p08` remakes those pages' guide files, `make.py p11` the sentences.
 
 ## Building the next pages
 
@@ -144,15 +167,19 @@ index.html
 css/tokens.css      only place colors, fonts, sizes are defined (Person A)
 css/base.css        reset, layout, rotate overlay
 css/components.css  all components from the spec
-css/pages.css       page-specific layout
+css/pages.css       page-specific layout (P01–P06)
+css/scenes.css      P07–P12, badges, Kaohsiung map
 content/content.js  every visible string, EN + 繁中 (Person A only)
 js/app.js           router, state, top bar, panel
 js/ui.js            bi(), button(), chip(), toast(), modal(), openVocab(), notePopover()
 js/icons.js         inline SVG icons (no icon font needed, works offline)
 js/drag.js          drag + tap-to-place for touch (for P05, P07–P10)
+js/badges.js        the seven badges: medal(), earnBadge(), the "Badge earned" pop-up
+js/community-board.js  the P08 neighbourhood board (lots, places, route), also on P11/P12
+js/kaohsiung-map.js the simplified SVG map of Kaohsiung (P08, P10)
 js/ar.js            loads A-Frame 1.5.0 + MindAR 1.2.5 on demand, startAR() / stopAR()
 js/ar-diorama.js    the 3D pop-up neighbourhood shown on the card (three.js, no model files); buildNeighborhood(THREE, { place }) builds one place for P05
-js/ar-place.js      P05 "See it in AR": camera view + 3D place (<model-viewer> from jsDelivr), real AR on supported phones/tablets
+js/ar-place.js      "See it in AR" (P05 places, P07 exhibits): camera view + 3D model (<model-viewer> from jsDelivr), real AR on supported phones/tablets
 js/narration.js     narration player + Listen button
 js/config.js        page list, asset paths, library URLs
 js/pages/           one file per page

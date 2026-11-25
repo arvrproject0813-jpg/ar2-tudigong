@@ -1,2 +1,9 @@
 .DS_Store
 node_modules/
+
+# Kokoro voice model files and scratch output (see assets/source-art/tts/make.py)
+assets/source-art/tts/venv/
+assets/source-art/tts/out/
+assets/source-art/tts/*.onnx
+assets/source-art/tts/*.bin
+assets/source-art/tts/config.json

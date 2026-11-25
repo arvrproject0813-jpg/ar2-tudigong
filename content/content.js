@@ -197,7 +197,41 @@ const CONTENT = {
     "touchEarth": {
       "en": "Touch the earth",
       "zh": "輕觸大地"
-    }
+    },
+    "badgeEarned": {
+      "en": "Badge earned",
+      "zh": "獲得徽章"
+    },
+    "simpleMap": {
+      "en": "Simplified map, not to scale",
+      "zh": "簡化示意圖，未依實際比例"
+    },
+    "step": {
+      "en": "Stop",
+      "zh": "站"
+    },
+    "clear": {
+      "en": "Clear",
+      "zh": "清除"
+    },
+    "goodMatch": [
+      {
+        "en": "Good match!",
+        "zh": "配對成功！"
+      },
+      {
+        "en": "Well done!",
+        "zh": "做得好！"
+      },
+      {
+        "en": "That's right!",
+        "zh": "答對了！"
+      },
+      {
+        "en": "Great!",
+        "zh": "太棒了！"
+      }
+    ]
   },
   "p01": {
     "guide": {
@@ -949,8 +983,8 @@ const CONTENT = {
   },
   "p07": {
     "guide": {
-      "en": "Take a close look at the small temple and the things around it: the building, the offering table, and the stone lions.",
-      "zh": "仔細看看小廟和它周圍的東西：建築、供桌，還有石獅。"
+      "en": "Tap each object to take a close look. When you have seen three, match each object with its cultural meaning.",
+      "zh": "點一點每個物件，仔細看一看。看完三個之後，把物件和它的文化意義配對起來。"
     },
     "eyebrow": {
       "en": "P07 · Scene 3",
@@ -973,6 +1007,14 @@ const CONTENT = {
         "meaning": {
           "en": "A local landmark and community node",
           "zh": "地方地標與社區節點"
+        },
+        "note": {
+          "en": "Look at the curved tile roof and the ridge ends that sweep up like a swallow's tail. Many small temples have only one room and stand right beside a lane, a field or a street corner.",
+          "zh": "看看彎彎的瓦片屋頂，屋脊兩端像燕子尾巴一樣往上翹。許多小廟只有一個房間，就蓋在巷口、田邊或街角。"
+        },
+        "hint": {
+          "en": "Hint: Which one helps neighbors find their way and meet each other?",
+          "zh": "提示：哪一個能讓街坊認路、彼此相聚？"
         }
       },
       "table": {
@@ -987,6 +1029,14 @@ const CONTENT = {
         "meaning": {
           "en": "Shows local life and festival preparation",
           "zh": "呈現地方生活與節慶準備"
+        },
+        "note": {
+          "en": "This lacquered wooden table stands in front of the shrine. On festival days, neighbors get it ready together. Here we only observe it: notice the carved gold edge and the red table skirt.",
+          "zh": "這張上了漆的木桌放在小廟前。節慶時，街坊鄰居會一起把它準備好。在這裡我們只觀察：看看雕花的金色桌緣和紅色桌裙。"
+        },
+        "hint": {
+          "en": "Hint: Which one do neighbors get ready together on festival days?",
+          "zh": "提示：節慶時，街坊會一起準備哪一個？"
         }
       },
       "lions": {
@@ -1001,6 +1051,14 @@ const CONTENT = {
         "meaning": {
           "en": "A symbol connected with temple architecture",
           "zh": "與廟宇建築相關的象徵"
+        },
+        "note": {
+          "en": "A pair of stone lions guards the door, one on each side. With curly manes and round eyes, they look friendly. Many wear a red ribbon around the neck.",
+          "zh": "一對石獅守在門的兩側。捲捲的鬃毛、圓圓的眼睛，看起來很親切。許多石獅的脖子上還繫著紅色的彩帶。"
+        },
+        "hint": {
+          "en": "Hint: Which one is carved from stone and stands at the temple door?",
+          "zh": "提示：哪一個是石頭雕成、站在廟門口的？"
         }
       },
       "tree": {
@@ -1015,6 +1073,14 @@ const CONTENT = {
         "meaning": {
           "en": "Part of the cultural landscape and local memory",
           "zh": "文化地景與地方記憶的一部分"
+        },
+        "note": {
+          "en": "An old banyan often grows beside a small temple. Its wide shade is a place where neighbors rest, chat and drink tea. Not every old tree is linked to Tudigong, but many are part of local memory.",
+          "zh": "小廟旁常長著一棵老榕樹。寬大的樹蔭是街坊休息、聊天、泡茶的地方。不是每棵老樹都和土地公有關，但許多老樹都是地方記憶的一部分。"
+        },
+        "hint": {
+          "en": "Hint: Which one is alive and has grown here for many years?",
+          "zh": "提示：哪一個是活的，在這裡生長了很多年？"
         }
       }
     },
@@ -1037,12 +1103,86 @@ const CONTENT = {
     "narration": {
       "en": "When observing a Tudigong temple, we can look beyond the deity image and notice the building and the area around it. The small temple, the offering table, and the stone lions can all be part of a cultural landscape. In some places, an old tree nearby is part of it too.",
       "zh": "觀察土地公廟時，我們可以把目光放到神像以外，留意建築本身和周圍的環境。小廟、供桌和石獅，都可以是文化地景的一部分。在有些地方，附近的老樹也是其中之一。"
+    },
+    "gallery": {
+      "en": "Neighborhood Temple Gallery",
+      "zh": "街坊小廟展"
+    },
+    "exhibit": {
+      "en": "Exhibit",
+      "zh": "展品"
+    },
+    "tapToLook": {
+      "en": "Tap to look closely",
+      "zh": "點一下仔細看"
+    },
+    "matchIntro": {
+      "en": "Drag each meaning card to the object it describes. You can also tap a card, then tap an object.",
+      "zh": "把每張意義卡拖到它描述的物件上；也可以先點卡片，再點物件。"
+    },
+    "matchUnlock": {
+      "en": "Great observing! Now match the cultural meanings.",
+      "zh": "觀察得真仔細！現在來配對文化意義。"
+    },
+    "moreToSee": {
+      "en": "Look at one more object to unlock the matching task.",
+      "zh": "再觀察一個物件，就能開始配對。"
+    },
+    "meaningTitle": {
+      "en": "Cultural Meanings",
+      "zh": "文化意義"
+    },
+    "arOpen": {
+      "en": "View in AR",
+      "zh": "用 AR 看看"
+    },
+    "landscapeTitle": {
+      "en": "Together, They Make a Cultural Landscape",
+      "zh": "它們一起構成文化地景"
+    },
+    "landscapeNote": {
+      "en": "A small temple, an offering table, a pair of stone lions and an old tree: together with the people who meet here, they make a place full of local memory.",
+      "zh": "一座小廟、一張供桌、一對石獅和一棵老樹，加上在這裡相聚的人們，就成了充滿地方記憶的地方。"
+    },
+    "arLandscape": {
+      "en": "View the Landscape in AR",
+      "zh": "用 AR 看整個地景"
+    },
+    "seeLandscape": {
+      "en": "See the Landscape",
+      "zh": "看看整個地景"
+    },
+    "chips": [
+      {
+        "en": "Cultural Landscape",
+        "zh": "文化地景"
+      },
+      {
+        "en": "Local Temple",
+        "zh": "地方廟宇／小廟"
+      }
+    ],
+    "skipStay": {
+      "en": "Keep Exploring",
+      "zh": "繼續探索"
+    },
+    "backToExhibits": {
+      "en": "Back to the Exhibits",
+      "zh": "回到展品"
+    },
+    "unlockHint": {
+      "en": "Look closely at 3 objects to unlock the meaning cards.",
+      "zh": "仔細看 3 個物件，就能打開意義卡。"
+    },
+    "dropHere": {
+      "en": "Place a meaning here",
+      "zh": "把意義卡放這裡"
     }
   },
   "p08": {
     "guide": {
-      "en": "Look at the community culture map, and find the places where everyday life and local culture meet.",
-      "zh": "看看社區文化地圖，找出日常生活和在地文化相遇的地方。"
+      "en": "Open the map. Put at least four places in the neighborhood, then tap them in order to build a cultural route.",
+      "zh": "打開地圖。在街坊放上至少四個地點，再依序點選它們，建立一條文化路線。"
     },
     "eyebrow": {
       "en": "P08 · Scene 4",
@@ -1105,12 +1245,128 @@ const CONTENT = {
     "narration": {
       "en": "Local culture lives in more than one building. This simple community culture map of Kaohsiung shows how schools, homes, markets, parks, old trees, and local temples come together in everyday life. Now think about your own neighborhood: which places belong on a community culture map?",
       "zh": "地方文化不只存在於一棟建築裡。這張簡化的高雄社區文化地圖，呈現了學校、住家、市場、公園、老樹與地方廟宇如何在日常生活中連結在一起。現在想一想你自己的街坊：哪些地方應該出現在社區文化地圖上？"
+    },
+    "kaohsiung": {
+      "en": "Kaohsiung",
+      "zh": "高雄"
+    },
+    "strait": {
+      "en": "Taiwan Strait",
+      "zh": "臺灣海峽"
+    },
+    "harbor": {
+      "en": "Kaohsiung Harbor",
+      "zh": "高雄港"
+    },
+    "loveRiver": {
+      "en": "Love River",
+      "zh": "愛河"
+    },
+    "myNeighborhood": {
+      "en": "My Neighborhood",
+      "zh": "我的街坊"
+    },
+    "openPrompt": {
+      "en": "This is Kaohsiung. Open the map to zoom in to a neighborhood.",
+      "zh": "這是高雄。打開地圖，放大來看一個街坊。"
+    },
+    "placePrompt": {
+      "en": "Drag a place card onto an empty lot, or tap a card and then a lot.",
+      "zh": "把地點卡拖到空地上，或先點卡片、再點空地。"
+    },
+    "emptyLot": {
+      "en": "Empty lot",
+      "zh": "空地"
+    },
+    "nodeNotes": {
+      "school": {
+        "en": "A school is where neighborhood children meet every day. It is a good place to start a culture walk.",
+        "zh": "學校是街坊孩子每天相聚的地方，也是文化走讀的好起點。"
+      },
+      "homes": {
+        "en": "Homes are where daily life begins. Neighbors meet in the lane outside.",
+        "zh": "家是日常生活的起點，鄰居們常在門外的巷子相遇。"
+      },
+      "market": {
+        "en": "A morning market connects farmers, shops and neighbors.",
+        "zh": "早市把農民、商家和鄰居連結在一起。"
+      },
+      "park": {
+        "en": "An old tree in the park gives shade and keeps local memory.",
+        "zh": "公園裡的老樹提供樹蔭，也保存了地方記憶。"
+      },
+      "temple": {
+        "en": "A small local temple is a landmark where neighbors meet and festivals happen.",
+        "zh": "地方小廟是街坊相聚、舉辦節慶的地標。"
+      },
+      "oldStreet": {
+        "en": "An old street keeps shop houses and stories from the past.",
+        "zh": "老街保留了老店屋和過去的故事。"
+      }
+    },
+    "canRoute": {
+      "en": "Great! Now you can build a cultural route.",
+      "zh": "很好！現在可以建立文化路線了。"
+    },
+    "allPlaced": {
+      "en": "All six places are on the map!",
+      "zh": "六個地點都放上地圖了！"
+    },
+    "routeIntro": {
+      "en": "Tap the places in the order you would visit them. Use at least 4 stops.",
+      "zh": "依照你想走訪的順序點選地點，至少要有 4 站。"
+    },
+    "routeNeedMore": {
+      "en": "Add at least 4 stops before you finish.",
+      "zh": "完成前，至少要有 4 站。"
+    },
+    "routeAlready": {
+      "en": "This place is already on your route.",
+      "zh": "這個地點已經在路線上了。"
+    },
+    "complete": {
+      "en": "Cultural Route Complete",
+      "zh": "文化路線完成"
+    },
+    "myRoute": {
+      "en": "My Cultural Route",
+      "zh": "我的文化路線"
+    },
+    "reflectLabel": {
+      "en": "Think about it",
+      "zh": "想一想"
+    },
+    "chips": [
+      {
+        "en": "Community Map",
+        "zh": "社區地圖"
+      },
+      {
+        "en": "Neighborhood",
+        "zh": "街坊／社區"
+      }
+    ],
+    "skipStay": {
+      "en": "Keep Building",
+      "zh": "繼續建立"
+    },
+    "rivers": {
+      "en": "Rivers",
+      "zh": "河流"
+    },
+    "canFinish": {
+      "en": "You can finish now, or add more stops.",
+      "zh": "現在可以完成，也可以再加幾站。"
+    },
+    "editRoute": {
+      "en": "Change the Route",
+      "zh": "修改路線"
     }
   },
   "p09": {
     "guide": {
-      "en": "Let's learn about Touya and Weiya, and how they follow the gentle rhythm of everyday life.",
-      "zh": "我們來認識頭牙和尾牙，看看它們怎麼跟著日常生活的節奏。"
+      "en": "Match zuoya, Touya and Weiya with their dates, and watch the lunar calendar light up.",
+      "zh": "把做牙、頭牙和尾牙和它們的日期配對起來，看看農曆月曆怎麼亮起來。"
     },
     "eyebrow": {
       "en": "P09 · Scene 5",
@@ -1170,12 +1426,16 @@ const CONTENT = {
     },
     "chips": [
       {
-        "en": "Local Business Culture",
-        "zh": "在地商業文化"
+        "en": "Zuoya",
+        "zh": "做牙"
       },
       {
-        "en": "Everyday Language",
-        "zh": "日常用語"
+        "en": "Touya",
+        "zh": "頭牙"
+      },
+      {
+        "en": "Weiya",
+        "zh": "尾牙"
       }
     ],
     "complete": {
@@ -1189,12 +1449,178 @@ const CONTENT = {
     "narration": {
       "en": "In traditional Taiwanese folk culture, zuoya is observed on the second and sixteenth days of each lunar month. The second day of the second lunar month is called Touya, and the sixteenth day of the twelfth lunar month is called Weiya. Over time, Weiya has also become the everyday word for a company’s year-end dinner.",
       "zh": "在臺灣傳統民間文化中，每個農曆月的初二與十六都有「做牙」的習俗。農曆二月初二稱為「頭牙」，十二月十六則稱為「尾牙」。隨著時間演變，「尾牙」也成為公司年終聚餐的常見說法。"
+    },
+    "calendarTitle": {
+      "en": "One Lunar Year",
+      "zh": "農曆一年"
+    },
+    "months": [
+      {
+        "en": "1",
+        "zh": "正月"
+      },
+      {
+        "en": "2",
+        "zh": "二月"
+      },
+      {
+        "en": "3",
+        "zh": "三月"
+      },
+      {
+        "en": "4",
+        "zh": "四月"
+      },
+      {
+        "en": "5",
+        "zh": "五月"
+      },
+      {
+        "en": "6",
+        "zh": "六月"
+      },
+      {
+        "en": "7",
+        "zh": "七月"
+      },
+      {
+        "en": "8",
+        "zh": "八月"
+      },
+      {
+        "en": "9",
+        "zh": "九月"
+      },
+      {
+        "en": "10",
+        "zh": "十月"
+      },
+      {
+        "en": "11",
+        "zh": "十一月"
+      },
+      {
+        "en": "12",
+        "zh": "十二月"
+      }
+    ],
+    "monthWord": {
+      "en": "Month",
+      "zh": "月"
+    },
+    "day2": {
+      "en": "2nd",
+      "zh": "初二"
+    },
+    "day16": {
+      "en": "16th",
+      "zh": "十六"
+    },
+    "yaDay": {
+      "en": "ya day",
+      "zh": "牙日"
+    },
+    "termsTitle": {
+      "en": "Terms",
+      "zh": "詞彙"
+    },
+    "answersTitle": {
+      "en": "Dates and Meanings",
+      "zh": "日期與意義"
+    },
+    "matchIntro": {
+      "en": "Drag each term card to its date. You can also tap a term, then tap a date.",
+      "zh": "把每張詞彙卡拖到對應的日期；也可以先點詞彙，再點日期。"
+    },
+    "hints": {
+      "zuoya": {
+        "en": "Hint: Zuoya happens twice every month.",
+        "zh": "提示：做牙每個月有兩次。"
+      },
+      "touya": {
+        "en": "Hint: Touya is the first ya day of the year.",
+        "zh": "提示：頭牙是一年中的第一個牙日。"
+      },
+      "weiya": {
+        "en": "Hint: Weiya is the last ya day of the year.",
+        "zh": "提示：尾牙是一年中的最後一個牙日。"
+      }
+    },
+    "notes": {
+      "zuoya": {
+        "en": "In traditional folk culture, the 2nd and 16th days of every lunar month are ya days. Many family shops still keep them, so every month has two.",
+        "zh": "在傳統民間文化中，每個農曆月的初二和十六是「牙」日。許多家庭商店至今仍記得這些日子，所以每個月都有兩個牙日。"
+      },
+      "touya": {
+        "en": "Touya is the first ya day of the year, on the 2nd day of the 2nd lunar month. It is also known as Tudigong's birthday, and some companies treat their staff to a meal.",
+        "zh": "頭牙是一年中的第一個牙日，在農曆二月初二，也被視為土地公的生日。有些公司會在這天請員工吃飯。"
+      },
+      "weiya": {
+        "en": "Weiya is the last ya day of the year, on the 16th day of the 12th lunar month. Today it also means a company's year-end party, where bosses thank their staff with a big meal.",
+        "zh": "尾牙是一年中的最後一個牙日，在農曆十二月十六。現在它也指公司的年終聚餐，老闆會用一頓大餐感謝員工。"
+      }
+    },
+    "captions": {
+      "zuoya": {
+        "en": "Two ya days in every lunar month",
+        "zh": "每個農曆月有兩個牙日"
+      },
+      "touya": {
+        "en": "Family shops on a shopping street",
+        "zh": "商店街上的家庭商店"
+      },
+      "weiya": {
+        "en": "A year-end company meal",
+        "zh": "公司的年終聚餐"
+      }
+    },
+    "context": {
+      "business": {
+        "title": {
+          "en": "Local Business Culture",
+          "zh": "在地商業文化"
+        },
+        "text": {
+          "en": "Many family shops in Taiwan have kept the ya days for generations. The ya days follow the rhythm of a working year, from Touya to Weiya.",
+          "zh": "臺灣許多家庭商店世代都記得牙日。牙日跟著一整年的工作節奏，從頭牙一路到尾牙。"
+        }
+      },
+      "language": {
+        "title": {
+          "en": "Everyday Language",
+          "zh": "日常用語"
+        },
+        "text": {
+          "en": "Weiya is now an everyday word: people say \"our company's Weiya\" for the year-end party. The phrase 打牙祭 means \"to treat yourself to a good meal.\"",
+          "zh": "「尾牙」已經是日常用語：大家會說「公司的尾牙」來指年終聚餐。「打牙祭」則是「好好吃一頓」的意思。"
+        }
+      }
+    },
+    "contextPrompt": {
+      "en": "Tap a card to see how ya days live on today.",
+      "zh": "點一張卡片，看看牙日如何延續到今天。"
+    },
+    "skipStay": {
+      "en": "Keep Matching",
+      "zh": "繼續配對"
+    },
+    "everyMonth": {
+      "en": "Every month",
+      "zh": "每個月"
+    },
+    "yearArc": {
+      "en": "A working year: from Touya to Weiya",
+      "zh": "一整年的工作節奏：從頭牙到尾牙"
+    },
+    "dropHere": {
+      "en": "Place a term here",
+      "zh": "把詞彙放這裡"
     }
   },
   "p10": {
     "guide": {
-      "en": "Let's visit Bogong in Meinong, and see how one belief can be shared in different local ways.",
-      "zh": "我們一起去認識美濃的伯公，看看同一個信仰，如何有不同的在地表現。"
+      "en": "Now let's travel to Meinong, a Hakka community in Kaohsiung. Match three cards to find out what Tudigong, Bogong and fuchang mean.",
+      "zh": "現在我們出發到高雄的客家社區美濃。把三張卡片配對起來，看看土地公、伯公和福廠各是什麼意思。"
     },
     "eyebrow": {
       "en": "P10 · Scene 6",
@@ -1235,8 +1661,8 @@ const CONTENT = {
           "zh": "福廠案例"
         },
         "meaning": {
-          "en": "A culture-specific festival space or structure in Yong'an, Meinong. It is not another name for every Tudigong temple.",
-          "zh": "美濃永安特定的節慶空間或結構，並非所有土地公廟的別稱。"
+          "en": "A special festival space in Yong'an, Meinong, not a name for every Tudigong temple",
+          "zh": "美濃永安特有的節慶空間，不是所有土地公廟的通稱"
         }
       }
     },
@@ -1263,12 +1689,189 @@ const CONTENT = {
     "narration": {
       "en": "In Hakka communities such as Meinong in Kaohsiung, Tudigong is often called Bogong. Local language, history, and community life have given Bogong traditions their own local style. In the Yong’an area of Meinong, a fuchang is a special space or structure for a local festival. It is not just another name for a Tudigong temple.",
       "zh": "在高雄美濃等客家社區，土地公常被稱為「伯公」。在地的語言、歷史與社區生活，讓伯公傳統有了自己的在地特色。在美濃永安地區，「福廠」是當地節慶使用的特別空間或結構，並不是土地公廟的另一個名稱。"
+    },
+    "chips": [
+      {
+        "en": "Bogong",
+        "zh": "伯公"
+      },
+      {
+        "en": "Fuchang",
+        "zh": "福廠"
+      }
+    ],
+    "chipLabels": [
+      {
+        "en": "Local Culture",
+        "zh": "在地文化"
+      },
+      {
+        "en": "Fuchang",
+        "zh": "福廠"
+      }
+    ],
+    "kaohsiung": {
+      "en": "Kaohsiung",
+      "zh": "高雄"
+    },
+    "downtown": {
+      "en": "Downtown Kaohsiung",
+      "zh": "高雄市區"
+    },
+    "mapPrompt": {
+      "en": "Tap the pin to learn about Meinong.",
+      "zh": "點一下圖釘，認識美濃。"
+    },
+    "meinongNote": {
+      "en": "Meinong is a Hakka farming community at the foot of green mountains in Kaohsiung. It is known for rice fields, old tobacco-curing barns and oil-paper umbrellas.",
+      "zh": "美濃位在高雄的青山腳下，是一個客家農業社區，以稻田、老菸樓和油紙傘聞名。"
+    },
+    "meinongTitle": {
+      "en": "Meinong",
+      "zh": "美濃"
+    },
+    "artCaption": {
+      "en": "Illustration inspired by Meinong's farmland",
+      "zh": "以美濃田園為靈感的插畫"
+    },
+    "matchIntro": {
+      "en": "Tap a concept card, then tap the meaning that matches it. You can also drag the card.",
+      "zh": "先點一張概念卡，再點出相符的意思；也可以直接拖曳卡片。"
+    },
+    "conceptsTitle": {
+      "en": "Concepts",
+      "zh": "概念"
+    },
+    "meaningsTitle": {
+      "en": "Meanings",
+      "zh": "意思"
+    },
+    "notes": {
+      "tudigong": {
+        "en": "That's right! Tudigong is the name used in many places across Taiwan. His formal title is Fude Zhengshen. 土地 means \"land,\" and 公 is a respectful word for an older man.",
+        "zh": "答對了！臺灣許多地方都稱祂為「土地公」，正式名稱是「福德正神」。名稱裡的「公」，是對年長男性的尊稱。"
+      },
+      "bogong": {
+        "en": "Well done! In Hakka, Bogong is also a family word for a great-uncle. Calling Tudigong \"Bogong\" makes him feel like an elder in the family. One study counted about 380 Bogong shrines in Meinong!",
+        "zh": "做得好！在客家話裡，「伯公」也是對家族長輩（爸爸的伯父）的稱呼。把土地公叫作伯公，就像把祂當成家中的長輩。有研究統計，美濃約有 380 座伯公！"
+      },
+      "fuchang": {
+        "en": "Correct! A fuchang is a festival space that people in Yong'an, Meinong, build together every year. It is a space for a festival, not a temple, so Tudigong temples are not called \"fuchang.\"",
+        "zh": "答對了！福廠是美濃永安的居民每年一起搭建的節慶空間。它是節慶用的場地，不是廟，所以土地公廟並不叫「福廠」。"
+      }
+    },
+    "hints": {
+      "tudigong": {
+        "en": "Hint: Which name do people use all over Taiwan?",
+        "zh": "提示：臺灣各地最常用的是哪一個稱呼？"
+      },
+      "bogong": {
+        "en": "Hint: Bogong is a word from the Hakka language.",
+        "zh": "提示：「伯公」是客家話的稱呼。"
+      },
+      "fuchang": {
+        "en": "Hint: A fuchang is a place, not a name for Tudigong.",
+        "zh": "提示：福廠是一個地方，不是土地公的稱呼。"
+      }
+    },
+    "comparePrompt": {
+      "en": "Great matching! Tap Compare Cultural Expressions to see the two names side by side.",
+      "zh": "配對完成！點「比較文化表現」，看看兩個稱呼有什麼異同。"
+    },
+    "compareSub": {
+      "en": "One belief, different local expressions",
+      "zh": "同一信仰，不同的在地表現"
+    },
+    "rows": [
+      {
+        "q": {
+          "en": "Who uses this name?",
+          "zh": "誰這樣稱呼？"
+        },
+        "tudigong": {
+          "en": "Many communities across Taiwan",
+          "zh": "臺灣各地許多社區"
+        },
+        "bogong": {
+          "en": "Hakka communities, such as Meinong",
+          "zh": "美濃等客家社區"
+        }
+      },
+      {
+        "q": {
+          "en": "What does the name mean?",
+          "zh": "名稱的意思"
+        },
+        "tudigong": {
+          "en": "土地 \"land\" + 公, a respectful word for an older man",
+          "zh": "「土地」加上對年長男性的尊稱「公」"
+        },
+        "bogong": {
+          "en": "Also a family word for a great-uncle",
+          "zh": "也是對家族長輩（爸爸的伯父）的稱呼"
+        }
+      },
+      {
+        "q": {
+          "en": "What might you see?",
+          "zh": "可能會看到什麼？"
+        },
+        "tudigong": {
+          "en": "Small temples on street corners, beside fields and near markets",
+          "zh": "街角、田邊與市場附近的小廟"
+        },
+        "bogong": {
+          "en": "Many are simple shrines with only a stone or stone tablet, often with a big tree nearby",
+          "zh": "許多樸素的伯公壇只有一塊石頭或石碑，旁邊常有大樹"
+        }
+      }
+    ],
+    "bothLine": {
+      "en": "Both names are tied to land, farming and community life, close to where people live.",
+      "zh": "兩個稱呼都與土地、農業和社區生活緊密相連，也都在人們生活的地方附近。"
+    },
+    "didYouKnow": {
+      "en": "Did you know?",
+      "zh": "你知道嗎？"
+    },
+    "didYouKnowText": {
+      "en": "Hakka speakers often call a Bogong shrine and the shady space around it 伯公下 (\"Bogong's place\"). Neighbors rest, chat and drink tea there, so it works like a small community center.",
+      "zh": "客家人常把伯公廟和周圍的空間叫作「伯公下」。鄰居們會在這裡休息、聊天、泡茶，就像一個小小的社區活動中心。"
+    },
+    "caseTitle": {
+      "en": "A Local Case: Fuchang",
+      "zh": "在地案例：福廠"
+    },
+    "caseText": {
+      "en": "Every year, people in Yong'an, Meinong, build a fuchang together for a Hakka festival. It is used from the 25th day of the 12th lunar month to the Lantern Festival, the 15th day of the 1st lunar month. Traditional Hakka bayin music leads the way.",
+      "zh": "每年，美濃永安的居民都會一起搭建福廠，作為客家節慶的場地，從農曆十二月二十五日一直使用到元宵節（正月十五日）。祭典由傳統的客家八音開道演奏。"
+    },
+    "caseStatus": {
+      "en": "Kaohsiung City lists this festival as an official folk custom.",
+      "zh": "這項祭典（瀰濃永安庄伯公福廠入年駕祭典）已是高雄市市定民俗。"
+    },
+    "caseReminder": {
+      "en": "Remember: \"fuchang\" is the name of this local festival space. It is not another name for Tudigong temples.",
+      "zh": "記住：「福廠」是這個在地節慶空間的名稱，不是土地公廟的另一個名字。"
+    },
+    "creditLink": {
+      "en": "Read more",
+      "zh": "了解更多"
+    },
+    "creditUrl": "https://www.khm.org.tw/tw/event/past/detail/338",
+    "badge": {
+      "en": "Local Variation",
+      "zh": "在地差異"
+    },
+    "skipStay": {
+      "en": "Keep Matching",
+      "zh": "繼續配對"
     }
   },
   "p11": {
     "guide": {
-      "en": "Now it's your turn. Put the words in order to introduce Tudigong and community culture in English. Take your time.",
-      "zh": "現在輪到你了。把字詞組合起來，用英文介紹土地公與社區文化。慢慢來，不用急。"
+      "en": "Now it's your turn! Choose word cards to finish an English sentence about Tudigong and community culture. Take your time.",
+      "zh": "現在輪到你了！選擇字卡，完成一句介紹土地公與社區文化的英文句子。慢慢來，不用急。"
     },
     "eyebrow": {
       "en": "P11 · Ending",
@@ -1347,8 +1950,8 @@ const CONTENT = {
             "zh": "尾牙",
             "ok": false,
             "hint": {
-              "en": "Weiya is a date and a year-end meal.",
-              "zh": "尾牙是日期，也指年終聚餐。"
+              "en": "Not quite. Weiya is a date and a year-end meal, not a place.",
+              "zh": "還差一點！尾牙是一個日子，也指年終聚餐，不是一個地方。"
             }
           }
         ]
@@ -1367,8 +1970,8 @@ const CONTENT = {
             "zh": "福廠",
             "ok": false,
             "hint": {
-              "en": "A fuchang is a festival space in Yong'an.",
-              "zh": "福廠是永安的節慶空間。"
+              "en": "Not quite. A fuchang is a festival space in Yong'an, not a name for Tudigong.",
+              "zh": "還差一點！福廠是永安的節慶空間，不是土地公的稱呼。"
             }
           },
           {
@@ -1376,8 +1979,8 @@ const CONTENT = {
             "zh": "頭牙",
             "ok": false,
             "hint": {
-              "en": "Touya is a date in the lunar calendar.",
-              "zh": "頭牙是農曆中的日子。"
+              "en": "Not quite. Touya is a date: the 2nd day of the 2nd lunar month.",
+              "zh": "還差一點！頭牙是一個日子：農曆二月初二。"
             }
           }
         ]
@@ -1402,12 +2005,120 @@ const CONTENT = {
     "narration": {
       "en": "On this journey, we started from everyday places in Kaohsiung and learned how Tudigong culture connects land, fields, street corners, markets, communities, and cultural memory. We also learned that in Meinong, Tudigong is called Bogong and has its own local traditions. Now, answer the core question in one English sentence.",
       "zh": "在這段旅程中，我們從高雄的日常場所出發，認識了土地公文化如何連結土地、田野、街角、市場、社區與文化記憶。我們也認識到，在美濃，土地公被稱為「伯公」，並有自己的在地傳統。現在，請用一句英文回答核心提問。"
+    },
+    "cardTitle": {
+      "en": "Complete the English Sentence",
+      "zh": "完成英文句子"
+    },
+    "instruction": {
+      "en": "Choose a sentence. Tap a word card to fill the next blank. To change a word, tap the blank again.",
+      "zh": "選一個句子，點字卡填入下一個空格。想換字，就再點一次那個空格。"
+    },
+    "tabs": [
+      {
+        "en": "Connections",
+        "zh": "連結"
+      },
+      {
+        "en": "Landscape",
+        "zh": "地景"
+      },
+      {
+        "en": "Meinong",
+        "zh": "美濃"
+      }
+    ],
+    "prompts": [
+      {
+        "en": "What does Tudigong culture bring together? Pick two different words.",
+        "zh": "土地公文化連結了哪些事物？選兩個不同的詞。"
+      },
+      {
+        "en": "What can a small temple in your neighborhood be part of?",
+        "zh": "街坊裡的小廟可以是什麼的一部分？"
+      },
+      {
+        "en": "What do Hakka communities in Meinong call Tudigong?",
+        "zh": "美濃的客家社區怎麼稱呼土地公？"
+      }
+    ],
+    "sameWord": {
+      "en": "You already used this word. Choose a different one.",
+      "zh": "這個詞已經用過了，換一個吧。"
+    },
+    "sentenceDone": {
+      "en": "Sentence complete!",
+      "zh": "句子完成了！"
+    },
+    "recaps": [
+      {
+        "en": "Fields, markets and street corners: Tudigong culture lives in everyday places.",
+        "zh": "田野、市場和街角：土地公文化就在日常場所之中。"
+      },
+      {
+        "en": "Small temples, stone lions and old trees can all be part of a cultural landscape.",
+        "zh": "小廟、石獅和老樹，都可以是文化地景的一部分。"
+      },
+      {
+        "en": "Bogong is the Hakka name. In Hakka, it is also a family word for a great-uncle.",
+        "zh": "「伯公」是客家人的稱呼，在客家話裡也是對家族長輩的稱呼。"
+      }
+    ],
+    "speakPrompt": {
+      "en": "Tap Listen, then read your sentence aloud.",
+      "zh": "點「聆聽」，再把句子大聲唸出來。"
+    },
+    "nextPrompt": {
+      "en": "Try another sentence, or tap Next to see your results.",
+      "zh": "再試一個句子，或點「下一步」看看你的成果。"
+    },
+    "taskDone": {
+      "en": "Sentence Task Complete",
+      "zh": "句子任務完成"
+    },
+    "badge": {
+      "en": "Culture Introducer",
+      "zh": "文化介紹員"
+    },
+    "startersTitle": {
+      "en": "You can also say…",
+      "zh": "你也可以這樣說…"
+    },
+    "startersTip": {
+      "en": "Use these to make your own sentence with a classmate.",
+      "zh": "和同學一起用這些開頭，說出你自己的句子。"
+    },
+    "task": {
+      "en": "Complete 1 English sentence",
+      "zh": "完成 1 個英文句子"
+    },
+    "listenSentence": {
+      "en": "Listen",
+      "zh": "聆聽"
+    },
+    "skipStay": {
+      "en": "Keep Writing",
+      "zh": "繼續造句"
+    },
+    "chips": [
+      {
+        "en": "Cultural Memory",
+        "zh": "文化記憶"
+      },
+      {
+        "en": "Bogong",
+        "zh": "伯公"
+      }
+    ],
+    "tapBlank": {
+      "en": "To change a word, tap the blank first.",
+      "zh": "想換字，先點一下那個空格。"
     }
   },
   "p12": {
     "guide": {
-      "en": "Well done! You've completed the journey. Look back at what you learned, and come back anytime.",
-      "zh": "做得很好！你完成了這趟旅程。回顧一下學到的東西，歡迎隨時再回來。"
+      "en": "Well done! You finished the journey. Look at your map, your badges and your sentences. Then think about the places in your own neighborhood.",
+      "zh": "做得很好！你完成了這趟旅程。看看你的地圖、徽章和句子，再想一想你自己街坊裡的地方。"
     },
     "eyebrow": {
       "en": "P12 · Project Information",
@@ -1504,6 +2215,187 @@ const CONTENT = {
     "narration": {
       "en": "You have completed a bilingual AR journey through Tudigong belief, life on the land, local communities, cultural landscapes, zuoya culture, and Bogong culture in Meinong. Now let’s return to the first question: why is Tudigong so often found close to everyday life? One answer is that the belief has become connected with land use, community relationships, and local memory.",
       "zh": "你已完成一段雙語 AR 旅程，認識了土地公信仰、土地上的生活、地方社區、文化地景、做牙文化，以及美濃的伯公文化。現在回到最初的問題：為什麼土地公常出現在日常生活附近？其中一個答案是：這份信仰逐漸與土地利用、社區關係和地方記憶連結在一起。"
+    },
+    "arrival": {
+      "en": "Journey Complete!",
+      "zh": "旅程完成！"
+    },
+    "recapLabel": {
+      "en": "Back to the Core Inquiry",
+      "zh": "回到核心提問"
+    },
+    "oneAnswer": {
+      "en": "One answer: Tudigong culture grew together with farming, neighborhoods and markets, so small temples are often found where people live, work and meet.",
+      "zh": "一個可能的答案：土地公文化和農業、街坊、市場一起發展，所以小廟常出現在人們生活、工作與相聚的地方。"
+    },
+    "yourAnswer": {
+      "en": "What would your answer be?",
+      "zh": "你的答案會是什麼？"
+    },
+    "mapCaption": {
+      "en": "This is the cultural route you built in Scene 4.",
+      "zh": "這是你在場景四建立的文化路線。"
+    },
+    "noRoute": {
+      "en": "No route yet. You can build one in Scene 4: From Kaohsiung to My Neighborhood.",
+      "zh": "還沒有路線。你可以到場景四「從高雄到我的街坊」建立一條。"
+    },
+    "goScene4": {
+      "en": "Go to Scene 4",
+      "zh": "前往場景四"
+    },
+    "badgesTitle": {
+      "en": "My Badges",
+      "zh": "我的徽章"
+    },
+    "badgeCount": {
+      "en": "{n} of 7 earned",
+      "zh": "已獲得 {n}／7"
+    },
+    "locked": {
+      "en": "Not earned yet. You can go back and try!",
+      "zh": "尚未獲得，可以回去挑戰！"
+    },
+    "wordsTip": {
+      "en": "Tap a word to review its meaning.",
+      "zh": "點一下詞彙，複習它的意思。"
+    },
+    "badgeHow": {
+      "node": {
+        "en": "Marked the small temple as a community node (Scene 1)",
+        "zh": "在場景一把小廟標記為社區節點"
+      },
+      "clue": {
+        "en": "Found a cultural clue on the timeline (Scene 2)",
+        "zh": "在場景二的時間軸上找到文化線索"
+      },
+      "landscape": {
+        "en": "Matched cultural objects with their meanings (Scene 3)",
+        "zh": "在場景三完成文化物件的意義配對"
+      },
+      "route": {
+        "en": "Built a cultural route on the community map (Scene 4)",
+        "zh": "在場景四的社區地圖上建立文化路線"
+      },
+      "calendar": {
+        "en": "Matched zuoya, Touya and Weiya (Scene 5)",
+        "zh": "在場景五配對做牙、頭牙與尾牙"
+      },
+      "local": {
+        "en": "Matched Tudigong, Bogong and fuchang (Scene 6)",
+        "zh": "在場景六配對土地公、伯公與福廠"
+      },
+      "speaker": {
+        "en": "Introduced local culture in an English sentence (Ending)",
+        "zh": "在結尾用英文句子介紹在地文化"
+      }
+    },
+    "badgePage": {
+      "node": "p05",
+      "clue": "p06",
+      "landscape": "p07",
+      "route": "p08",
+      "calendar": "p09",
+      "local": "p10",
+      "speaker": "p11"
+    },
+    "sentencesIntro": {
+      "en": "Your sentences from this journey:",
+      "zh": "你在這趟旅程中完成的句子："
+    },
+    "speakTip": {
+      "en": "Read them aloud to a friend or family member.",
+      "zh": "唸給朋友或家人聽聽看。"
+    },
+    "noSentence": {
+      "en": "No sentence yet. Go back to the Ending page to make one!",
+      "zh": "還沒有句子。回到結尾頁，完成一句吧！"
+    },
+    "storyText": {
+      "en": "Tudigong's Neighborhood is a bilingual AR learning experience for junior- and senior-high school students. It starts from everyday places in Kaohsiung, such as street corners, fields, markets and neighborhoods, and asks one question: why do we often find Tudigong close to daily life?",
+      "zh": "「土地公的街坊」是為國高中生設計的雙語 AR 學習體驗。它從高雄的街角、田野、市場與街坊等日常場所出發，探討一個問題：為什麼土地公常出現在日常生活附近？"
+    },
+    "credits": {
+      "en": "Made by: [names] · [school or unit]",
+      "zh": "製作團隊：【待補】"
+    },
+    "readingIntro": {
+      "en": "Want to learn more? These are the sources behind this experience.",
+      "zh": "想知道更多嗎？以下是本體驗參考的資料。"
+    },
+    "forStudents": {
+      "en": "For students",
+      "zh": "給學生"
+    },
+    "forTeachers": {
+      "en": "For teachers",
+      "zh": "給老師"
+    },
+    "fieldStudy": {
+      "en": "Field-study idea: Find a small temple, an old tree or a market near your school. Add it to a community map and write one English sentence about it.",
+      "zh": "走讀小任務：在學校附近找一座小廟、一棵老樹或一個市場，把它畫進社區地圖，再用一句英文介紹它。"
+    },
+    "rateQ": {
+      "en": "How much did you enjoy this journey?",
+      "zh": "你有多喜歡這趟旅程？"
+    },
+    "rates": [
+      {
+        "en": "Not really",
+        "zh": "不太喜歡"
+      },
+      {
+        "en": "It was OK",
+        "zh": "還可以"
+      },
+      {
+        "en": "I liked it",
+        "zh": "喜歡"
+      },
+      {
+        "en": "I really liked it",
+        "zh": "很喜歡"
+      },
+      {
+        "en": "I loved it!",
+        "zh": "超喜歡！"
+      }
+    ],
+    "tellMore": {
+      "en": "Tell us more (optional)",
+      "zh": "想說的話（選填）"
+    },
+    "tellMorePh": {
+      "en": "What did you like? What could be better?",
+      "zh": "你喜歡哪個部分？哪裡可以更好？"
+    },
+    "rateFirst": {
+      "en": "Please choose a rating first.",
+      "zh": "請先選擇評分。"
+    },
+    "confirmAgain": {
+      "en": "Start again? Your badges, route and sentences will be cleared.",
+      "zh": "要重新開始嗎？你的徽章、路線和句子都會清除。"
+    },
+    "startAgain": {
+      "en": "Start Again",
+      "zh": "重新開始"
+    },
+    "cancel": {
+      "en": "Cancel",
+      "zh": "取消"
+    },
+    "endTitle": {
+      "en": "Thank you for exploring!",
+      "zh": "謝謝你的探索！"
+    },
+    "words": {
+      "en": "Words You Learned Today",
+      "zh": "今日學到的詞彙"
+    },
+    "goBack": {
+      "en": "Go back",
+      "zh": "回去看看"
     }
   },
   "vocab": [
@@ -1640,6 +2532,14 @@ const CONTENT = {
     {
       "title": "Kaohsiung Gushou Temple: Fude Zhengshen",
       "url": "https://cushow.org.tw/?act=menuinfo&cmd=detail&mi_id=20240202008&ml_id=20240202004"
+    },
+    {
+      "title": "MOE Hakka Dictionary resource: 伯公下 (Bogong's place)",
+      "url": "https://hakkadict.moe.edu.tw/static/resource/%E7%A6%AE%E4%BF%97/109_024_%E4%BC%AF%E5%85%AC%E4%B8%8B.pdf"
+    },
+    {
+      "title": "MOE Hakka Dictionary resource: 化胎式伯公 (Bogong shrines)",
+      "url": "https://hakkadict.moe.edu.tw/static/resource/%E4%BF%A1%E4%BB%B0/109_015_%E5%8C%96%E8%83%8E%E5%BC%8F%E4%BC%AF%E5%85%AC.pdf"
     }
   ]
 };
