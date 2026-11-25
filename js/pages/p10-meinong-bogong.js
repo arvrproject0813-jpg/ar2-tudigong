@@ -1,25 +1,33 @@
 // P10 · Scene 6 — Bogong in Meinong: one belief, different local expressions.
 //
 //   Left, a travel card: a schematic map from downtown Kaohsiung to Meinong (js/kaohsiung-map.js, not to scale) — tap
-//   the Meinong pin for a short note — and an illustration of Meinong's farmland (assets/img/p10_meinong.webp, a render
-//   of the app's 3D kit: a Hakka courtyard house, a tobacco-curing barn, rice fields, a stream).
+//   the Meinong pin for a short note — and three Meinong culture cards made from the team's 3D models: a Hakka
+//   settlement, a tobacco-curing barn and a Bogong shrine (assets/img/p10_*.webp, assets/models/p10/*.glb). Each card
+//   opens a picture, a short note and "View in AR".
 //   Right, the matching task (team script claude/ui_narration_p10_p12.md): tap a concept card (Tudigong, Bogong,
 //   Fuchang Case) and then its meaning, or drag it. Right: a green check and a culture note. Not yet: a gentle hint and
 //   the card goes back. All three: badge "Local Variation" and "Compare Cultural Expressions" opens the compare card
 //   (Tudigong and Bogong side by side, "Did you know?", and the Yong'an fuchang as one local case, with its source).
-// Rules: fuchang appears only as the Yong'an case, never as a general name; no AI-made pictures of Bogong shrines or
-// fuchang (the illustration shows farmland only).
+// Rules: fuchang appears only as the Yong'an case, never as a general name, and is not pictured. The Bogong shrine is
+// the team's conceptual 3D model; its card says so ("not a copy of a real shrine").
 import { el, bi, chip, toast, clearToasts, plain, modal, notePopover } from '../ui.js';
 import { icon } from '../icons.js';
 import { createDragGroup } from '../drag.js';
 import { playChime, playMiss, playFlourish, playClick } from '../sound.js';
 import { earnBadge } from '../badges.js';
 import { kaohsiungMap, KMAP } from '../kaohsiung-map.js';
+import { openPlaceAR, loadModelViewer, closePlaceAR } from '../ar-place.js';
 
 const IDS = ['tudigong', 'bogong', 'fuchang'];
 const MEAN_ORDER = ['bogong', 'fuchang', 'tudigong'];
 const ICON = { tudigong: 'temple', bogong: 'fields', fuchang: 'star' };
 const VIEW = [40, 110, 470, 420];                 // map units: downtown Kaohsiung up to Meinong
+// Meinong culture cards: picture (render of the team's model), its size, the model for AR, an icon
+const CARDS = {
+  settlement: ['assets/img/p10_settlement.webp', 603, 466, 'assets/models/p10/meinong.glb', 'home'],
+  barn: ['assets/img/p10_barn.webp', 588, 356, 'assets/models/p10/barn.glb', 'fields'],
+  bogong: ['assets/img/p10_bogong.webp', 623, 379, 'assets/models/p10/bogong.glb', 'tree'],
+};
 
 let group = null;
 let timers = [];
@@ -62,8 +70,36 @@ export function render(stage, ctx) {
     el('div', { class: 'map-carved p10-carved' }, mapBox),
     el('div', { class: 'p10-prompt' }, el('span', { class: 'ic', html: icon('tap') }),
       el('span', {}, bi(c.mapPrompt, { layout: 'stack' }), el('span', { class: 'p10-map-caption' }, bi(k.simpleMap, { layout: 'inline' })))),
-    el('figure', { class: 'p10-art' }, el('img', { src: 'assets/img/p10_meinong.webp', alt: '', width: 1445, height: 548, draggable: 'false' }),
-      el('figcaption', {}, bi(c.artCaption, { layout: 'inline' }))));
+    el('div', { class: 'p10-cards' },
+      el('span', { class: 'p10-cards-title' }, bi(c.cardsTitle, { layout: 'inline' })),
+      el('div', { class: 'p10-cards-row' }, Object.keys(CARDS).map((id) => {
+        const [img, w, h] = CARDS[id];
+        const b = el('button', { class: `p10-mcard is-${id}`, type: 'button', 'aria-label': plain(c.cards[id].title) },
+          el('span', { class: 'p10-mcard-pic' }, el('img', { src: img, alt: '', width: w, height: h, draggable: 'false' })),
+          el('span', { class: 'p10-mcard-name' }, bi(c.cards[id].title, { layout: 'stack' })),
+          el('span', { class: 'p10-mcard-ar', 'aria-hidden': 'true', html: icon('camera') }));
+        b.addEventListener('click', () => { closeNote?.(); playClick(); openCard(id); });
+        return b;
+      }))));
+
+  // a Meinong culture card: picture, note (and for the Bogong shrine, that it is an illustration), View in AR
+  function openCard(id) {
+    const [img, w, h, glb, ic] = CARDS[id], cd = c.cards[id];
+    const ar = el('button', { class: 'btn btn-primary info-ar', type: 'button' }, el('span', { class: 'ic', html: icon('camera') }), bi(c.viewAR, { layout: 'stack' }));
+    const close = modal({
+      title: cd.title,
+      body: [el('div', { class: 'info-body' },
+        el('div', { class: 'info-pic p10-info-pic' }, el('img', { src: img, alt: '', width: w, height: h })),
+        el('div', { class: 'info-text' },
+          el('span', { class: 'info-tag' }, el('span', { class: 'ic', html: icon(ic) }), bi(c.place, { layout: 'inline' })),
+          el('p', {}, bi(cd.note)),
+          cd.caption ? el('p', { class: 'p10-model-note' }, el('span', { class: 'ic', html: icon('info') }), bi(cd.caption, { layout: 'stack' })) : null,
+          ar))],
+    });
+    ar.addEventListener('click', () => { close(); openPlaceAR({ id, title: cd.title, fact: cd.caption || cd.note, src: glb }); });
+    document.querySelector('#modal-layer .modal')?.classList.add('info-dialog');
+    loadModelViewer().catch(() => {});
+  }
 
   /* ---------- matching: concepts → meanings ---------- */
   const concepts = {}, meanings = {};
@@ -179,6 +215,7 @@ export function render(stage, ctx) {
 
 export function destroy() {
   closeNote?.(); closeNote = null;
+  closePlaceAR();
   timers.forEach(clearTimeout); timers = [];
   group?.destroy(); group = null;
 }

@@ -12,11 +12,14 @@ import { icon } from '../icons.js';
 import { createDragGroup } from '../drag.js';
 import { playChime, playMiss, playFlourish, playClick } from '../sound.js';
 import { earnBadge } from '../badges.js';
+import { openPlaceAR, loadModelViewer, closePlaceAR } from '../ar-place.js';
 
 const TERMS = ['zuoya', 'touya', 'weiya'];
 const DATE_ORDER = ['weiya', 'zuoya', 'touya'];             // the date cards come in a different order
 const SEAL = { zuoya: '做牙', touya: '頭牙', weiya: '尾牙' };
-const PIC = { touya: ['assets/img/p09_street.webp', 748, 413], weiya: ['assets/img/p09_meal.webp', 698, 460] };
+// story pictures: renders of the team's 3D models (lunar calendar, storefront, Weiya table); the same models open in AR
+const PIC = { zuoya: ['assets/img/p09_calendar.webp', 450, 548], touya: ['assets/img/p09_street.webp', 744, 395], weiya: ['assets/img/p09_meal.webp', 693, 456] };
+const MODEL = { zuoya: 'assets/models/p09/calendar.glb', touya: 'assets/models/p09/storefront.glb', weiya: 'assets/models/p09/weiya.glb' };
 
 let group = null;
 let timers = [];
@@ -148,15 +151,21 @@ export function render(stage, ctx) {
     closeStory?.();
     const pic = PIC[id];
     const x = iconButton('close', plain(k.close), () => close(), 'close');
-    const card = el('div', { class: `p09-story is-${id}${pic ? ' has-pic' : ''}`, role: 'dialog', 'aria-label': plain(c.terms[id].label) },
-      pic ? el('figure', { class: 'p09-story-pic' }, el('img', { src: pic[0], alt: '', width: pic[1], height: pic[2] }), el('figcaption', {}, bi(c.captions[id], { layout: 'inline' })))
-        : el('figure', { class: 'p09-story-pic is-cal' }, el('span', { class: 'p09-mini', 'aria-hidden': 'true' }, Array.from({ length: 12 }, () => el('i', {}, el('b'), el('b')))), el('figcaption', {}, bi(c.captions[id], { layout: 'inline' }))),
+    const ar = el('button', { class: 'btn btn-primary info-ar p09-story-ar', type: 'button' }, el('span', { class: 'ic', html: icon('camera') }), bi(c.viewAR, { layout: 'stack' }));
+    ar.addEventListener('click', () => { close(); openPlaceAR({ id, title: c.terms[id].label, fact: c.captions[id], src: MODEL[id] }); });
+    // zuoya: the calendar's page shows the two ya days of every month
+    const page = id === 'zuoya' ? el('span', { class: 'p09-cal-page', 'aria-hidden': 'true' }, bi(c.day2, { layout: 'stack' }), el('i'), bi(c.day16, { layout: 'stack' })) : null;
+    const card = el('div', { class: `p09-story is-${id} has-pic`, role: 'dialog', 'aria-label': plain(c.terms[id].label) },
+      el('figure', { class: `p09-story-pic is-${id}` }, el('span', { class: 'p09-story-img' }, el('img', { src: pic[0], alt: '', width: pic[1], height: pic[2] }), page),
+        el('figcaption', {}, bi(c.captions[id], { layout: 'inline' }))),
       el('div', { class: 'p09-story-text' },
         el('span', { class: 'p09-story-seal', lang: 'zh-Hant' }, SEAL[id]),
         el('h3', {}, bi(c.terms[id].label, { layout: 'inline' })),
         el('p', { class: 'p09-story-date' }, bi(c.terms[id].answer, { layout: 'stack' })),
-        el('p', {}, bi(c.notes[id], { layout: 'stack' }))),
+        el('p', {}, bi(c.notes[id], { layout: 'stack' })),
+        ar),
       x);
+    loadModelViewer().catch(() => {});
     story.replaceChildren(card);
     wrap.classList.add('has-story');
     const outside = (e) => { if (!card.contains(e.target)) close(); };
@@ -181,6 +190,7 @@ export function render(stage, ctx) {
 
 export function destroy() {
   closeStory?.(); closeStory = null;
+  closePlaceAR();
   timers.forEach(clearTimeout); timers = [];
   group?.destroy(); group = null;
 }

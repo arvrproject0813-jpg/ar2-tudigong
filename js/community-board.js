@@ -13,13 +13,20 @@ import CONTENT from '../content/content.js';
 
 export const BOARD_W = 1700, BOARD_H = 1000;
 export const LOTS = [[396.6, 358.4], [877.5, 417.0], [1358.3, 475.5], [325.4, 633.0], [806.2, 691.5], [1287.1, 750.1]];
+// school, homes, market and old street are the team's 3D models (assets/models/p08/*.glb), the park and the temple
+// come from the model kit; all drawn with the board's camera (assets/source-art/render/scenes.js, P08)
 export const NODES = {
-  school: { w: 262, h: 251, ax: 139.0, ay: 159.6 },
-  homes: { w: 280, h: 280, ax: 157.0, ay: 188.6 },
-  market: { w: 248, h: 205, ax: 125.0, ay: 113.6 },
+  school: { w: 252, h: 194, ax: 127.0, ay: 100.6 },
+  homes: { w: 263, h: 262, ax: 138.0, ay: 168.6 },
+  market: { w: 252, h: 226, ax: 127.0, ay: 132.6 },
   park: { w: 248, h: 232, ax: 125.0, ay: 140.6 },
-  temple: { w: 255, h: 219, ax: 132.0, ay: 127.6 },
-  oldStreet: { w: 249, h: 213, ax: 126.0, ay: 121.6 },
+  temple: { w: 259, h: 223, ax: 134.0, ay: 129.6 },
+  oldStreet: { w: 273, h: 252, ax: 148.0, ay: 158.6 },
+};
+/** The place in 3D for "View in AR" (P08 notes). */
+export const NODE_MODEL = {
+  school: 'assets/models/p08/school.glb', homes: 'assets/models/p08/homes.glb', market: 'assets/models/p08/market.glb',
+  oldStreet: 'assets/models/p08/oldstreet.glb', park: 'assets/models/p05/park.glb', temple: 'assets/models/p05/temple.glb',
 };
 export const NODE_IDS = ['school', 'homes', 'market', 'park', 'temple', 'oldStreet'];
 export const NODE_ICON = { school: 'school', homes: 'home', market: 'market', park: 'tree', temple: 'temple', oldStreet: 'street' };

@@ -16,7 +16,28 @@ import * as SCENES from './assets/source-art/render/scenes.js';
 const sceneFn = (name) => name.split('.').reduce((o, k) => o?.[k.toUpperCase() === k ? k : k], { p07: SCENES.P07, p08: SCENES.P08, p09: SCENES.P09, p10: SCENES.P10, debug: SCENES.DEBUG });
 
 let kit = null;
-window.ready = loadKit(THREE, GLTFLoader, { timeout: 120000 }).then((k) => { kit = k; return !!k; });
+// the team's Phase II models (SCENES.TEAM: P07 offering table and display stand, P08 places, P09 calendar / storefront /
+// Weiya table, P10 Meinong): loaded like the kit (centred, standing on y = 0, metal softened) and added to it
+const prep = (scene) => {
+  scene.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(scene), size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
+  scene.position.set(-c.x, -box.min.y, -c.z);
+  scene.traverse((o) => {
+    if (!o.isMesh) return;
+    o.castShadow = true; o.receiveShadow = true;
+    (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => {
+      if ('metalness' in m) m.metalness = Math.min(m.metalness ?? 0, 0.3);
+      if ('roughness' in m) m.roughness = Math.max(m.roughness ?? 1, 0.5);
+    });
+  });
+  const g = new THREE.Group(); g.add(scene); g.userData.size = size; return g;
+};
+window.ready = loadKit(THREE, GLTFLoader, { timeout: 120000 }).then(async (k) => {
+  kit = k || {};
+  const L = new GLTFLoader();
+  await Promise.all(Object.entries(SCENES.TEAM || {}).map(async ([name, url]) => { kit[name] = prep((await L.loadAsync(url)).scene); }));
+  return !!k;
+});
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;

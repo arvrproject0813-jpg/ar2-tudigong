@@ -146,11 +146,12 @@ export function openVocab(term) {
  * Culture-note popover anchored to a point (x%, y%) inside a positioned container.
  * Returns a close() function.
  */
-export function notePopover(container, { xPct, yPct, title, body, onClose }) {
+export function notePopover(container, { xPct, yPct, title, body, onClose, extra = null }) {
   container.querySelectorAll('.culture-note').forEach((n) => n.__close ? n.__close() : n.remove());
   const note = el('div', { class: 'culture-note', role: 'dialog' },
     el('h3', {}, bi(title)),
-    el('p', {}, bi(body)));
+    el('p', {}, bi(body)),
+    extra);                                    // optional: e.g. a "View in AR" button (P08)
   const close = () => {
     note.remove();
     container.removeEventListener('pointerdown', outside, true);

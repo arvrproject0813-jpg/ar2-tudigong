@@ -1598,8 +1598,8 @@ const CONTENT = {
           "zh": "呈現地方生活與節慶準備"
         },
         "note": {
-          "en": "This lacquered wooden table stands in front of the shrine. On festival days, neighbors get it ready together. Here we only observe it: notice the carved gold edge and the red table skirt.",
-          "zh": "這張上了漆的木桌放在小廟前。節慶時，街坊鄰居會一起把它準備好。在這裡我們只觀察：看看雕花的金色桌緣和紅色桌裙。"
+          "en": "This dark wooden table stands in front of the shrine. On festival days, neighbors get it ready together with fruit, tea and snacks. Here we only observe it: notice the table skirt embroidered with dragons.",
+          "zh": "這張深色木桌放在小廟前。節慶時，街坊鄰居會一起擺上水果、茶和點心，把它準備好。在這裡我們只觀察：看看繡著龍的桌裙。"
         },
         "hint": {
           "en": "Hint: Which one do neighbors get ready together on festival days?",
@@ -1928,6 +1928,10 @@ const CONTENT = {
     "editRoute": {
       "en": "Change the Route",
       "zh": "修改路線"
+    },
+    "viewAR": {
+      "en": "View in AR",
+      "zh": "用 AR 看看"
     }
   },
   "p09": {
@@ -2182,6 +2186,10 @@ const CONTENT = {
     "dropHere": {
       "en": "Place a term here",
       "zh": "把詞彙放這裡"
+    },
+    "viewAR": {
+      "en": "View in AR",
+      "zh": "用 AR 看看"
     }
   },
   "p10": {
@@ -2433,6 +2441,50 @@ const CONTENT = {
     "skipStay": {
       "en": "Keep Matching",
       "zh": "繼續配對"
+    },
+    "viewAR": {
+      "en": "View in AR",
+      "zh": "用 AR 看看"
+    },
+    "cardsTitle": {
+      "en": "Meinong culture cards: tap one",
+      "zh": "美濃文化卡：點一張看看"
+    },
+    "cards": {
+      "settlement": {
+        "title": {
+          "en": "Hakka Settlement",
+          "zh": "客家聚落"
+        },
+        "note": {
+          "en": "A Hakka farmhouse with a front courtyard sits among rice fields at the foot of green mountains. Many families in Meinong have farmed here for generations.",
+          "zh": "一座有禾埕的客家伙房，坐落在青山腳下的稻田之間。美濃許多家庭世代在這裡耕作。"
+        }
+      },
+      "barn": {
+        "title": {
+          "en": "Tobacco Barn",
+          "zh": "菸樓"
+        },
+        "note": {
+          "en": "Meinong was once famous for growing tobacco. Tall barns like this one were used to dry the leaves, and many old barns still stand among the fields.",
+          "zh": "美濃過去以種植菸草聞名。像這樣高高的菸樓用來烘乾菸葉，許多老菸樓至今仍立在田野間。"
+        }
+      },
+      "bogong": {
+        "title": {
+          "en": "Bogong Shrine",
+          "zh": "伯公壇"
+        },
+        "note": {
+          "en": "Many Bogong shrines in Meinong are simple and open to the sky, by fields, roads and village entrances. Some have a small mound (化胎) behind them.",
+          "zh": "美濃許多伯公壇樸素而開放，位在田邊、路旁或庄頭。有些伯公壇的後方有一個小土丘（化胎）。"
+        },
+        "caption": {
+          "en": "This 3D model is an illustration made for this project, not a copy of a real shrine.",
+          "zh": "這個 3D 模型是本專案製作的示意，並非真實伯公壇的複製。"
+        }
+      }
     }
   },
   "p11": {
@@ -3301,4 +3353,4 @@ A peaceful rural landscape inspired by Meinong, Kaohsiung, a Hakka farming commu
 - **P12 credits:** the credits line (`p12.credits`) appears once it has the team's names and school or unit.
 - **P05 wording:** `p05.arFacts.temple` says neighbors stop "to pray" (拜拜), a word this checklist bans. Suggested: "Neighbors stop here to chat and meet friends. · 鄰居們會在這裡聊天、和朋友碰面。"
 - **Library versions:** MindAR 1.2.5 and A-Frame 1.5.0 are confirmed on npm and pinned in js/config.js. Do not change them mid-project.
-- **Real photos:** Bogong / Fuchang (P10) need real photos with permission and credit, or no photo. P10 currently shows no photo of either: only a farmland illustration rendered from the app's own 3D kit.
+- **Real photos:** Bogong / Fuchang (P10) need real photos with permission and credit, or no photo. P10 shows no photo of either. It shows the team's conceptual Bogong shrine 3D model, captioned "This 3D model is an illustration made for this project, not a copy of a real shrine." Fuchang is not pictured.

@@ -14,10 +14,10 @@ Built from the team build guide (`TUDIGONG_DESIGN_GUIDE.md`).
 | P04 Introduction | Done: 3D neighborhood (drag to turn 360°, pinch/scroll to zoom) with 4 attached info pins; flat map as fallback | B |
 | P05 Street Corner | Done: riddle cards, misty map that wakes up, vertical Neighborhood Passport, meeting-point question; afterwards every place opens in the AR camera | B |
 | P06 Land Use | Done: the same land long ago and today (aligned 3D renders), timeline + handle on the map, layer chips, Compare Land Use, Find Cultural Clues (temple + old tree stay) | C |
-| P07 Cultural Objects | Done: a small museum of the four allowed objects (small temple, offering table, stone lions, old tree): look closely (picture, what to notice, View in AR), then fix each meaning card to its exhibit like a brass label; the four come together as one cultural landscape (also in AR). Badge: Landscape Observer | C |
+| P07 Cultural Objects | Done: a small museum of the four allowed objects (small temple, offering table, stone lions, old tree) on the team's display stands: look closely (picture, what to notice, View in AR), then fix each meaning card to its exhibit like a brass label; the four come together as one cultural landscape (also in AR). Badge: Landscape Observer | C |
 | P08 Community Map | Done: a schematic map of Kaohsiung zooms into "My Neighborhood"; put places on empty lots (any place on any lot), then tap them in order to draw a cultural route (saved for P11/P12). Badge: Route Builder | C |
 | P09 Touya and Weiya | Done: a lunar-year strip with two ya days a month; match Zuoya, Touya and Weiya to their date cards (red seals, the year lights up), story cards with pictures, then two context cards to flip. Badge: Calendar Matcher | C |
-| P10 Bogong in Meinong | Done: map from downtown Kaohsiung to Meinong (with a note) and a farmland illustration; match Tudigong, Bogong and the fuchang case to their meanings (culture notes, hints); Compare Cultural Expressions card with the Yong'an fuchang case and its source. Badge: Local Variation | C |
+| P10 Bogong in Meinong | Done: map from downtown Kaohsiung to Meinong (with a note) and three Meinong culture cards from the team's models (settlement, tobacco barn, Bogong shrine, each with View in AR); match Tudigong, Bogong and the fuchang case to their meanings (culture notes, hints); Compare Cultural Expressions card with the Yong'an fuchang case and its source. Badge: Local Variation | C |
 | P11 Ending | Done: the core question, three sentence frames with word cards (gentle hints, no "wrong"), the Chinese line, a culture recap and Listen (recorded voice); the student's own route map behind the card. Badge: Culture Introducer | C |
 | P12 Project Information | Done: my route map, my 7 badges (tap one for how it was earned, or go back for a locked one), words learned today; panel: back to the core question, my sentences, Story / Further Reading / Teacher Questions, a 1–5 feedback rating, Back to Home and Experience Again (asks first) | C |
 
@@ -132,6 +132,19 @@ All six pages share `css/scenes.css` (loaded after `pages.css`) and the same loo
 - **Kaohsiung map** (`js/kaohsiung-map.js`): a simplified SVG map of Kaohsiung (coast, Kaoping River, Love River, Cijin, northern border, hills), labelled "Simplified map, not to scale". P08 shows the whole city, P10 a crop from downtown to Meinong.
 - **Voice for P11.** Listen plays `assets/audio/p11/t<frame>_<words>.mp3` (all 23 possible sentences, Kokoro voice `af_sol`); if a file is missing, the browser's own English voice reads it.
 - **Feedback (P12)** is not sent anywhere yet: Submit only shows the thank-you message. Link a form here if the team wants to collect answers. The credits line appears once `p12.credits` in `content/content.js` has the team's names.
+
+### The team's Phase II 3D models (P07–P10)
+
+The team's models (Drive folders "Phase II_3D elements" and "ROSIE", about 60–67 MB each) are made web-ready: simplified to about 38,000 triangles, textures 1024 px WebP, about 1.2–1.8 MB each, then turned so their front faces the viewer, centred, standing on the ground and scaled for tabletop AR (about 40 cm across).
+
+| Page | Model (original file) | In the app |
+|---|---|---|
+| P07 | museum display stand, offering table | every exhibit stands on the display stand; the Offering Table exhibit and the landscape use the team's table (`assets/models/p07/table.glb`, `stand.glb`) |
+| P08 | school building, townhouses, market, old town | the School, Homes, Market and Old Street places on the board; each place's note has View in AR (`assets/models/p08/`) |
+| P09 | lunar calendar, storefront, Weiya table | the Zuoya, Touya and Weiya story cards (picture + View in AR), the shopping street and the year-end meal (`assets/models/p09/`) |
+| P10 | terrain tile, tobacco barn, Bogong shrine | three Meinong culture cards under the map (picture, note, View in AR); the Bogong card says the model is an illustration, not a copy of a real shrine (`assets/models/p10/`) |
+
+To replace one, run `gltf-transform optimize in.glb out.glb --compress false --texture-compress webp --texture-size 1024 --simplify true --simplify-ratio 0.02 --simplify-error 0.004`, fit it with `node prep_team.mjs out.glb assets/models/pXX/name.glb <turn°> <size m>` (in `assets/source-art/render/`), then re-render the pictures (`render.py`, see below). `preview.html?files=a.glb,b.glb` shows models side by side.
 
 ### Making the pictures and AR models (P07–P10)
 

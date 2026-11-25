@@ -4,10 +4,19 @@
 // Each builder gets the parts `h` (see buildNeighborhood: scene) and returns { root, anchors?, info? }.
 // Units: about 1 = the width of the culture card. +Y up, +Z towards the viewer.
 //
-// Cultural rules (storyboard Object Usage Rules): shrine architecture, an EMPTY offering table, stone lions and the
-// old tree only. No deity statue close-up (the P07 shrine has an empty, shaded niche), no incense burner,
-// moon blocks or plaque text, no smoke, glow or light rays. No Bogong shrine or fuchang is modelled (P10 uses
-// only landscape: real photos with permission would be needed for those).
+// Cultural rules (storyboard Object Usage Rules): shrine architecture, the offering table (observation only), stone
+// lions and the old tree. No deity statue close-up (the P07 shrine has an empty, shaded niche), no incense burner,
+// moon blocks or plaque text, no smoke, glow or light rays. No fuchang is modelled. The Bogong shrine (P10) is the
+// team's conceptual model, shown with a caption that it is not a copy of a real shrine.
+//
+// TEAM: the team's Phase II models (Tripo, made web-ready with gltf-transform and turned so their front faces +Z).
+// render.html loads them into the kit, so builders use them like kit pieces: h.kitPiece('tSchool', { width }).
+export const TEAM = {
+  tTable: 'assets/models/p07/table.glb', tStand: 'assets/models/p07/stand.glb',
+  tSchool: 'assets/models/p08/school.glb', tHomes: 'assets/models/p08/homes.glb', tMarket: 'assets/models/p08/market.glb', tOldStreet: 'assets/models/p08/oldstreet.glb',
+  tCalendar: 'assets/models/p09/calendar.glb', tStorefront: 'assets/models/p09/storefront.glb', tWeiya: 'assets/models/p09/weiya.glb',
+  tMeinong: 'assets/models/p10/meinong.glb', tBarn: 'assets/models/p10/barn.glb', tBogong: 'assets/models/p10/bogong.glb',
+};
 
 /* ---------- small helpers ---------- */
 const lightsDay = (h, g, { warm = 1, sun = [0.6, 1.0, 0.8] } = {}) => {
@@ -135,18 +144,31 @@ function banyanSeat(h, width = 0.34, withRing = true) {
 }
 
 /* ================= P07: the four exhibits and the landscape they make together ================= */
+// an exhibit on the team's museum display stand (the stand's top is `top` wide; the object stands on it)
+function onStand(h, obj, top) {
+  const g = new h.THREE.Group();
+  const stand = h.kitPiece('tStand', { width: top });
+  stand.updateMatrixWorld(true);
+  const H = new h.THREE.Box3().setFromObject(stand).max.y;
+  g.add(stand);
+  obj.position.y = H - 0.002; g.add(obj);
+  g.userData.standH = H;
+  return g;
+}
 export const P07 = {
-  temple: (h) => { const g = new h.THREE.Group(); g.add(h.kitShrine(0.3, { lions: false, burner: false, statue: false })); return { root: g }; },
-  table: (h) => { const g = new h.THREE.Group(); g.add(offeringTable(h, 0.34)); return { root: g }; },
-  lions: (h) => { const g = new h.THREE.Group(); g.add(lionPair(h)); return { root: g }; },
-  tree: (h) => { const g = new h.THREE.Group(); g.add(banyanSeat(h, 0.36)); return { root: g }; },
+  temple: (h) => { const g = new h.THREE.Group(); g.add(onStand(h, h.kitShrine(0.3, { lions: false, burner: false, statue: false }), 0.36)); return { root: g }; },
+  table: (h) => { const g = new h.THREE.Group(); g.add(onStand(h, h.kitPiece('tTable', { width: 0.34 }), 0.38)); return { root: g }; },
+  lions: (h) => { const g = new h.THREE.Group(); g.add(onStand(h, lionPair(h), 0.33)); return { root: g }; },
+  tree: (h) => { const g = new h.THREE.Group(); g.add(onStand(h, banyanSeat(h, 0.36), 0.42)); return { root: g }; },
+  // for AR: the team's offering table on its own
+  tableAR: (h) => { const g = new h.THREE.Group(); g.add(h.kitPiece('tTable', { width: 0.34 })); return { root: g }; },
   // all four together on a round plinth: the small temple, the table in front, lions at the front corners, the banyan beside it
   landscape: (h) => {
     const { THREE } = h; const g = new THREE.Group();
     lightsDay(h, g);
     roundPlinth(h, g, 0.24);
     at(g, h.kitShrine(0.2, { lions: false, burner: false, statue: false }), 0.03, -0.06);
-    at(g, offeringTable(h, 0.11), 0.03, 0.06);
+    at(g, h.kitPiece('tTable', { width: 0.11 }), 0.03, 0.062);
     at(g, lionPair(h, 0.052, 0.2, 0.15), 0.03, 0.115);
     at(g, banyanSeat(h, 0.26), -0.14, -0.08);
     at(g, h.smallTree(), 0.19, -0.13, 0, 1.2);
@@ -286,22 +308,24 @@ export const P08 = {
     return { root: g };
   },
   // the six places, each built at the origin on its own pad (the pad hides the lot's dashed edge)
-  school: (h) => { const g = new h.THREE.Group(); lightsDay(h, g, { sun: [0.55, 1.0, 0.6] }); g.add(lotPad(h)); g.add(school(h)); return { root: g }; },
+  // the team's models: school building, townhouses, market, old town (front to +Z, fitted to the lot)
+  school: (h) => {
+    const g = new h.THREE.Group(); lightsDay(h, g, { sun: [0.55, 1.0, 0.6] }); g.add(lotPad(h));
+    at(g, h.kitPiece('tSchool', { width: 0.166 }), 0, -0.004, 0, 1, 0.006);
+    return { root: g };
+  },
   homes: (h) => {
     const g = new h.THREE.Group(); lightsDay(h, g, { sun: [0.55, 1.0, 0.6] }); g.add(lotPad(h));
-    [[-0.052, -0.035, 0.05, 0.12, '#F3EADA', h.COL.teal], [0.0, -0.035, 0.05, 0.15, '#EAD9C0', h.COL.red], [0.052, -0.035, 0.05, 0.11, '#F6EFE2', h.COL.gold]]
-      .forEach(([x, z, w, hh, wall, acc]) => at(g, h.house(w, hh, 0.06, wall, acc), x, z, 0, 1, 0.006));
-    [[-0.06, 0.035], [-0.045, 0.035], [0.05, 0.04]].forEach(([x, z], i) => at(g, h.scooter(['#F3F1EC', '#2F8C88', '#B23A27'][i]), x, z, 0, 1.4, 0.006));
-    at(g, h.person('#F2C9C0'), 0.015, 0.05, 0.5, 1.6, 0.006); at(g, h.smallTree(), 0.07, 0.065, 1, 0.9, 0.006);
+    at(g, h.kitPiece('tHomes', { width: 0.15 }), 0, -0.024, 0, 1, 0.006);
+    [[-0.058, 0.06], [-0.043, 0.062], [0.052, 0.064]].forEach(([x, z], i) => at(g, h.scooter(['#F3F1EC', '#2F8C88', '#B23A27'][i]), x, z, 0, 1.4, 0.006));
+    at(g, h.person('#F2C9C0'), 0.012, 0.064, 0.5, 1.6, 0.006);
     return { root: g };
   },
   market: (h) => {
     const g = new h.THREE.Group(); lightsDay(h, g, { sun: [0.55, 1.0, 0.6] }); g.add(lotPad(h));
-    at(g, h.kitPiece('stallFood', { width: 0.058 }), -0.045, -0.04, 0.25, 1, 0.006);
-    at(g, h.kitPiece('stallAcc', { width: 0.058 }), 0.03, -0.05, -0.1, 1, 0.006);
-    at(g, h.kitPiece('stallFood', { width: 0.058 }), 0.05, 0.03, -0.9, 1, 0.006);
-    [[-0.05, 0.04], [-0.035, 0.05]].forEach(([x, z]) => g.add(h.box(0.016, 0.01, 0.012, h.M.wood, x, 0.006, z)));
-    [[-0.01, 0.02, '#3F6F8F'], [0.0, 0.06, '#F3DE9A'], [-0.065, 0.0, '#B9D3A4'], [0.02, -0.005, '#F2C9C0']].forEach(([x, z, c], i) => at(g, h.person(c), x, z, i * 1.9, 1.6, 0.006));
+    at(g, h.kitPiece('tMarket', { width: 0.166 }), 0, -0.034, 0, 1, 0.006);
+    [[-0.045, 0.035, '#3F6F8F'], [0.0, 0.06, '#F3DE9A'], [-0.065, 0.06, '#B9D3A4'], [0.04, 0.03, '#F2C9C0'], [0.062, 0.058, '#CFE3EA']]
+      .forEach(([x, z, c], i) => at(g, h.person(c), x, z, i * 1.9 + 3, 1.6, 0.006));
     return { root: g };
   },
   park: (h) => {
@@ -323,7 +347,7 @@ export const P08 = {
   temple: (h) => {
     const g = new h.THREE.Group(); lightsDay(h, g, { sun: [0.55, 1.0, 0.6] }); g.add(lotPad(h));
     at(g, h.kitShrine(0.075, { burner: false, statue: false }), 0, -0.03, 0, 1, 0.006);
-    at(g, offeringTable(h, 0.032), 0, 0.012, 0, 1, 0.006);
+    at(g, h.kitPiece('tTable', { width: 0.032 }), 0, 0.012, 0, 1, 0.006);
     at(g, banyanSeat(h, 0.09, false), -0.055, -0.045, 0, 1, 0.006);
     at(g, h.smallTree(), 0.06, -0.05, 2, 0.85, 0.006);
     at(g, h.person('#B9D3A4'), 0.045, 0.045, -0.6, 1.5, 0.006); at(g, h.person('#3F6F8F'), 0.03, 0.06, 2.6, 1.5, 0.006);
@@ -331,8 +355,7 @@ export const P08 = {
   },
   oldStreet: (h) => {
     const g = new h.THREE.Group(); lightsDay(h, g, { sun: [0.55, 1.0, 0.6] }); g.add(lotPad(h));
-    at(g, h.kitPiece('storefront', { width: 0.08 }), -0.04, -0.03, 0, 1, 0.006);
-    at(g, h.kitPiece('storefront', { width: 0.08 }), 0.042, -0.03, 0, 1, 0.006);
+    at(g, h.kitPiece('tOldStreet', { width: 0.166 }), 0, -0.034, 0, 1, 0.006);
     [[-0.05, 0.045], [-0.035, 0.045], [0.06, 0.05]].forEach(([x, z], i) => at(g, h.scooter(['#E1B655', '#F3F1EC', '#B23A27'][i]), x, z, 0, 1.4, 0.006));
     [[0.0, 0.04, '#F2C9C0'], [0.02, 0.055, '#3F6F8F']].forEach(([x, z, c], i) => at(g, h.person(c), x, z, i * 2.2, 1.6, 0.006));
     return { root: g };
@@ -382,8 +405,8 @@ export const P09 = {
     lightsDay(h, g, { sun: [0.7, 1.0, 0.75] });
     roundPlinth(h, g, 0.23);
     // a pedestrian shopping street: paving in front of the shops (the plinth top)
-    // three family shops (the team's shophouse model)
-    [[-0.13, -0.07, 0.3], [0, -0.1, 0], [0.13, -0.07, -0.3]].forEach(([x, z, r]) => at(g, h.kitPiece('storefront', { width: 0.12 }), x, z, r));
+    // three family shops (the team's storefront model)
+    [[-0.135, -0.075, 0.32], [0, -0.1, 0], [0.135, -0.075, -0.32]].forEach(([x, z, r]) => at(g, h.kitPiece('tStorefront', { width: 0.11 }), x, z, r));
     at(g, h.kitPiece('stallFood', { width: 0.055 }), -0.1, 0.03, 0.35);
     at(g, h.kitPiece('stallAcc', { width: 0.055 }), 0.11, 0.035, -0.4);
     const sc = ['#F3F1EC', '#B23A27', '#2F8C88', '#E1B655'];
@@ -405,8 +428,22 @@ export const P09 = {
       speckle(c, w, hh, 0.08, '90,55,25', 6);
     }, [2, 2]);
     roundPlinth(h, g, 0.23, std('#ffffff', { map: floor, roughness: 0.6 }));
-    at(g, banquetTable(h, { guests: [0, 1, 2, 3, 5, 6, 7] }), -0.085, -0.03);
-    at(g, banquetTable(h, { guests: [0, 1, 3, 4, 5, 6] }), 0.095, 0.02, 0.4);
+    // two of the team's Weiya tables, colleagues sitting around them on red banquet chairs
+    const weiya = (x, z, r, guests) => {
+      const t = new THREE.Group(); t.add(h.kitPiece('tWeiya', { width: 0.15 }));
+      const chairM = std('#B23A27', { roughness: 0.6 }), cols = ['#3F6F8F', '#F2C9C0', '#F3DE9A', '#B9D3A4', '#CFE3EA', '#7E9FB8', '#E8D5B5', '#C7432C'];
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2 + 0.2, cx = Math.cos(a), cz = Math.sin(a);
+        const ch = new THREE.Group();
+        ch.add(box(0.017, 0.003, 0.017, chairM, 0, 0.018, 0)); ch.add(box(0.017, 0.022, 0.003, chairM, 0, 0.021, -0.008));
+        [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sz]) => ch.add(box(0.0018, 0.018, 0.0018, std('#C9952E', { metalness: 0.4, roughness: 0.4 }), sx * 0.007, 0, sz * 0.007)));
+        ch.position.set(cx * 0.094, 0, cz * 0.094); ch.rotation.y = -a - Math.PI / 2; t.add(ch);
+        if (guests.includes(i)) { const p = h.person(cols[i]); p.scale.setScalar(1.8); p.position.set(cx * 0.096, 0.013, cz * 0.096); p.rotation.y = -a - Math.PI / 2; t.add(p); }
+      }
+      at(g, t, x, z, r);
+    };
+    weiya(-0.09, -0.04, 0, [0, 1, 2, 3, 5, 6, 7]);
+    weiya(0.1, 0.03, 0.4, [0, 1, 3, 4, 5, 7]);
     // two red lanterns on stands, and a host greeting a colleague by the door
     [[-0.19, -0.12], [0.19, -0.1]].forEach(([x, z]) => {
       const s = new THREE.Group();
@@ -422,6 +459,11 @@ export const P09 = {
     return { root: g };
   },
 };
+
+// the zuoya picture: the team's lunar calendar on a small round plinth
+P09.calendar = (h) => { const g = new h.THREE.Group(); g.add(h.kitPiece('tCalendar', { width: 0.24 })); return { root: g }; };
+// for AR: the Weiya table and the storefront on their own
+P09.weiyaAR = (h) => { const g = new h.THREE.Group(); g.add(h.kitPiece('tWeiya', { width: 0.4 })); return { root: g }; };
 
 /* ================= P10: a landscape inspired by Meinong (rice fields, a tobacco-curing barn, a Hakka courtyard house,
    oil-paper umbrellas drying, green mountains behind). Landscape only: no Bogong shrine, no fuchang. ================= */
@@ -530,6 +572,11 @@ export const P10 = {
     return { root: g };
   },
 };
+
+// the team's Meinong models, each on its own (P10 culture cards): the settlement tile, the tobacco barn, the Bogong shrine
+P10.settlement = (h) => { const g = new h.THREE.Group(); g.add(h.kitPiece('tMeinong', { width: 0.4 })); return { root: g }; };
+P10.barn = (h) => { const g = new h.THREE.Group(); g.add(h.kitPiece('tBarn', { width: 0.42 })); return { root: g }; };
+P10.bogong = (h) => { const g = new h.THREE.Group(); g.add(h.kitPiece('tBogong', { width: 0.37 })); return { root: g }; };
 
 /* debug: look at kit pieces */
 export const DEBUG = {

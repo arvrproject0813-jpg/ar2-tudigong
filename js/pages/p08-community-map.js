@@ -15,7 +15,8 @@ import { createDragGroup } from '../drag.js';
 import { playChime, playClick, playFlourish, playEnter } from '../sound.js';
 import { earnBadge } from '../badges.js';
 import { kaohsiungMap, KMAP } from '../kaohsiung-map.js';
-import { communityBoard, NODE_IDS, NODE_ICON, lotPct } from '../community-board.js';
+import { communityBoard, NODE_IDS, NODE_ICON, NODE_MODEL, lotPct } from '../community-board.js';
+import { openPlaceAR, loadModelViewer, closePlaceAR } from '../ar-place.js';
 
 let group = null;
 let timers = [];
@@ -156,12 +157,20 @@ export function render(stage, ctx) {
     const n = count();
     // the culture note for this place, beside its lot
     closeNote?.();
-    const [xp, yp] = lotPct(lot);
-    timers.push(setTimeout(() => { closeNote = notePopover(bview, { xPct: xp, yPct: yp, title: c.nodes[id], body: c.nodeNotes[id], onClose: () => { closeNote = null; } }); }, reduce ? 0 : 350));
+    timers.push(setTimeout(() => showNote(lot, id), reduce ? 0 : 350));
     clearToasts();
     if (n === 4) { toast(c.canRoute, 'success', 3500); buildBtn.hidden = false; buildBtn.classList.add('is-new'); }
     else if (n === 6) toast(c.allPlaced, 'success', 3000);
     progress();
+  }
+  // the place's culture note, with "View in AR" for its 3D model (the team's models; park and temple from P05)
+  function showNote(lot, id) {
+    closeNote?.();
+    const [xp, yp] = lotPct(lot);
+    const ar = el('button', { class: 'btn btn-primary note-ar', type: 'button' }, el('span', { class: 'ic', html: icon('camera') }), bi(c.viewAR, { layout: 'stack' }));
+    ar.addEventListener('click', () => { closeNote?.(); openPlaceAR({ id, title: c.nodes[id], fact: c.nodeNotes[id], src: NODE_MODEL[id] }); });
+    closeNote = notePopover(bview, { xPct: xp, yPct: yp, title: c.nodes[id], body: c.nodeNotes[id], extra: ar, onClose: () => { closeNote = null; } });
+    loadModelViewer().catch(() => {});
   }
   buildBtn.addEventListener('click', () => { closeNote?.(); playClick(); setPhase('route'); clearToasts(); toast(c.routeIntro, 'hint', 4000); });
 
@@ -180,7 +189,11 @@ export function render(stage, ctx) {
     finishBtn.classList.toggle('is-ready', route.length >= 4);
   }
   board.lots.forEach((lot) => lot.addEventListener('click', () => {
-    if (phase !== 'route' || !lot.classList.contains('is-filled')) return;
+    if (!lot.classList.contains('is-filled')) return;
+    if (phase !== 'route') {                       // building or done: a placed place opens its note again (unless a card is waiting)
+      if (!tray.querySelector('.p08-card.is-selected')) { playClick(); showNote(+lot.dataset.lot, lot.dataset.id); }
+      return;
+    }
     const id = lot.dataset.id;
     if (route.includes(id)) { clearToasts(); toast(c.routeAlready, 'hint', 2200); return; }
     route.push(id); ctx.seen('route', [...route]);
@@ -222,4 +235,5 @@ export function destroy() {
   timers.forEach(clearTimeout); timers = [];
   group?.destroy(); group = null;
   closeNote = null;
+  closePlaceAR();
 }

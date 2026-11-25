@@ -82,7 +82,7 @@ export function render(stage, ctx) {
   landAR.addEventListener('click', () => openPlaceAR({ id: 'landscape', title: c.landscapeTitle, fact: c.landscapeNote, src: GLB('landscape') }));
   const land = el('div', { class: 'p07-land', 'aria-hidden': 'true' },
     el('div', { class: 'p07-land-pic' },
-      el('img', { src: 'assets/img/p07_landscape.webp', alt: '', width: 866, height: 650, draggable: 'false' }),
+      el('img', { src: 'assets/img/p07_landscape.webp', alt: '', width: 862, height: 642, draggable: 'false' }),
       ORDER.map((id, i) => el('span', { class: 'p07-land-tag', style: { left: `${LAND_TAG[id][0]}%`, top: `${LAND_TAG[id][1]}%`, '--i': i } },
         el('span', { class: 'ic', html: icon(ICON[id]) }), bi(c.objects[id].label, { layout: 'stack' })))),
     el('div', { class: 'paper-card p07-land-card' },
