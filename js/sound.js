@@ -505,3 +505,21 @@ export function playEnter() {
   ['D4', 'A4', 'D5', 'F#5', 'A5'].forEach((k, i) => zither(ctx, out, t + 1.6 + i * 0.08, NOTE[k], 0.5 - i * 0.05, 0.5));
 }
 
+
+/** Page change: the clouds roll in (a soft rush of air, about 0.8 s). */
+export function playClouds() {
+  const out = sfxOut(); if (!out) return;
+  const t = ctx.currentTime + 0.01;
+  const n = noiseSrc(ctx, t, 1.0);
+  const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.7;
+  bp.frequency.setValueAtTime(300, t); bp.frequency.exponentialRampToValueAtTime(1150, t + 0.42); bp.frequency.exponentialRampToValueAtTime(380, t + 0.95);
+  const g = env(ctx, t, [[0.22, 0.2], [0.5, 0.15], [0.98, 0]]);
+  n.connect(bp).connect(g).connect(out);
+}
+/** A seal is stamped (page-change medallion, a stamp on the journey map): a soft wooden tap and one zither note. */
+export function playStamp(step = 3) {
+  const out = sfxOut(); if (!out) return;
+  const t = ctx.currentTime + 0.01;
+  woodTock(ctx, out, t, 0.45, 0.85);
+  zither(ctx, out, t + 0.03, NOTE[STEP_NOTES[Math.min(step, STEP_NOTES.length - 1)]], 0.75, 0.5);
+}

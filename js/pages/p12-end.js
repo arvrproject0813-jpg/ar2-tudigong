@@ -128,6 +128,7 @@ export function render(stage, ctx) {
     body: [recap, said, el('div', { class: 'p12-accs' }, story, reading, teacher), feedback],
     secondary: [homeBtn],
     primary: { text: c.again, alwaysEnabled: true, onClick: () => confirmAgain() },
+    sheetLabel: c.sheetLabel,
   });
   function confirmAgain() {
     const close = modal({

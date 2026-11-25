@@ -12,9 +12,9 @@
   <script>
   (function () {
     var v = Math.floor(Date.now() / 120000).toString(36);
-    var css = ['tokens', 'base', 'components', 'pages', 'welcome', 'scenes'];
-    var js = ['app', 'ar-diorama', 'ar-place', 'ar', 'badges', 'community-board', 'config', 'drag', 'guide', 'icons', 'kaohsiung-map', 'narration', 'sound', 'ui',
-      'pages/_stub', 'pages/p01-home', 'pages/p02-scan', 'pages/p03-howto', 'pages/p04-intro',
+    var css = ['tokens', 'base', 'components', 'pages', 'welcome', 'scenes', 'shell', 'journey', 'story'];
+    var js = ['app', 'ar-diorama', 'ar-place', 'ar', 'badges', 'community-board', 'config', 'curtain', 'drag', 'guide', 'icons', 'kaohsiung-map', 'narration', 'sound', 'story', 'ui',
+      'pages/_stub', 'pages/map', 'pages/p01-home', 'pages/p02-scan', 'pages/p03-howto', 'pages/p04-intro',
       'pages/p05-street-corner', 'pages/p06-land-use', 'pages/p07-objects', 'pages/p08-community-map',
       'pages/p09-touya-weiya', 'pages/p10-meinong-bogong', 'pages/p11-sentence', 'pages/p12-end'];
     var map = { imports: {} };
@@ -35,7 +35,7 @@
     <header class="topbar" id="topbar"></header>
     <main class="layout">
       <section id="stage" aria-label="Activity area"></section>
-      <aside id="panel" class="panel" aria-label="Page information"></aside>
+      <aside id="panel" class="panel sheet is-none" aria-label="Page information"></aside>
     </main>
   </div>
   <div id="toast-layer" aria-live="polite"></div>

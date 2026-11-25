@@ -231,7 +231,45 @@ const CONTENT = {
         "en": "Great!",
         "zh": "太棒了！"
       }
-    ]
+    ],
+    "youWill": {
+      "en": "In this scene you will",
+      "zh": "在這個場景，你會"
+    },
+    "stepNames": [
+      {
+        "en": "Learn",
+        "zh": "認識"
+      },
+      {
+        "en": "Do",
+        "zh": "動手"
+      },
+      {
+        "en": "Badge",
+        "zh": "徽章"
+      }
+    ],
+    "start": {
+      "en": "Start",
+      "zh": "開始"
+    },
+    "scrollHint": {
+      "en": "Scroll down",
+      "zh": "往下滑"
+    },
+    "cardOf": {
+      "en": "Card",
+      "zh": "第"
+    },
+    "badgeLockedTitle": {
+      "en": "Badge waiting",
+      "zh": "徽章等你來拿"
+    },
+    "nextStopBtn": {
+      "en": "Next stop",
+      "zh": "下一站"
+    }
   },
   "p01": {
     "guide": {
@@ -983,8 +1021,8 @@ const CONTENT = {
   },
   "p07": {
     "guide": {
-      "en": "Tap each object to take a close look. When you have seen three, match each object with its cultural meaning.",
-      "zh": "點一點每個物件，仔細看一看。看完三個之後，把物件和它的文化意義配對起來。"
+      "en": "Scroll down to learn what to look for. Then tap each object to look closely, and match the meaning cards.",
+      "zh": "往下滑，認識觀察的重點。接著點一點每個物件仔細看，再配對意義卡。"
     },
     "eyebrow": {
       "en": "P07 · Scene 3",
@@ -1177,6 +1215,87 @@ const CONTENT = {
     "dropHere": {
       "en": "Place a meaning here",
       "zh": "把意義卡放這裡"
+    },
+    "intro": {
+      "en": "A small temple is more than a building. Let's look at what stands around it.",
+      "zh": "小廟不只是一棟建築。一起來看看它的周圍有些什麼。"
+    },
+    "plan": [
+      {
+        "en": "Read 3 short cards about what to look for",
+        "zh": "讀 3 張小卡，認識觀察重點"
+      },
+      {
+        "en": "Look closely at 4 objects and match their meanings",
+        "zh": "仔細看 4 個物件，配對它們的意義"
+      },
+      {
+        "en": "See the whole landscape and earn a badge",
+        "zh": "看見整個地景，獲得徽章"
+      }
+    ],
+    "learnTitle": {
+      "en": "What to look for",
+      "zh": "觀察重點"
+    },
+    "learn": [
+      {
+        "title": {
+          "en": "Look beyond the deity image",
+          "zh": "把目光放到神像以外"
+        },
+        "text": {
+          "en": "When we observe a Tudigong temple, we can look beyond the deity image and notice the building and the area around it.",
+          "zh": "觀察土地公廟時，我們可以把目光放到神像以外，留意建築本身和周圍的環境。"
+        },
+        "img": "p07_obj_temple.webp"
+      },
+      {
+        "title": {
+          "en": "Objects make a landscape",
+          "zh": "物件構成地景"
+        },
+        "text": {
+          "en": "The small temple, the offering table and the stone lions can all be part of a cultural landscape. In some places, an old tree nearby is part of it too.",
+          "zh": "小廟、供桌和石獅，都可以是文化地景的一部分。在有些地方，附近的老樹也是其中之一。"
+        },
+        "img": "p07_obj_lions.webp"
+      },
+      {
+        "title": {
+          "en": "Words to know",
+          "zh": "認識詞彙"
+        },
+        "vocab": [
+          "cultural landscape",
+          "local temple"
+        ],
+        "text": {
+          "en": "Tap a word to see its card.",
+          "zh": "點一下詞彙，看看詞彙卡。"
+        },
+        "img": "p07_obj_tree.webp"
+      }
+    ],
+    "doTitle": {
+      "en": "Look closely, then match",
+      "zh": "仔細看，再配對"
+    },
+    "doIntro": {
+      "en": "Tap each object to look closely. After three, the meaning cards turn over: drag each one onto its object.",
+      "zh": "點一點每個物件，仔細看一看。看完三個，意義卡就會翻開：把每張卡拖到對應的物件上。"
+    },
+    "cardBack": {
+      "en": "Meaning card",
+      "zh": "意義卡"
+    },
+    "badgeTitle": {
+      "en": "The whole landscape",
+      "zh": "整個地景"
+    },
+    "badgeLocked": {
+      "en": "Match all four meanings to see the whole landscape and earn your badge.",
+      "zh": "完成四個意義配對，就能看見整個地景，並獲得徽章。"
     }
   },
   "p08": {
@@ -2448,6 +2567,10 @@ const CONTENT = {
     "goBack": {
       "en": "Go back",
       "zh": "回去看看"
+    },
+    "sheetLabel": {
+      "en": "Recap and feedback",
+      "zh": "回顧與回饋"
     }
   },
   "vocab": [
@@ -2593,6 +2716,308 @@ const CONTENT = {
       "title": "MOE Hakka Dictionary resource: 化胎式伯公 (Bogong shrines)",
       "url": "https://hakkadict.moe.edu.tw/static/resource/%E4%BF%A1%E4%BB%B0/109_015_%E5%8C%96%E8%83%8E%E5%BC%8F%E4%BC%AF%E5%85%AC.pdf"
     }
-  ]
+  ],
+  "journey": {
+    "title": {
+      "en": "Journey Map",
+      "zh": "街坊旅程圖"
+    },
+    "mapKicker": {
+      "en": "Your route",
+      "zh": "你的路線"
+    },
+    "mapButton": {
+      "en": "Map",
+      "zh": "地圖"
+    },
+    "sheet": {
+      "en": "Story and words",
+      "zh": "故事與詞彙"
+    },
+    "intro": {
+      "en": "Visit the stops in order, or tap any stop to go there. Each stop you finish gets a stamp.",
+      "zh": "照順序走訪每一站，也可以點任何一站直接前往。完成一站，就能蓋上一個章。"
+    },
+    "startHere": {
+      "en": "Start here",
+      "zh": "從這裡開始"
+    },
+    "continue": {
+      "en": "Continue",
+      "zh": "繼續"
+    },
+    "go": {
+      "en": "Go",
+      "zh": "出發"
+    },
+    "again": {
+      "en": "Visit again",
+      "zh": "再去一次"
+    },
+    "done": {
+      "en": "Stamped",
+      "zh": "已蓋章"
+    },
+    "stop": {
+      "en": "Stop",
+      "zh": "第"
+    },
+    "allDone": {
+      "en": "Every stop is stamped! See your badges.",
+      "zh": "每一站都蓋好章了！看看你的徽章。"
+    },
+    "seeBadges": {
+      "en": "See my badges",
+      "zh": "看我的徽章"
+    },
+    "stamps": {
+      "en": "stamps",
+      "zh": "個章"
+    },
+    "backToMap": {
+      "en": "Back to the map",
+      "zh": "回到地圖"
+    },
+    "nextStop": {
+      "en": "Next stop",
+      "zh": "下一站"
+    },
+    "sections": [
+      {
+        "id": "ready",
+        "title": {
+          "en": "Get ready",
+          "zh": "準備出發"
+        },
+        "stops": [
+          "p02",
+          "p03"
+        ]
+      },
+      {
+        "id": "explore",
+        "title": {
+          "en": "Explore the neighborhood",
+          "zh": "走訪街坊"
+        },
+        "stops": [
+          "p04",
+          "p05",
+          "p06",
+          "p07",
+          "p08",
+          "p09",
+          "p10"
+        ]
+      },
+      {
+        "id": "share",
+        "title": {
+          "en": "Share what you learned",
+          "zh": "分享所學"
+        },
+        "stops": [
+          "p11",
+          "p12"
+        ]
+      }
+    ],
+    "stops": {
+      "p02": {
+        "icon": "scan",
+        "seal": "卡",
+        "kicker": {
+          "en": "Get ready",
+          "zh": "準備"
+        },
+        "title": {
+          "en": "Scan the card",
+          "zh": "掃描文化卡"
+        },
+        "blurb": {
+          "en": "Point the camera at the Tudigong culture card.",
+          "zh": "用相機對準土地公文化卡。"
+        },
+        "img": "card_thumb.webp"
+      },
+      "p03": {
+        "icon": "tap",
+        "seal": "手",
+        "kicker": {
+          "en": "Get ready",
+          "zh": "準備"
+        },
+        "title": {
+          "en": "How to play",
+          "zh": "使用說明"
+        },
+        "blurb": {
+          "en": "Try the moves you will use: tap, drag, slide and match.",
+          "zh": "試試會用到的操作：點選、拖曳、滑動與配對。"
+        }
+      },
+      "p04": {
+        "icon": "map",
+        "seal": "問",
+        "kicker": {
+          "en": "Introduction",
+          "zh": "導論"
+        },
+        "title": {
+          "en": "Why is Tudigong close by?",
+          "zh": "土地公為什麼在身邊？"
+        },
+        "blurb": {
+          "en": "Turn a 3D neighborhood and find the big question.",
+          "zh": "轉動立體街坊，認識這趟旅程的核心提問。"
+        },
+        "img": "p05_dawn.webp"
+      },
+      "p05": {
+        "icon": "corner",
+        "seal": "廟",
+        "kicker": {
+          "en": "Scene 1",
+          "zh": "場景一"
+        },
+        "title": {
+          "en": "The street-corner temple",
+          "zh": "街角小廟"
+        },
+        "blurb": {
+          "en": "Solve riddles and find where the community meets.",
+          "zh": "解開謎題，找出社區交會的地方。"
+        },
+        "img": "p05_place_temple.webp"
+      },
+      "p06": {
+        "icon": "fields",
+        "seal": "田",
+        "kicker": {
+          "en": "Scene 2",
+          "zh": "場景二"
+        },
+        "title": {
+          "en": "From fields to neighborhoods",
+          "zh": "從田野到街坊"
+        },
+        "blurb": {
+          "en": "Slide from past to present and watch the land change.",
+          "zh": "從過去滑到現在，看看土地怎麼改變。"
+        },
+        "img": "p06_map_past.webp"
+      },
+      "p07": {
+        "icon": "lion",
+        "seal": "景",
+        "kicker": {
+          "en": "Scene 3",
+          "zh": "場景三"
+        },
+        "title": {
+          "en": "Objects and landscape",
+          "zh": "文化物件與地景"
+        },
+        "blurb": {
+          "en": "Look closely at four objects and match their meanings.",
+          "zh": "仔細觀察四個物件，配對它們的文化意義。"
+        },
+        "img": "p07_landscape.webp"
+      },
+      "p08": {
+        "icon": "route",
+        "seal": "坊",
+        "kicker": {
+          "en": "Scene 4",
+          "zh": "場景四"
+        },
+        "title": {
+          "en": "My neighborhood map",
+          "zh": "我的街坊地圖"
+        },
+        "blurb": {
+          "en": "Place everyday places and connect a cultural route.",
+          "zh": "放上日常地點，連成一條文化路線。"
+        },
+        "img": "p08_node_market.webp"
+      },
+      "p09": {
+        "icon": "calendar",
+        "seal": "牙",
+        "kicker": {
+          "en": "Scene 5",
+          "zh": "場景五"
+        },
+        "title": {
+          "en": "Touya and Weiya",
+          "zh": "頭牙與尾牙"
+        },
+        "blurb": {
+          "en": "Match the dates and light up the lunar calendar.",
+          "zh": "配對日期，點亮農曆月曆。"
+        },
+        "img": "p09_meal.webp"
+      },
+      "p10": {
+        "icon": "compare",
+        "seal": "伯",
+        "kicker": {
+          "en": "Scene 6",
+          "zh": "場景六"
+        },
+        "title": {
+          "en": "Bogong in Meinong",
+          "zh": "美濃的伯公"
+        },
+        "blurb": {
+          "en": "Travel to a Hakka community and compare three ideas.",
+          "zh": "前往客家社區，比較三個概念。"
+        },
+        "img": "p10_settlement.webp"
+      },
+      "p11": {
+        "icon": "chat",
+        "seal": "說",
+        "kicker": {
+          "en": "Ending",
+          "zh": "結尾"
+        },
+        "title": {
+          "en": "Say it in English",
+          "zh": "用英文介紹"
+        },
+        "blurb": {
+          "en": "Build an English sentence about your neighborhood.",
+          "zh": "組出一句介紹街坊的英文句子。"
+        }
+      },
+      "p12": {
+        "icon": "star",
+        "seal": "成",
+        "kicker": {
+          "en": "Finish",
+          "zh": "完成"
+        },
+        "title": {
+          "en": "Your badges",
+          "zh": "你的徽章"
+        },
+        "blurb": {
+          "en": "See your badges and think about your own neighborhood.",
+          "zh": "看看你的徽章，想一想自己的街坊。"
+        }
+      }
+    }
+  },
+  "map": {
+    "heading": {
+      "en": "Journey Map",
+      "zh": "街坊旅程圖"
+    },
+    "guide": {
+      "en": "This is your journey map. Start at the glowing stop, or tap any stop to see what it is about.",
+      "zh": "這是你的旅程地圖。從發光的那一站開始，也可以點任何一站，看看那一站要做什麼。"
+    }
+  }
 };
 export default CONTENT;

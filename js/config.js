@@ -5,6 +5,7 @@ export const PAGES = [
   { id: 'p01', file: 'p01-home' },
   { id: 'p02', file: 'p02-scan' },
   { id: 'p03', file: 'p03-howto' },
+  { id: 'map', file: 'map' },               // the journey map: home of the experience after the opening pages
   { id: 'p04', file: 'p04-intro' },
   { id: 'p05', file: 'p05-street-corner' },
   { id: 'p06', file: 'p06-land-use' },

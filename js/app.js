@@ -1,4 +1,4 @@
-// app.js — page router, progress state, top bar and panel shell.
+// app.js — page router, progress state, top bar, the bar + story sheet under the stage, and page changes.
 import CONTENT from '../content/content.js';
 import { PAGES, STORE_KEY } from './config.js';
 import { el, bi, button, iconButton, checklist, toast, clearToasts, closeModal, openVocab, setLang, plain, modal } from './ui.js';
@@ -6,11 +6,12 @@ import { icon } from './icons.js';
 import { narrationControl, stopNarration } from './narration.js';
 import { startMusic, stopMusic, installClickSounds } from './sound.js';
 import { playGuide, clearGuide, stopGuide } from './guide.js';
+import { curtainClose, curtainOpen } from './curtain.js';
 
 /* ---------- state ---------- */
 const freshState = () => ({
   lang: 'bi', page: 'p01', done: {}, seen: {},
-  p08Route: [], p11Sentences: [], badges: [], arAvailable: false, panelCollapsed: false, music: true, voice: true,
+  p08Route: [], p11Sentences: [], badges: [], arAvailable: false, music: true, voice: true,
 });
 // Progress lives only in memory: moving between pages keeps it, but reloading the page (or
 // opening the link again) always starts fresh from the welcome page. Nothing is stored on the device.
@@ -33,68 +34,52 @@ const indexOf = (id) => PAGES.findIndex((p) => p.id === id);
 async function go(id) {
   if (indexOf(id) < 0) id = 'p01';
   const token = ++navToken;
+  const page = PAGES[indexOf(id)];
+  // the cloud curtain closes over the old page while the new one loads (not for the welcome page, its walk-in
+  // into the shrine, or a re-render after a language switch)
+  const fromFullbleed = document.body.classList.contains('is-fullbleed');
+  const curtain = !!current && current.id !== id && id !== 'p01' && !fromFullbleed && !window.__noCurtain;
+  const loading = import(`./pages/${page.file}.js`);
+  if (curtain) { stopGuide(); await curtainClose(stopInfo(id)); }
+  let mod;
+  try { mod = await loading; }
+  catch (e) { console.error('Could not load page', page.file, e); if (curtain) curtainOpen(); return; }
+  if (token !== navToken) return;              // a newer navigation started meanwhile
   if (current?.mod?.destroy) { try { current.mod.destroy(); } catch (e) { console.error(e); } }
   clearToasts(); closeModal(); stopNarration(); clearGuide();
-  const page = PAGES[indexOf(id)];
-  let mod;
-  try { mod = await import(`./pages/${page.file}.js`); }
-  catch (e) { console.error('Could not load page', page.file, e); return; }
-  if (token !== navToken) return;              // a newer navigation started meanwhile
-  const fromFullbleed = document.body.classList.contains('is-fullbleed');
   current = { id, mod };
   state.page = id;
-  // P02 always opens with the side panel showing: it slides in from the right
-  const slidePanel = id === 'p02' && mod.chrome !== false && (state.panelCollapsed || fromFullbleed || !prevId);
-  if (id === 'p02' && state.panelCollapsed) { state.panelCollapsed = false; applyPanelState(); }
-  prevId = id;
+  steps = null;
   save();
   renderTopbar();
-  $stage.replaceChildren(); $panel.replaceChildren();
+  $stage.replaceChildren(); $panel.replaceChildren(); $panel.className = 'panel sheet is-none';
   $stage.scrollTop = 0;
   document.body.classList.toggle('is-fullbleed', mod.chrome === false);
+  document.body.dataset.page = id;
   mod.render($stage, makeCtx(id));
-  if (slidePanel) playPanelEnter();
-  if (id !== 'p01') startGuide(id);                 // the welcome page starts its own guide once the title is written
+  if (curtain) curtainOpen();
+  // the voice guide (the welcome page starts its own; the map speaks only on the first visit)
+  if (id !== 'p01' && !(mod.guideOnce && state.seen[id]?.guided)) {
+    state.seen[id] = { ...(state.seen[id] || {}), guided: true };
+    setTimeout(() => { if (token === navToken) startGuide(id); }, curtain ? 650 : 0);
+  }
 }
-let prevId = null;
 
-/** Slide the side panel (and its edge tab) in from the right edge, then let its contents fade in. */
-function playPanelEnter() {
-  const b = document.body;
-  clearTimeout(playPanelEnter.t);
-  b.classList.remove('panel-enter');
-  b.classList.add('panel-pre', 'panel-collapsed');          // start fully closed, without a transition
-  void $panel.offsetWidth;
-  b.classList.remove('panel-pre');
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    b.classList.add('panel-enter');
-    b.classList.toggle('panel-collapsed', !!state.panelCollapsed);   // open -> transitions to full width
-  }));
-  playPanelEnter.t = setTimeout(() => { b.classList.remove('panel-enter'); window.dispatchEvent(new Event('resize')); }, 1500);
-}
+/** The recommended next stop: the first stop (in order) that isn't finished yet. */
+function nextStopId() { return STOP_IDS.find((s) => !state.done[s]) || 'p12'; }
 const next = () => { const i = indexOf(current.id); if (i < PAGES.length - 1) go(PAGES[i + 1].id); };
 const back = () => { const i = indexOf(current.id); if (i > 0) go(PAGES[i - 1].id); };
 const rerender = () => go(current.id);
 
-/* ---------- full-screen stage: hide / show the side panel ---------- */
-// Edge tab on the panel's left side (created once, lives outside the page content)
-const $handle = el('button', { id: 'panel-handle', type: 'button', onclick: () => setPanelCollapsed(!state.panelCollapsed) });
-document.querySelector('.layout').append($handle);
-
-function applyPanelState() {
-  document.body.classList.toggle('panel-collapsed', !!state.panelCollapsed);
-  $handle.innerHTML = icon(state.panelCollapsed ? 'chevLeft' : 'chevRight');
-  const label = plain(state.panelCollapsed ? CONTENT.common.showPanel : CONTENT.common.fullScreen);
-  $handle.setAttribute('aria-label', label); $handle.title = label;
-  $panel.setAttribute('aria-hidden', state.panelCollapsed ? 'true' : 'false');
-  // let layouts and the AR camera re-measure once the slide animation has finished
-  setTimeout(() => window.dispatchEvent(new Event('resize')), 420);
+/* ---------- the journey: stops on the map, their labels for the top bar and the curtain ---------- */
+const STOP_IDS = ['p02', 'p03', 'p04', 'p05', 'p06', 'p07', 'p08', 'p09', 'p10', 'p11', 'p12'];
+function stopInfo(id) {
+  const J = CONTENT.journey, s = J.stops[id];
+  if (id === 'map') return { icon: 'map', kicker: J.mapKicker, title: J.title, seal: '圖' };
+  if (!s) return { icon: 'temple', kicker: null, title: CONTENT[id]?.heading || J.title, seal: '街' };
+  return { icon: s.icon, kicker: s.kicker, title: s.title, seal: s.seal, num: STOP_IDS.indexOf(id) + 1 };
 }
-function setPanelCollapsed(v) {
-  state.panelCollapsed = v; save();
-  applyPanelState();
-  if (current) renderTopbar();
-}
+let steps = null;        // the page's step chips in the top bar: { items, active, done:Set, onClick }
 
 /* ---------- background music + button sounds (js/sound.js) ---------- */
 // Browsers only allow sound after the first tap, so the music starts on the first touch anywhere.
@@ -141,7 +126,7 @@ function cycleLang() {
 
 /* ---------- top bar ---------- */
 function renderTopbar() {
-  const i = indexOf(current.id);
+  const id = current.id, J = CONTENT.journey;
   const langLabel = { bi: '雙語', en: 'EN', zh: '中文' }[state.lang];
   const langBtn = el('button', {
     class: 'icon-btn lang-btn', type: 'button',
@@ -149,38 +134,55 @@ function renderTopbar() {
     html: icon('lang'),
     onclick: cycleLang,
   }, langLabel);
+  const mid = el('div', { class: 'tb-mid' });
+  if (id === 'map') {
+    const n = STOP_IDS.filter((s) => state.done[s]).length;
+    mid.append(el('span', { class: 'tb-title is-map' }, el('span', { class: 'ic', html: icon('map') }), bi(J.title, { layout: 'inline' })),
+      el('span', { class: 'tb-meter', title: `${n} / ${STOP_IDS.length}` }, el('i', { style: { width: `${(n / STOP_IDS.length) * 100}%` } })),
+      el('span', { class: 'tb-count' }, `${n}/${STOP_IDS.length}`));
+  } else {
+    const info = stopInfo(id);
+    mid.append(el('button', { class: 'tb-map', type: 'button', onclick: () => go('map'), 'aria-label': plain(J.mapButton) },
+      el('span', { class: 'ic', html: icon('map') }), bi(J.mapButton, { layout: 'stack' })));
+    mid.append(el('span', { class: 'tb-title' },
+      info.num ? el('b', { class: 'tb-num' }, String(info.num)) : null,
+      el('span', { class: 'tb-title-text' }, info.kicker ? el('small', {}, bi(info.kicker, { layout: 'inline' })) : null, bi(info.title, { layout: 'inline' }))));
+    if (steps) {
+      mid.append(el('div', { class: 'tb-steps', role: 'tablist' }, steps.items.map((t, i) => {
+        const b = el('button', { class: `tb-step${i === steps.active ? ' is-on' : ''}${steps.done.has(i) ? ' is-done' : ''}`, type: 'button', role: 'tab', 'aria-selected': String(i === steps.active) },
+          el('b', {}, steps.done.has(i) ? el('span', { class: 'ic', html: icon('check') }) : String(i + 1)), bi(t, { layout: 'inline' }));
+        b.addEventListener('click', () => steps.onClick?.(i));
+        return b;
+      })));
+    }
+  }
   $topbar.replaceChildren(
     el('div', { class: 'tb-left' },
-      el('button', { class: 'tb-logo', type: 'button', onclick: () => go('p01'), 'aria-label': 'Tudigong — back to the welcome page', title: `P${String(i + 1).padStart(2, '0')} / 12` },
+      el('button', { class: 'tb-logo', type: 'button', onclick: () => go('p01'), 'aria-label': 'Tudigong — back to the welcome page' },
         el('span', { class: 'cal', lang: 'zh-Hant' }, '土地公'),
         el('span', { class: 'lat' }, 'Tudigong'))),
-    el('div', { class: 'tb-mid' },
-      el('div', { class: 'progress-dots', role: 'progressbar', 'aria-valuemin': '1', 'aria-valuemax': '12', 'aria-valuenow': String(i + 1) },
-        PAGES.map((p, j) => el('span', { class: j < i ? 'is-done' : j === i ? 'is-current' : '' })))),
-    el('div', { class: 'tb-right' },
-      voiceButton(),
-      musicButton(),
-      iconButton(state.panelCollapsed ? 'sidebar' : 'expand', plain(state.panelCollapsed ? CONTENT.common.showPanel : CONTENT.common.fullScreen),
-        () => setPanelCollapsed(!state.panelCollapsed), 'panel-toggle'),
-      langBtn),
+    mid,
+    el('div', { class: 'tb-right' }, voiceButton(), musicButton(), langBtn),
   );
 }
 
 /* ---------- page context ---------- */
 function makeCtx(id) {
-  let primaryBtn = null, tasksHost = null, completed = !!state.done[id], tasks = [];
+  let primaryBtn = null, tasksHost = null, taskPill = null, completed = !!state.done[id], tasks = [];
 
   const ctx = {
     id, state, content: CONTENT[id], CONTENT,
     go, next, back, rerender, save, toast, openVocab, cycleLang, musicButton, voiceButton, musicIfOn, resetAll: () => resetAll(),
+    openSheet: () => {}, nextStop: () => nextStopId(),
     guide: () => startGuide(id),
 
     /**
-     * Build the right-hand panel.
-     * opts: { title?, display?, narration? (default true), body?: Node[], tasks?: [], secondary?: Node[], primary?: {text, onClick} | false }
+     * Build the bar under the stage and its slide-up sheet ("Story and words": title, narration, words, tasks).
+     * opts: { title?, display?, narration? (default true), body?: Node[], tasks?: [], secondary?: Node[] (shown in the bar),
+     *         primary?: {text, onClick, alwaysEnabled} | false, sheetLabel?: {en, zh}, sheetOpen? }
      */
     panel(opts = {}) {
-      const c = CONTENT[id] || {};
+      const c = CONTENT[id] || {}, J = CONTENT.journey;
       const title = opts.title || c.heading;
       const inner = el('div', { class: 'panel-inner' });
       if (title) inner.append(el('h1', { class: `panel-title ${opts.display ? 'display' : ''}`, style: { margin: 0 } }, bi(title)));
@@ -191,31 +193,70 @@ function makeCtx(id) {
       inner.append(body);
       tasksHost = el('div', { class: 'panel-tasks' });
       inner.append(tasksHost);
-      if (opts.tasks) ctx.setTasks(opts.tasks);
-      const actions = el('div', { class: 'panel-actions' });
-      if (opts.secondary?.length) actions.append(el('div', { class: 'btn-row' }, opts.secondary));
-      // bottom row: a small round Back button + the wide primary (Next) button
-      const nav = el('div', { class: 'nav-row' });
-      if (indexOf(id) > 0) nav.append(iconButton('back', plain(CONTENT.common.back), back, 'nav-back'));
+      // the bar under the stage: "Story and words" (opens the sheet), task progress, and Next
+      const sheetPanel = el('div', { class: 'sheet-panel', role: 'dialog', 'aria-label': plain(opts.sheetLabel || J.sheet) },
+        el('div', { class: 'sheet-grip' }, el('span', { class: 'sheet-handle', 'aria-hidden': 'true' }),
+          iconButton('close', plain(CONTENT.common.close), () => setSheet(false), 'sheet-close')),
+        inner);
+      taskPill = el('span', { class: 'sheet-tasks', hidden: true });
+      const toggle = el('button', { class: 'sheet-toggle', type: 'button', 'aria-expanded': 'false' },
+        el('span', { class: 'ic', html: icon('book') }),
+        el('span', { class: 'sheet-label' }, bi(opts.sheetLabel || J.sheet, { layout: 'stack' })),
+        taskPill,
+        el('span', { class: 'sheet-chev', html: icon('chevLeft') }));
+      toggle.addEventListener('click', () => setSheet(!$panel.classList.contains('is-open')));
+      const bar = el('div', { class: 'sheet-bar' }, toggle);
+      if (opts.secondary?.length) bar.append(el('div', { class: 'sheet-extra' }, opts.secondary));   // extra page actions sit in the bar
       if (opts.primary !== false) {
-        const p = opts.primary || { text: CONTENT.common.next, onClick: next };
+        const nextId = PAGES[indexOf(id) + 1]?.id;
+        const p = opts.primary || { text: nextId && nextId !== 'map' && J.stops[nextId] ? { en: `Next: ${J.stops[nextId].title.en}`, zh: `下一站：${J.stops[nextId].title.zh}` } : CONTENT.common.next, onClick: next };
         // Next always works: if the page isn't finished yet, a small dialog asks whether to stay or move on
         primaryBtn = button(p.text, { variant: 'primary', onClick: () => (completed || p.alwaysEnabled ? p.onClick() : askSkip(p.onClick)) });
+        primaryBtn.classList.add('sheet-next');
         primaryBtn.classList.toggle('is-pending', !completed && !p.alwaysEnabled);
-        nav.append(primaryBtn);
+        bar.append(primaryBtn);
       }
-      if (nav.childElementCount) actions.append(nav);
-      inner.append(actions);
-      $panel.replaceChildren(inner);
+      const scrim = el('div', { class: 'sheet-scrim', onclick: () => setSheet(false) });
+      $panel.className = `panel sheet${opts.sheet === false && opts.primary === false ? ' is-none' : ''}`;
+      $panel.replaceChildren(scrim, sheetPanel, bar);
+      if (opts.tasks) ctx.setTasks(opts.tasks);
+      function setSheet(open) {
+        $panel.classList.toggle('is-open', open);
+        toggle.setAttribute('aria-expanded', String(open));
+        if (open) stopGuide();
+      }
+      ctx.openSheet = () => setSheet(true);
+      if (opts.sheetOpen) setSheet(true);
     },
 
-    setTasks(items) { tasks = items || []; if (tasksHost) tasksHost.replaceChildren(checklist(items)); },
+    /** Step chips in the top bar (e.g. Learn · Do · Badge). Returns { setActive(i), setDone(i) }. */
+    steps(items, { onClick } = {}) {
+      steps = { items, active: 0, done: new Set(), onClick };
+      renderTopbar();
+      const sync = () => { if (current?.id === id) renderTopbar(); };
+      return {
+        setActive(i) { if (steps && steps.active !== i) { steps.active = i; sync(); } },
+        setDone(i) { if (steps && !steps.done.has(i)) { steps.done.add(i); sync(); } },
+      };
+    },
+
+    setTasks(items) {
+      tasks = items || [];
+      if (tasksHost) tasksHost.replaceChildren(checklist(items));
+      if (taskPill) {                                  // the bar shows how many tasks are done
+        const n = tasks.filter((t) => t.done).length;
+        taskPill.hidden = !tasks.length;
+        taskPill.classList.toggle('is-done', !!tasks.length && n === tasks.length);
+        taskPill.replaceChildren(el('span', { class: 'ic', html: icon('check') }), `${n}/${tasks.length}`);
+      }
+    },
 
     /** Mark this page complete: unlocks the primary button and saves progress. */
     complete() {
+      const first = !completed;
       completed = true;
       state.done[id] = true; save();
-      if (primaryBtn) primaryBtn.classList.remove('is-pending');
+      if (primaryBtn) { primaryBtn.classList.remove('is-pending'); if (first) primaryBtn.classList.add('is-ready'); }
     },
     isComplete: () => completed,
 
@@ -327,7 +368,7 @@ function markKeywords(root, chips) {
 }
 
 // the badge shown on each page's "not finished yet" pop-up
-const PAGE_ICON = { p02: 'scan', p03: 'tap', p04: 'map', p05: 'corner', p06: 'fields', p07: 'lion', p08: 'route', p09: 'calendar', p10: 'compare', p11: 'chat', p12: 'star' };
+const PAGE_ICON = { map: 'map', p02: 'scan', p03: 'tap', p04: 'map', p05: 'corner', p06: 'fields', p07: 'lion', p08: 'route', p09: 'calendar', p10: 'compare', p11: 'chat', p12: 'star' };
 
 /* ---------- start ---------- */
 // Developer shortcuts: open index.html#p04 to jump to a page, #reset to clear progress,
@@ -336,7 +377,7 @@ const PAGE_ICON = { p02: 'scan', p03: 'tap', p04: 'map', p05: 'corner', p06: 'fi
 function fromHash() {
   const h = location.hash.replace('#', '');
   if (h === 'reset') { Object.assign(state, freshState()); save(); setLang(state.lang); return 'p01'; }
-  const one = h.match(/^reset-(p\d\d)$/);
+  const one = h.match(/^reset-(p\d\d|map)$/);
   if (one && indexOf(one[1]) >= 0) {
     delete state.seen[one[1]]; delete state.done[one[1]]; save();
     history.replaceState(null, '', `#${one[1]}`);
@@ -345,7 +386,7 @@ function fromHash() {
   return indexOf(h) >= 0 ? h : null;
 }
 window.addEventListener('hashchange', () => { const h = fromHash(); if (h) go(h); });
-applyPanelState();
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && $panel.classList.contains('is-open')) $panel.classList.remove('is-open'); });
 go(fromHash() || state.page || 'p01');
 // download the 3D models in the background while students are on the first pages (P02 AR, P04 map)
 setTimeout(() => import('./ar-diorama.js').then((m) => m.prefetchKit()).catch(() => {}), 2500);

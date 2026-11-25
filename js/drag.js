@@ -47,11 +47,14 @@ export function createDragGroup({ cards, targets, accept, onCorrect, onWrong }) 
       if (!moved && Math.hypot(e.clientX - sx, e.clientY - sy) < 6) return;
       if (!moved) {
         moved = true;
+        // (a card may be turned, e.g. in a fan: use its own size, centred on where it is on screen)
         const r = card.getBoundingClientRect();
-        ox = sx - r.left; oy = sy - r.top;
+        const w = card.offsetWidth || r.width, h = card.offsetHeight || r.height;
+        const left = r.left + (r.width - w) / 2, top = r.top + (r.height - h) / 2;
+        ox = sx - left; oy = sy - top;
         clone = card.cloneNode(true);
         clone.classList.add('is-dragging');
-        Object.assign(clone.style, { position: 'fixed', left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, margin: 0, zIndex: 60, pointerEvents: 'none' });
+        Object.assign(clone.style, { position: 'fixed', left: `${left}px`, top: `${top}px`, right: 'auto', bottom: 'auto', width: `${w}px`, height: `${h}px`, margin: 0, zIndex: 60, pointerEvents: 'none' });
         document.body.appendChild(clone);
         card.classList.add('is-ghost');
       }

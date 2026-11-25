@@ -7,14 +7,15 @@ Built from the team build guide (`TUDIGONG_DESIGN_GUIDE.md`).
 
 | Page | Status | Owner |
 |---|---|---|
-| P00 shell (router, top bar, panel, tokens, components, drag helper, AR helper) | Done | B |
+| P00 shell (router, top bar, bar + story sheet, cloud transitions, tokens, components, drag helper, AR helper) | Done (Nov 2026 redesign: no side panel) | B |
+| Journey map (`#map`) | Done: the home of the experience after P03. A winding trail of 11 numbered stops in three parts (Get ready · Explore the neighborhood · Share what you learned); every stop is open, the next one glows with Start here, finished stops get a red stamp | B |
 | P01 Welcome | Done: full-screen opening animation (shrine rises from the earth, gold 土地公 calligraphy) | A |
 | P02 Scan (MindAR) | Done, tested with the placeholder card | B |
 | P03 How to Use | Done | A |
 | P04 Introduction | Done: 3D neighborhood (drag to turn 360°, pinch/scroll to zoom) with 4 attached info pins; flat map as fallback | B |
 | P05 Street Corner | Done: riddle cards, misty map that wakes up, vertical Neighborhood Passport, meeting-point question; afterwards every place opens in the AR camera | B |
 | P06 Land Use | Done: the same land long ago and today (aligned 3D renders), timeline + handle on the map, layer chips, Compare Land Use, Find Cultural Clues (temple + old tree stay) | C |
-| P07 Cultural Objects | Done: a small museum of the four allowed objects (small temple, offering table, stone lions, old tree) on the team's display stands: look closely (picture, what to notice, View in AR), then fix each meaning card to its exhibit like a brass label; the four come together as one cultural landscape (also in AR). Badge: Landscape Observer | C |
+| P07 Cultural Objects | Done, **in the new scrolling story format** (Hero · Learn · Do · Badge; the model for the other scenes): a small museum of the four allowed objects (small temple, offering table, stone lions, old tree) on the team's display stands: look closely (picture, what to notice, View in AR), then the meaning cards, face down in a fan until three objects are seen, turn over and are fixed to their exhibits like brass labels; the four come together as one cultural landscape (also in AR). Badge: Landscape Observer | C |
 | P08 Community Map | Done: a schematic map of Kaohsiung zooms into "My Neighborhood"; put places on empty lots (any place on any lot), then tap them in order to draw a cultural route (saved for P11/P12). Badge: Route Builder | C |
 | P09 Touya and Weiya | Done: a lunar-year strip with two ya days a month; match Zuoya, Touya and Weiya to their date cards (red seals, the year lights up), story cards with pictures, then two context cards to flip. Badge: Calendar Matcher | C |
 | P10 Bogong in Meinong | Done: map from downtown Kaohsiung to Meinong (with a note) and three Meinong culture cards from the team's models (settlement, tobacco barn, Bogong shrine, each with View in AR); match Tudigong, Bogong and the fuchang case to their meanings (culture notes, hints); Compare Cultural Expressions card with the Yong'an fuchang case and its source. Badge: Local Variation | C |
@@ -54,7 +55,7 @@ Current background music: `assets/audio/bgm.mp3` is "When Peach Blossoms Bloom" 
 
 **Voice guide.** When a page opens, a calm voice says what to do there (for P01, after the welcome tap). The words also show in a small dark bar at the bottom of the stage, which fades away after a few seconds; ↻ plays it again and × hides it. English mode speaks English, 中文 mode speaks Mandarin, 雙語 mode speaks English and then Mandarin (on phones the bar shows only the line being spoken). Music goes quiet while it speaks. The speaker button in the top bar (and in the P01 corner) turns the voice off and on.
 - Words: `guide` on every page in `content/content.js` (from the content sheet).
-- Audio: `assets/audio/guide/p01_en.mp3 … p12_zh.mp3`, made with the open-source Kokoro-82M voice model (Apache-2.0): English voice `af_sol`, Mandarin voice `zf_018`, spoken a little slower than normal (0.92), level-matched. To change a line, change the text and remake that page's two files (or record your own and save them under the same names).
+- Audio: `assets/audio/guide/p01_en.mp3 … p12_zh.mp3` and `map_en.mp3`, `map_zh.mp3`, made with the open-source Kokoro-82M voice model (Apache-2.0): English voice `af_sol`, Mandarin voice `zf_018`, spoken a little slower than normal (0.92), level-matched. To change a line, change the text and remake that page's two files (or record your own and save them under the same names).
 - Code: `js/guide.js`.
 
 **Into the shrine (P01 → P02).** Pressing Start Experience walks you into the shrine: the view glides toward it and pauses at the doorway, where warm lamplight glows inside; then you pass through: the scene is cut by an arch-shaped hole the shape of the doorway, which grows past the screen, and P02 is waiting inside, settling into place as the light fades (about 2 s, with a soft rush of air and a zither chord). A sharp copy of the shrine with its doorway cut out exactly (`assets/img/shrine_doorcut.webp`, made from `assets/source-art/sprite_shrine.svg`) moves on top of the scene, so the opening is always the shrine's own gold frame. For smoothness the scene is lifted into its own layer and only scaled, with its own animations paused (`enterShrine()` in `js/pages/p01-home.js`, `.enter-host` / `.enter-glow` in `css/welcome.css`, `playEnter()` in `js/sound.js`). With Reduce Motion on, it simply goes to P02.
@@ -63,15 +64,31 @@ Current background music: `assets/audio/bgm.mp3` is "When Peach Blossoms Bloom" 
 
 **P04 camera flights.** Tapping a place on the 3D map glides the camera in to it, then its note opens; tapping another place pulls back to the whole neighbourhood first, then glides in to the new one; closing the note pulls back out (`focusHook` in `js/pages/p04-intro.js`).
 
-**Vocabulary in the panel text.** The page's vocabulary words (its word chips) are bold with a soft gold highlight wherever they appear in the panel text, in English and Chinese, and tapping one opens its word card (`markKeywords()` in `js/app.js`).
+**Vocabulary in the story sheet.** The page's vocabulary words (its word chips) are bold with a soft gold highlight wherever they appear in the sheet's text, in English and Chinese, and tapping one opens its word card (`markKeywords()` in `js/app.js`).
 
 **"Not finished yet" pop-up.** Next always works; on an unfinished page it opens a pop-up with the page's badge and a ring showing how much is done (e.g. 1 / 2), the page's checklist (done ✓ / still to do), and two big choices: Go to Next Page, or stay (Continue Scanning / Keep Exploring). `askSkip()` in `js/app.js`, `.skd*` in `css/components.css`.
 
 **Camera setup (P02).** Before the scanner starts, a Camera Setup card shows a small animated scene (a tablet framing the culture card) and four steps: Allow Camera, Fit the Card (30–50 cm), Good Light, Stay Safe. The steps light up one after another and the scene acts each one out (the Allow button being tapped, the scan frame and beam, the light coming on, a safety ring); tap a step to see it. The camera only turns on after Start Camera. The voice guide shows as a small speaker pill in the card's corner.
 
-## Full-screen mode
+## The frame: journey map, top bar, story sheet, cloud transitions (Nov 2026 redesign)
 
-The gold-framed arrow tab on the panel's left edge (or the frame icon in the top bar) slides the side panel away so the activity uses the whole screen; the same tab, now at the screen edge, brings it back. The choice is remembered, except on P02 (Scan): arriving there always slides the panel in from the right so the scan instructions are seen (`playPanelEnter()` in `js/app.js`).
+The side panel is gone, so every activity uses the whole width. What used to be in it now lives in three places:
+
+- **Top bar:** the 土地公 logo (back to the welcome page), a **Map** button, the stop's number and title, and on story pages the step chips **Learn · Do · Badge**, which follow the scroll (tap one to jump there; a finished step shows ✓). Then voice, music and language.
+- **The bar under the stage:** **Story and words 故事與詞彙** (with a ✓ 1/2 task count) opens a sheet that slides up with the page's title, narration (Listen), vocabulary words and checklist; × or Esc closes it. On the right, **Next: <next stop>** (it glows once when the page is finished; on an unfinished page the "not finished yet" pop-up asks first). Extra page actions (P02 Scan Again, P11/P12 buttons) sit in the bar too. P12's sheet is called "Recap and feedback". `ctx.panel()` in `js/app.js`, `.sheet-*` in `css/shell.css`.
+- **Journey map** (`js/pages/map.js`, `css/journey.css`): after P03 (How to play) students land on a map that works like collecting stamps (集章) at each place: a winding road through 11 round stops that look like roof-tile ends (瓦當). Clay = not visited, teal = the next stop (Start here 從這裡開始), gold with a red seal = finished (a stamp lands with a sound the first time you come back). Every stop is open: tap one to see what it is about, then Go. A floating **Continue** button always offers the first unfinished stop. The voice guide speaks only on the first visit.
+- **Cloud curtain** (`js/curtain.js`, `.curtain` in `css/shell.css`): moving between pages, painted auspicious clouds (祥雲, the same style as the clouds behind every page) roll in from both sides, a medallion shows where you are going (its icon, a red seal, Stop N · Scene N and the title), and the clouds part (about 1.3 s, a soft rush of air and a zither note, no bells). Not used for the welcome page or a language switch; Reduce Motion gives a short fade. Tests can set `window.__noCurtain = true`.
+
+### The story page (P07 now; the other scenes next)
+
+A scene is one page you scroll, with four parts (`js/story.js`, `css/story.css`):
+
+1. **Hero:** the scene's seal (場景三), title, one sentence, a picture, and "In this scene you will" with the three steps; Start scrolls to Learn.
+2. **Learn:** one idea per card; the cards stick and stack as you scroll (each one shrinks and dims a little as the next slides over it).
+3. **Do:** the activity on a board as tall as the screen.
+4. **Badge:** the result (locked and blurred until the activity is done), the badge, the takeaway, and Back to the map / Next stop.
+
+To convert a page: `const story = createStory(stage, ctx); story.hero({...}); story.learn({...}); story.doSection({...}); const badge = story.badgeSection({...}); story.ready();` then call `badge.unlock(true)` when the activity is finished (see `js/pages/p07-objects.js`). The strings for the hero and the Learn cards are `intro`, `plan`, `learnTitle`, `learn` in the page's content.
 
 ## Welcome page (P01) and the 土地公 logo
 
@@ -102,7 +119,7 @@ The `.mind` file must be compiled from the exact image you print.
 
 ## Design: v2 "Temple craft"
 
-The side panel is gold-leaf paper (灑金): faint gold flecks and soft gilded hills (`assets/img/panel_mural.svg`, generated by `assets/source-art/panel_murals.py`). Panel text uses its own typefaces, set on `.panel` in `css/components.css`: Alegreya for titles and buttons, Alegreya Sans for text and 昭源宋體 (Chiron Sung HK) for Chinese. The rest of the site keeps the original fonts.
+The story sheet is gold-leaf paper (灑金): faint gold flecks and soft gilded hills (`assets/img/panel_mural.svg`, generated by `assets/source-art/panel_murals.py`). The frame, the sheet, the map and the story pages use Alegreya for titles and buttons, Alegreya Sans for text and 昭源宋體 (Chiron Sung HK) for Chinese (set on `.panel` in `css/components.css`, and in `css/shell.css`, `css/journey.css`, `css/story.css`). The older scene layouts keep the original fonts.
 
 Buttons are carved wooden plaques (匾額): cut corners, a gold rim, teal lacquer for the main action and plain wood for secondary actions (`.btn` in `css/components.css`). Back is the small round wooden button next to Next at the bottom of the panel. Labels are sentence case, with no spaced capitals. The narration button stays hidden until that page's MP3 exists, and unwritten 【待補】 Chinese lines are hidden (中文 mode shows the English instead).
 
@@ -171,7 +188,7 @@ export function render(stage, ctx) {
 export function destroy() {} // remove timers / listeners, stop AR
 ```
 
-`ctx` gives: `content` (this page's text), `CONTENT`, `state`, `go(id)`, `next()`, `back()`, `panel()`, `setTasks()`, `complete()`, `isComplete()`, `seen(key, value)`, `toast(text, type)`, `openVocab(term)`, `save()`, `resetAll()`.
+`ctx` gives: `content` (this page's text), `CONTENT`, `state`, `go(id)`, `next()`, `back()`, `panel()` (the bar + story sheet; extra options `sheetLabel`, `sheetOpen`), `steps(items)` (step chips in the top bar), `openSheet()`, `nextStop()`, `setTasks()`, `complete()`, `isComplete()`, `seen(key, value)`, `toast(text, type)`, `openVocab(term)`, `save()`, `resetAll()`. A page can export `chrome = false` (full screen, like P01) or `guideOnce = true` (voice guide only on the first visit, like the map).
 
 ## Files
 
@@ -181,9 +198,14 @@ css/tokens.css      only place colors, fonts, sizes are defined (Person A)
 css/base.css        reset, layout, rotate overlay
 css/components.css  all components from the spec
 css/pages.css       page-specific layout (P01–P06)
-css/scenes.css      P07–P12, badges, Kaohsiung map
+css/scenes.css      P08–P12, badges, Kaohsiung map
+css/shell.css       top bar, the bar + story sheet, the cloud curtain
+css/journey.css     the journey map
+css/story.css       the scrolling story page (P07, then the other scenes)
 content/content.js  every visible string, EN + 繁中 (Person A only)
-js/app.js           router, state, top bar, panel
+js/app.js           router, state, top bar, the bar + story sheet, page changes
+js/curtain.js       the cloud curtain between pages
+js/story.js         the scrolling story page: createStory() → hero, learn, doSection, badgeSection
 js/ui.js            bi(), button(), chip(), toast(), modal(), openVocab(), notePopover()
 js/icons.js         inline SVG icons (no icon font needed, works offline)
 js/drag.js          drag + tap-to-place for touch (for P05, P07–P10)
@@ -194,7 +216,7 @@ js/ar.js            loads A-Frame 1.5.0 + MindAR 1.2.5 on demand, startAR() / st
 js/ar-diorama.js    the 3D pop-up neighbourhood shown on the card (three.js, no model files); buildNeighborhood(THREE, { place }) builds one place for P05
 js/ar-place.js      "See it in AR" (P05 places, P07 exhibits): camera view + 3D model (<model-viewer> from jsDelivr), real AR on supported phones/tablets
 js/narration.js     narration player + Listen button
-js/config.js        page list, asset paths, library URLs
+js/config.js        page list (p01, p02, p03, map, p04 … p12), asset paths, library URLs
 js/pages/           one file per page
 assets/img/         placeholder SVG art (replace with final WebP)
 assets/targets/     printable scan card + compiled .mind target

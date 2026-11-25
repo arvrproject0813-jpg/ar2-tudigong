@@ -1,7 +1,7 @@
 /* welcome.css — P01 full-screen opening: the shrine rises from the earth. Colors only via tokens.css. */
 
 /* Pages that export `chrome = false` hide the top bar and side panel */
-body.is-fullbleed .topbar, body.is-fullbleed #panel, body.is-fullbleed #panel-handle { display: none; }
+body.is-fullbleed .topbar, body.is-fullbleed #panel { display: none; }
 body.is-fullbleed #stage { margin-top: 0; overflow: hidden; overflow: clip; }   /* the welcome scene can never be scrolled */
 body.is-fullbleed #toast-layer { right: 0; top: var(--space-4); }
 
