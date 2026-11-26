@@ -99,6 +99,7 @@
   border-top: 3px double var(--gold-500);
   box-shadow: 0 -6px 16px rgba(58, 42, 30, .12);
 }
+.sheet-map { display: none; }            /* shown in portrait (css/portrait.css) */
 .sheet-toggle {
   display: inline-flex; align-items: center; gap: 10px; min-width: 0; height: calc(var(--bar-h) - 14px);
   padding: 0 14px 0 6px; border-radius: var(--radius-pill); border: 0; cursor: pointer; text-align: left; line-height: 1.12;
@@ -145,6 +146,7 @@
   position: absolute; z-index: 1; left: 50%; bottom: calc(100% - 3px);
   width: min(760px, calc(100% - 24px));
   max-height: calc(100vh - var(--topbar-h) - var(--bar-h) - 34px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  max-height: calc(100dvh - var(--topbar-h) - var(--bar-h) - 34px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
   display: flex; flex-direction: column;
   border-radius: 18px 18px 0 0;
   background: url('../assets/img/panel_mural.svg') center bottom / cover no-repeat, var(--tex-paper), linear-gradient(180deg, var(--beige-50), var(--beige-100));

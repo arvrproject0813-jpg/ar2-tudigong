@@ -25,6 +25,9 @@ export function createDragGroup({ cards, targets, accept, onCorrect, onWrong }) 
       return true;
     }
     if (target) {
+      // not this one: the card shakes and is let go, so the next tap on it picks it up again
+      card.classList.remove('is-selected');
+      if (selected === card) selected = null;
       card.classList.remove('is-hint'); void card.offsetWidth; card.classList.add('is-hint');
       target.classList.remove('is-hint'); void target.offsetWidth; target.classList.add('is-hint');
       onWrong?.(card, target);

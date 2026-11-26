@@ -232,7 +232,11 @@ export function render(stage, ctx) {
       const w = view.clientWidth, h = view.clientHeight;
       if (!w || !h) return;
       renderer.setSize(w, h, false);
-      camera.aspect = w / h; camera.updateProjectionMatrix();
+      camera.aspect = w / h;
+      // a narrow (portrait) view: widen the lens so the whole neighbourhood still fits from side to side
+      // (the landscape frame is always 3 : 2, which keeps the original 34°)
+      camera.fov = camera.aspect >= 1.45 ? 34 : Math.min(72, (2 * Math.atan(Math.tan((17 * Math.PI) / 180) * (1.5 / camera.aspect)) * 180) / Math.PI);
+      camera.updateProjectionMatrix();
     };
     const ro = new ResizeObserver(resize); ro.observe(view); resize();
 

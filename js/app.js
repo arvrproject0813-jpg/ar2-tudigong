@@ -156,6 +156,7 @@ function renderTopbar() {
       })));
     }
   }
+  $topbar.classList.toggle('has-steps', !!steps && id !== 'map');     // (portrait: the steps take the title's place)
   $topbar.replaceChildren(
     el('div', { class: 'tb-left' },
       el('button', { class: 'tb-logo', type: 'button', onclick: () => go('p01'), 'aria-label': 'Tudigong — back to the welcome page' },
@@ -205,7 +206,10 @@ function makeCtx(id) {
         taskPill,
         el('span', { class: 'sheet-chev', html: icon('chevLeft') }));
       toggle.addEventListener('click', () => setSheet(!$panel.classList.contains('is-open')));
-      const bar = el('div', { class: 'sheet-bar' }, toggle);
+      // (portrait phones: the Map button sits here, in the bar under the thumb, instead of in the top bar)
+      const mapBtn = el('button', { class: 'sheet-map', type: 'button', 'aria-label': plain(J.mapButton), onclick: () => go('map') },
+        el('span', { class: 'ic', html: icon('map') }), bi(J.mapButton, { layout: 'stack' }));
+      const bar = el('div', { class: 'sheet-bar' }, mapBtn, toggle);
       if (opts.secondary?.length) bar.append(el('div', { class: 'sheet-extra' }, opts.secondary));   // extra page actions sit in the bar
       if (opts.primary !== false) {
         const nextId = PAGES[indexOf(id) + 1]?.id;

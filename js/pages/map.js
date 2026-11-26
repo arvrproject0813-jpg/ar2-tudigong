@@ -106,6 +106,11 @@ export function render(stage, ctx) {
     row.classList.add('has-pop');
     row.append(node);
     pop = { id, row, node };
+    // keep the card inside the screen on narrow phones: slide it sideways (its arrow still points at the stop)
+    const rr = row.getBoundingClientRect(), vr = scroller.getBoundingClientRect(), w = node.offsetWidth, pad = 10;
+    const want = rr.left + rr.width / 2 - w / 2;
+    const dx = Math.min(Math.max(want, vr.left + pad), vr.right - pad - w) - want;
+    if (Math.abs(dx) > 0.5) node.style.setProperty('--dx', `${Math.round(dx)}px`);
     // keep the card in view
     requestAnimationFrame(() => {
       const r = node.getBoundingClientRect(), sr = scroller.getBoundingClientRect();

@@ -21,6 +21,9 @@ img { max-width: 100%; display: block; }
 :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
 
 #app { height: 100%; display: flex; flex-direction: column; }
+/* phones: exactly the visible screen, so the bar at the bottom is never under the browser's own toolbars
+   (on a computer this is the same height as 100%) */
+@supports (height: 100dvh) { html, body, #app { height: 100dvh; } }
 
 /* ---------- top bar: lacquered teal band with a gold meander strip ---------- */
 .topbar {

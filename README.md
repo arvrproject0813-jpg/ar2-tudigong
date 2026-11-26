@@ -1,6 +1,6 @@
 # AR-2 Tudigong's Neighborhood · 土地公的街坊
 
-Bilingual (English + Traditional Chinese) AR learning web app. Plain HTML/CSS/JS, MindAR image tracking, landscape only.
+Bilingual (English + Traditional Chinese) AR learning web app. Plain HTML/CSS/JS, MindAR image tracking. Laptops, tablets and phones held sideways use the landscape layout; phones held upright get their own portrait layout (`css/portrait.css`).
 Built from the team build guide (`TUDIGONG_DESIGN_GUIDE.md`).
 
 ## Status
@@ -27,7 +27,7 @@ Built from the team build guide (`TUDIGONG_DESIGN_GUIDE.md`).
 The camera only works over **HTTPS** (or `localhost`).
 
 - On your computer: `python3 -m http.server 8000` in this folder, then open `http://localhost:8000`.
-- On a phone/tablet: push the folder to GitHub and turn on **GitHub Pages** (Settings → Pages → deploy from branch), or drag the folder onto **Netlify Drop**. Open the HTTPS link on the device and turn it sideways.
+- On a phone/tablet: push the folder to GitHub and turn on **GitHub Pages** (Settings → Pages → deploy from branch), or drag the folder onto **Netlify Drop**. Open the HTTPS link on the device; it works upright or sideways.
 
 Updates show up within about 2 minutes of a push: `index.html` stamps every CSS/JS file with a `?v=` that changes every 2 minutes, so browsers never keep an old copy. **If you add a new .js or .css file, add its name to the lists at the top of `index.html`.**
 
@@ -78,6 +78,17 @@ The side panel is gone, so every activity uses the whole width. What used to be 
 - **The bar under the stage:** **Story and words 故事與詞彙** (with a ✓ 1/2 task count) opens a sheet that slides up with the page's title, narration (Listen), vocabulary words and checklist; × or Esc closes it. On the right, **Next: <next stop>** (it glows once when the page is finished; on an unfinished page the "not finished yet" pop-up asks first). Extra page actions (P02 Scan Again, P11/P12 buttons) sit in the bar too. P12's sheet is called "Recap and feedback". `ctx.panel()` in `js/app.js`, `.sheet-*` in `css/shell.css`.
 - **Journey map** (`js/pages/map.js`, `css/journey.css`): after P03 (How to play) students land on a map that works like collecting stamps (集章) at each place: a winding road through 11 round stops that look like roof-tile ends (瓦當). Clay = not visited, teal = the next stop (Start here 從這裡開始), gold with a red seal = finished (a stamp lands with a sound the first time you come back). Every stop is open: tap one to see what it is about, then Go. A floating **Continue** button always offers the first unfinished stop. The voice guide speaks only on the first visit.
 - **Cloud curtain** (`js/curtain.js`, `.curtain` in `css/shell.css`): moving between pages, painted auspicious clouds (祥雲, the same style as the clouds behind every page) roll in from both sides, a medallion shows where you are going (its icon, a red seal, Stop N · Scene N and the title), and the clouds part (about 1.3 s, a soft rush of air and a zither note, no bells). Not used for the welcome page or a language switch; Reduce Motion gives a short fade. Tests can set `window.__noCurtain = true`.
+
+### The phone version (portrait)
+
+Holding a phone upright gets its own layout; nothing about the landscape view (laptops, tablets, phones held sideways) changes. Everything is in `css/portrait.css`, loaded last, with every rule inside `@media (orientation: portrait)`; a few small bits of JS check `matchMedia('(orientation: portrait)')`.
+
+- **Frame:** a slimmer top bar (logo, the stop's number and its title on two lines, or the step chips with numbers only and the current step's name; voice, music, language). The **Map** button moves to the bar under the stage, where the thumb is: **Map · Story and words · Next**. Extra page actions (Scan Again, Experience Again, Give Feedback…) get their own row above it. The story sheet and dialogs use the full width (pictures above the words).
+- **Pages are one column and scroll** when they do not fit: maps first, then the cards and activities under them (P05 map then the riddle deck and passport; P06 chips, map, timeline; P08 the Kaohsiung map with its legend underneath, then the board with the place cards 3 × 2 and the route bar; P09 the year in two rows of six months, the date sheets one under another; P10 the trip card, then the matching; P11 the sentence card first and the sentence starters under it; P12 my map, my badges, my words). P04's 3D view fills the screen with a wider lens so the whole neighbourhood fits. On P07 the exhibits are 2 × 2 and the meaning cards a 2 × 2 grid that shrinks as cards are placed.
+- **Culture notes** (`notePopover` in `js/ui.js`): next to the pin on big maps (P04), otherwise docked at the bottom of the screen like a small sheet, so they never cover the cards you still have to tap.
+- The "turn your phone sideways" screen is gone (portrait.css hides `#rotate-overlay`). The app's height is the visible screen (`100dvh`), so the bar is never under the browser's own toolbars.
+
+Test sizes used: 390 × 844 and 360 × 640 (phones upright), 768 × 1024 (tablet upright), 844 × 390 and 667 × 375 (phones sideways), 1536 × 722, 1366 × 768, 1280 × 800 and 1180 × 820 (laptops and tablets, compared pixel by pixel with the previous version).
 
 ### The story page (P07 now; the other scenes next)
 
@@ -195,13 +206,14 @@ export function destroy() {} // remove timers / listeners, stop AR
 ```
 index.html
 css/tokens.css      only place colors, fonts, sizes are defined (Person A)
-css/base.css        reset, layout, rotate overlay
+css/base.css        reset, layout (full visible screen), rotate overlay (no longer shown: portrait has its own layout)
 css/components.css  all components from the spec
 css/pages.css       page-specific layout (P01–P06)
 css/scenes.css      P08–P12, badges, Kaohsiung map
 css/shell.css       top bar, the bar + story sheet, the cloud curtain
 css/journey.css     the journey map
 css/story.css       the scrolling story page (P07, then the other scenes)
+css/portrait.css    the phone version (portrait only; loaded last, landscape untouched)
 content/content.js  every visible string, EN + 繁中 (Person A only)
 js/app.js           router, state, top bar, the bar + story sheet, page changes
 js/curtain.js       the cloud curtain between pages

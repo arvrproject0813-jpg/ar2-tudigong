@@ -179,14 +179,14 @@
 
 /* ---------- the stop card ---------- */
 .jm-pop {
-  position: absolute; top: calc(var(--stop) + 14px); left: 50%; z-index: 6; width: min(320px, 86vw); transform: translateX(-50%);
+  position: absolute; top: calc(var(--stop) + 14px); left: 50%; margin-left: var(--dx, 0px); z-index: 6; width: min(320px, 86vw); transform: translateX(-50%);
   padding: 16px 18px 16px; border-radius: 16px; text-align: left;
   background: var(--tex-paper), linear-gradient(180deg, var(--beige-50), #F7EEDC);
   box-shadow: inset 0 0 0 1.5px var(--gold-500), inset 0 0 0 4px var(--beige-50), inset 0 0 0 5px rgba(201, 149, 46, .4), 0 16px 34px rgba(58, 42, 30, .3);
   animation: jm-pop .28s cubic-bezier(.3, 1.4, .5, 1) both;
 }
 .jm-pop::before {
-  content: ""; position: absolute; left: 50%; top: -9px; width: 18px; height: 18px; margin-left: -9px; transform: rotate(45deg);
+  content: ""; position: absolute; left: calc(50% - var(--dx, 0px)); top: -9px; width: 18px; height: 18px; margin-left: -9px; transform: rotate(45deg);
   background: var(--beige-50); box-shadow: -1.5px -1.5px 0 0 var(--gold-500);
 }
 @keyframes jm-pop { from { opacity: 0; transform: translate(-50%, -6px) scale(.94); } to { opacity: 1; transform: translateX(-50%); } }

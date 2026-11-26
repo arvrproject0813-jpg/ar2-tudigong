@@ -244,6 +244,10 @@ button.chip:hover { background: var(--teal-50); }
 .culture-note::before { content: ""; position: absolute; width: 16px; height: 16px; background: var(--color-surface); transform: rotate(45deg); top: var(--tail-y, 50%); margin-top: -8px; box-shadow: -1px 1px 0 rgba(201, 149, 46, .6); }
 .culture-note.tail-left::before { left: -7px; }
 .culture-note.tail-right::before { right: -7px; box-shadow: 1px -1px 0 rgba(201, 149, 46, .6); }
+/* (phones held upright: the note sits above or below its pin) */
+.culture-note.tail-top::before, .culture-note.tail-bottom::before { left: var(--tail-x, 50%); margin: 0 0 0 -8px; }
+.culture-note.tail-top::before { top: -7px; box-shadow: -1px -1px 0 rgba(201, 149, 46, .6); }
+.culture-note.tail-bottom::before { top: auto; bottom: -7px; box-shadow: 1px 1px 0 rgba(201, 149, 46, .6); }
 
 /* ---------- modal + vocab card ---------- */
 .modal-scrim { position: absolute; inset: 0; background: var(--color-scrim); display: grid; place-items: center; padding: var(--space-4); animation: fade-in var(--dur) var(--ease); }

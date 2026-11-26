@@ -154,25 +154,49 @@ export function notePopover(container, { xPct, yPct, title, body, onClose, extra
     el('h3', {}, bi(title)),
     el('p', {}, bi(body)),
     extra);                                    // optional: e.g. a "View in AR" button (P08)
+  // phones held upright, when the map is too small to hold the note: it docks at the bottom of the screen instead
+  const portrait = matchMedia('(orientation: portrait)').matches;
+  const stage = document.getElementById('stage');
+  let docked = false;
+  const host = () => (docked ? document : container);
   const close = () => {
     note.remove();
-    container.removeEventListener('pointerdown', outside, true);
+    host().removeEventListener('pointerdown', outside, true);
     document.removeEventListener('keydown', onKey);
     onClose && onClose();
   };
   // Tap outside the note (but not on a pin, which opens its own note) or press Escape to close
   const outside = (e) => { if (!note.contains(e.target) && !e.target.closest('.map-pin')) close(); };
   const onKey = (e) => { if (e.key === 'Escape') close(); };
-  container.addEventListener('pointerdown', outside, true);
-  document.addEventListener('keydown', onKey);
   note.__close = close;
   note.append(iconButton('close', plain(CONTENT.common.close), close, 'close'));
   container.append(note);
+  // (only a big map, like the P04 3D neighbourhood, keeps the note next to its pin)
+  const bigMap = container.classList.contains('map-frame') && container.clientHeight >= note.offsetHeight * 1.7 && container.clientWidth >= note.offsetWidth * 1.15;
+  if (portrait && stage && !bigMap) {
+    docked = true;
+    note.classList.add('is-docked');
+    stage.append(note);
+  }
+  host().addEventListener('pointerdown', outside, true);
+  document.addEventListener('keydown', onKey);
+  if (docked) return close;
   // Place the note beside the pin (right of it if the pin is in the left half, otherwise left),
   // so it rarely covers the other pins. Clamp inside the container.
   const cw = container.clientWidth, ch = container.clientHeight;
   const nw = note.offsetWidth, nh = note.offsetHeight;
   const px = (xPct / 100) * cw, py = (yPct / 100) * ch;
+  // phones held upright: no room beside the pin, so the note goes above or below it
+  if (matchMedia('(orientation: portrait)').matches && cw < nw * 1.6) {
+    const below = py < ch / 2;
+    const l = Math.min(Math.max(8, px - nw / 2), cw - nw - 8);
+    const t = below ? Math.min(py + 30, ch - nh - 8) : Math.max(8, py - nh - 30);
+    note.style.left = `${l}px`;
+    note.style.top = `${t}px`;
+    note.style.setProperty('--tail-x', `${Math.min(Math.max(18, px - l), nw - 18)}px`);
+    note.classList.add(below ? 'tail-top' : 'tail-bottom');
+    return close;
+  }
   const toRight = px < cw / 2;
   let left = toRight ? px + 30 : px - nw - 30;
   left = Math.min(Math.max(8, left), cw - nw - 8);

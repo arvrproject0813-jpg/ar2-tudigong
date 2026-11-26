@@ -79,7 +79,7 @@ const BANKS = [
 
 function buildLayer(info) {
   const W = window.innerWidth, H = window.innerHeight;
-  const R0 = Math.max(46, Math.min(96, H * 0.11));
+  const R0 = Math.max(40, Math.min(96, H * 0.11, W * 0.14));     // (phones held upright: smaller puffs)
   const banks = BANKS.map((b, li) => el('div', { class: `cc-layer b${li}` }, ['l', 'r'].map((side, si) => {
     const R = R0 * b.size;
     const edge = W / 2 + (b.reach - 1.0) * R;             // body ends here; puffs reach about one puff further

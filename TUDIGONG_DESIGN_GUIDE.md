@@ -19,7 +19,7 @@ TECH (do not change without asking me):
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
   (Both versions confirmed on npm. Never change them without telling the team.)
 - Served over HTTPS (camera needs it). Hosting: GitHub Pages or Netlify. Local testing: a local HTTPS server or the hosted URL on a phone.
-- Landscape only. In portrait, show a full-screen overlay "Please rotate your device 請將裝置橫放". Do not depend on screen.orientation.lock().
+- Landscape first (laptops, tablets, phones held sideways). Since late Nov 2026 phones held upright also get their own portrait layout (css/portrait.css, everything inside @media (orientation: portrait), so the landscape view never changes); the old "Please rotate your device" overlay is no longer shown. Do not depend on screen.orientation.lock().
 - Touch input with Pointer Events (pointerdown / pointermove / pointerup + setPointerCapture). Never the HTML5 Drag-and-Drop API (it fails on touch screens). Every drag task also supports tap-card-then-tap-target.
 - All visible text comes from content/content.js. Never hard-code UI strings in HTML or page modules.
 - Use only CSS variables from css/tokens.css. Never invent new colors, fonts, sizes or radii.
@@ -260,6 +260,7 @@ v2 "TEMPLE CRAFT" LOOK — applies to everything below:
    - Height --topbar-h, fill --color-bg, bottom --border. Left: Back icon button. Middle: progress dots. Right: Language icon button.
 18. Rotate overlay (#rotate-overlay)
    - Full screen --color-bg, phone-rotate icon 64px --teal-600, "Please rotate your device 請將裝置橫放". Shown via @media (orientation:portrait).
+   - (Late Nov 2026: no longer shown; portrait now has its own layout, see 4. Layout.)
 
 ICONS: Phosphor Icons, duotone weight, color --wood-600 (on light) or --beige-50 (on teal). 22–28px.
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css">  → <i class="ph-duotone ph-hand-tap"></i>
@@ -302,6 +303,23 @@ PAGE CHANGE: cloud curtain — painted 祥雲 roll in from both sides, a medalli
   Maps with pins use object-fit: contain inside a wrapper with aspect-ratio: 3/2, so pin % coordinates stay correct.
 - Phone landscape ≈ 844×390 (compact type). Tablet landscape ≈ 1180×820 (regular type). Laptop ≈ 1536×722.
 - Side padding: max(16px, env(safe-area-inset-left/right)) for the notch.
+
+PHONE UPRIGHT (portrait, css/portrait.css, loaded last; landscape untouched)
+┌──────────────────────────┐
+│ 土地公 (7) My neighborhood │  52px: logo · stop number + title (2 lines) · 🔊 ♫ 文A
+│          map  🔊 ♫ 文A    │  (story pages: step chips, numbers only + the current step's name)
+├──────────────────────────┤
+│ STAGE: one column that    │
+│ scrolls — map first, then │
+│ the cards / activity      │
+│ under it                  │
+├──────────────────────────┤
+│ [extra actions row]       │  only when a page has them (Scan Again, Experience Again…)
+│ [Map] [📖 Story… ✓1/2] [Next: …] │  60px
+└──────────────────────────┘
+- The Map button moves from the top bar to the bottom bar (thumb reach).
+- Culture notes dock at the bottom of the screen (except next to pins on the big P04 3D view).
+- The app is exactly the visible screen (100dvh). Tested at 390×844, 360×640, 768×1024.
 ```
 
 ## 5. Page prompts
@@ -3768,7 +3786,7 @@ A peaceful rural landscape inspired by Meinong, Kaohsiung, a Hakka farming commu
 
 ## 9. QA checklist
 
-- [ ] Tested on at least 1 phone + 1 tablet, iOS Safari and Android Chrome, in landscape. Portrait shows the rotate overlay.
+- [ ] Tested on at least 1 phone + 1 tablet, iOS Safari and Android Chrome, in landscape, and on a phone held upright (portrait layout: one column, Map · Story and words · Next at the bottom).
 - [ ] Opened from the HTTPS link; camera permission prompt works; 'Continue without AR' works when the camera is blocked.
 - [ ] The printed card is detected within about 3 seconds in normal classroom light.
 - [ ] Every instruction and button has English + Traditional Chinese. No Simplified characters (search for 这, 们, 时, 说).

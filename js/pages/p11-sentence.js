@@ -61,7 +61,8 @@ export function render(stage, ctx) {
 
   /* ---------- panel: Experience Again · Give Feedback · Next ---------- */
   const againBtn = button(c.again, { variant: 'secondary', onClick: () => confirmAgain() });
-  const feedbackBtn = button(c.feedback, { variant: 'secondary', onClick: () => ctx.go('p12') });
+  // Give Feedback: the ending page opens with its sheet scrolled to the feedback form
+  const feedbackBtn = button(c.feedback, { variant: 'secondary', onClick: () => { ctx.state.toFeedback = true; ctx.go('p12'); } });
   ctx.panel({
     body: [el('div', { class: 'chip-row' }, c.chips.map((v) => chip(v, { iconName: 'book', onClick: () => ctx.openVocab(v.en) })))],
     secondary: [againBtn, feedbackBtn],

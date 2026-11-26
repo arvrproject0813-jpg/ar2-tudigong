@@ -1,0 +1,492 @@
+/* portrait.css — the phone version: everything here is inside @media (orientation: portrait), so the landscape
+   layouts (laptops, tablets and phones held sideways) are not touched. Loaded last. */
+
+@media (orientation: portrait) {
+  :root { --topbar-h: 52px; --bar-h: 60px; }
+  #rotate-overlay { display: none !important; }
+
+  /* ================= the frame ================= */
+  /* top bar: logo · where you are (or the scene's steps) · voice, music, language.
+     The Map button moves down to the bar under the stage, where the thumb is. */
+  .topbar { gap: 8px; padding-left: max(10px, env(safe-area-inset-left, 0px)); padding-right: max(10px, env(safe-area-inset-right, 0px)); }
+  .topbar .tb-left, .topbar .tb-right { flex: none; }
+  .tb-logo { padding: 2px; }
+  .tb-logo .cal { font-size: 24px; }
+  .topbar .tb-mid { gap: 8px; justify-content: flex-start; }
+  .tb-map { display: none; }
+  .tb-title { gap: 7px; min-width: 0; }
+  .tb-num { width: 24px; height: 24px; font-size: 12.5px; box-shadow: 0 0 0 1.5px rgba(18, 63, 60, .7), 0 0 0 3px var(--gold-300); }
+  .tb-title-text { display: flex; }
+  .tb-title-text small { display: none; }
+  .tb-title-text > .bi { display: flex; flex-direction: column; min-width: 0; }
+  .tb-title-text > .bi > * { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: 0; }
+  .tb-title-text > .bi .en { font-size: 14px; line-height: 1.15; }
+  .tb-title-text > .bi .zh { font-size: 11.5px; line-height: 1.2; }
+  .tb-title.is-map { min-width: 0; }
+  .tb-title.is-map .bi { display: flex; flex-direction: column; line-height: 1.1; white-space: nowrap; }
+  .tb-title.is-map .en { font-size: 14.5px; }
+  .tb-title.is-map .zh { font-size: 11.5px; }
+  .tb-title.is-map .ic { display: none; }
+  .tb-meter { width: 54px; margin-left: auto; }
+  .topbar .tb-count { margin-right: 0; font-size: 12px; }
+  .topbar.has-steps .tb-title { display: none; }
+  .tb-steps { margin: 0 auto; padding: 3px; gap: 2px; }
+  .tb-step { height: 30px; padding: 0 3px; gap: 5px; }
+  .tb-step > b { width: 24px; height: 24px; font-size: 12px; }
+  .tb-step .bi { display: none; }
+  .tb-step.is-on { padding-right: 10px; }
+  .tb-step.is-on .bi { display: inline; font-size: 12.5px; }
+  .tb-step.is-on .bi .zh { display: none; }
+  .topbar .tb-right { gap: 5px; }
+  .topbar .icon-btn { width: 36px; height: 36px; }
+  .topbar .icon-btn svg { width: 18px; height: 18px; }
+  .topbar .icon-btn.lang-btn { padding: 0 9px 0 7px; gap: 4px; font-size: 12px; }
+  .topbar .lang-btn svg { width: 16px; height: 16px; }
+
+  /* the bar under the stage: Map · Story and words · Next */
+  .sheet-bar { gap: 8px; padding-left: max(10px, env(safe-area-inset-left, 0px)); padding-right: max(10px, env(safe-area-inset-right, 0px)); }
+  .sheet-map {
+    flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+    width: 52px; height: calc(var(--bar-h) - 12px); padding: 0; border: 0; border-radius: 14px; cursor: pointer;
+    background: var(--grad-lacquer); color: var(--beige-50); box-shadow: inset 0 0 0 1.5px var(--gold-300), 0 2px 0 #0D2E2C;
+    line-height: 1;
+  }
+  .sheet-map .ic svg { width: 20px; height: 20px; }
+  .sheet-map .bi { display: flex; flex-direction: column; align-items: center; }
+  .sheet-map .en { font-size: 10.5px; font-weight: 800; }
+  .sheet-map .zh { font-size: 9.5px; color: var(--gold-100); }
+  .sheet-map:active { transform: translateY(1px); }
+  .sheet-toggle { flex: none; gap: 6px; padding: 0 9px 0 5px; height: calc(var(--bar-h) - 12px); border-radius: 14px; }
+  .sheet-toggle > .ic { width: 30px; height: 30px; }
+  .sheet-toggle > .ic svg { width: 15px; height: 15px; }
+  .sheet-label .en { font-size: 12.5px; }
+  .sheet-label .zh { display: block; font-size: 10.5px; }
+  .sheet-tasks { padding: 2px 6px 2px 3px; font-size: 11.5px; }
+  .sheet-tasks .ic { width: 15px; height: 15px; }
+  .sheet-chev { display: none; }
+  .sheet-next { flex: 1 1 0; min-width: 0; max-width: none; margin-left: 0; min-height: calc(var(--bar-h) - 12px) !important; padding: 2px 12px !important; }
+  .sheet-next .en { font-size: 14px; }
+  .sheet-next .zh { font-size: 11px; }
+  /* extra page actions (Scan Again, Experience Again…) get their own row above */
+  .sheet-bar:has(.sheet-extra) { flex-wrap: wrap; height: auto; row-gap: 8px; padding-top: 8px; padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px)); }
+  .sheet-bar .sheet-extra { order: -1; flex: 1 1 100%; margin: 0; gap: 8px; }
+  .sheet-bar .sheet-extra .btn { flex: 1 1 0; min-width: 0; min-height: 40px; padding: 3px 10px; }
+  .sheet-bar .sheet-extra .btn .en { font-size: 13.5px; }
+  .sheet-bar .sheet-extra .btn .zh { font-size: 10.5px; }
+  .sheet-bar:has(.sheet-extra) > .sheet-map, .sheet-bar:has(.sheet-extra) > .sheet-toggle, .sheet-bar:has(.sheet-extra) > .sheet-next { height: 46px; min-height: 46px !important; }
+
+  /* the story sheet fills the width */
+  .sheet-panel { width: 100%; max-height: calc(100dvh - var(--topbar-h) - var(--bar-h) - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); }
+  .sheet-panel .panel-inner { padding: 0 18px 20px; }
+
+  /* toasts and the voice guide fit the width */
+  .toast { max-width: calc(100% - 24px); }
+  .guide-bar { max-width: calc(100% - 20px); bottom: 10px; gap: 8px; padding: 6px 6px 6px 7px; border-radius: 16px; }
+  .guide-ic, .guide-btn { width: 34px; height: 34px; }
+  .guide-text { font-size: 13.5px; }
+  .guide-text .zh { font-size: 12.5px; }
+
+  /* dialogs: picture above the words */
+  .modal-scrim { padding: 12px; }
+  .modal { padding: 18px 16px; }
+  .info-body { grid-template-columns: 1fr; gap: 12px; }
+  .info-pic { width: min(240px, 70%); justify-self: center; }
+  .info-pic.p10-info-pic { width: min(300px, 90%); }
+}
+
+@media (orientation: portrait) {
+  /* ================= P01 welcome: the knoll at the bottom, the title over the sky above ================= */
+  .welcome { background: var(--img-clouds-far) 0 14% / 190% auto repeat-x, linear-gradient(180deg, #1E4542 0%, #2B5A56 45%, #3C6E68 80%); }
+  .w-art {
+    left: 50%; top: auto; bottom: 0; transform: translateX(-59.6%);
+    width: min(228cqw, 110cqh);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 16%); mask-image: linear-gradient(180deg, transparent 0, #000 16%);
+  }
+  .welcome::before { background: linear-gradient(180deg, rgba(18, 63, 60, .72) 0%, rgba(18, 63, 60, .45) 34%, rgba(18, 63, 60, 0) 56%); }
+  .w-title {
+    top: calc(env(safe-area-inset-top, 0px) + 66px); transform: none; left: 0; right: 0; width: auto;
+    padding: 0 20px; align-items: center; text-align: center; gap: 1.1vh;
+  }
+  .w-brush span { font-size: min(24cqw, 12cqh); }
+  .w-brush::after { font-size: clamp(12px, 3.6cqw, 18px); right: -2.4em; }
+  .w-name { font-size: clamp(22px, 7cqw, 32px); }
+  .w-name-zh { font-size: clamp(15px, 4.6cqw, 20px); }
+  .w-sub { display: block; font-size: clamp(12.5px, 3.6cqw, 15px); }
+  .w-question { text-align: left; max-width: 380px; font-size: clamp(12.5px, 3.5cqw, 14.5px); padding: 8px 12px; }
+  .w-start { min-width: min(280px, 80cqw); margin-top: 1vh; }
+  .w-gate { left: 50%; top: 80%; }
+  .w-skip { bottom: max(14px, env(safe-area-inset-bottom, 0px)); }
+}
+@media (orientation: portrait) and (max-height: 700px) {
+  .w-sub { display: none; }
+  .w-question { font-size: 12px; padding: 6px 10px; }
+  .w-title { top: calc(env(safe-area-inset-top, 0px) + 60px); }
+}
+
+@media (orientation: portrait) {
+  /* ================= P02 scan: the camera-setup card stacks (scene above, steps below) ================= */
+  .scan-setup { padding: 12px; place-items: start center; }
+  .cs-card { grid-template-columns: 1fr; border-radius: 18px; }
+  .cs-scene { display: flex; align-items: center; justify-content: center; min-height: 0; height: clamp(150px, 24cqh, 220px); padding: 14px 10px 34px; box-shadow: inset 0 -2px 0 var(--gold-500); }
+  .cs-tablet { flex: none; width: auto; height: 100%; padding: 7px; border-radius: 16px; }
+  .cs-main { padding: 14px 14px 16px; gap: 8px; }
+  .cs-eyebrow { display: none; }
+  .cs-intro { display: block; font-size: 13.5px; }
+  .cs-main h2 .en { font-size: 22px; } .cs-main h2 .zh { font-size: 15px; }
+  .cs-step { grid-template-columns: 24px 34px 1fr; gap: 8px; padding: 7px 10px 7px 8px; }
+  .cs-ic { width: 34px; height: 34px; }
+  .cs-t { font-size: 15px; } .cs-t .zh { font-size: 12.5px; }
+  .cs-d { font-size: 13px; line-height: 1.35; } .cs-d .zh { font-size: 12px; }
+  .cs-step.is-on { transform: none; }
+  .btn.setup-start { min-height: 50px; }
+  .cs-voice > .guide-bar .guide-ic { display: none; }
+  /* the scanner: the frame fits the width */
+  .scan-frame { top: 44%; height: auto; width: 88%; max-width: none; }
+  .scan-status { bottom: 14px; padding: 7px 14px; font-size: 14px; max-width: calc(100% - 24px); }
+  .scan-error { padding: 14px; }
+  .scan-error-card { padding: 18px; }
+
+  /* ================= P03 how to play: two columns ================= */
+  .howto-wrap { justify-content: flex-start; overflow-y: auto; padding: 14px 14px 18px; }
+  .howto-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .howto-tile { padding: 14px 10px 12px; }
+  .howto-tile .ic { width: 46px; height: 46px; }
+  .howto-tile .ic svg { width: 22px; height: 22px; }
+  .howto-tile .label .en { font-size: 15.5px; }
+  .howto-tile .label .zh { font-size: 13px; }
+  .howto-tile .desc { display: block; font-size: 12.5px; }
+}
+
+@media (orientation: portrait) {
+  /* ================= P04 introduction: the 3D neighbourhood fills the screen ================= */
+  .map-area { padding: 10px 10px 60px; place-items: start center; }
+  .map-area .map-frame { width: calc(100cqw - 44px); height: calc(100cqh - 94px); aspect-ratio: auto; }
+  .p04-question { bottom: 10px; left: 10px; max-width: calc(100% - 20px); }
+}
+
+@media (orientation: portrait) {
+  /* ================= P05 street corner: the map on top, the riddle deck and passport below ================= */
+  .p05 { place-items: start center; padding: 12px; overflow-y: auto; }
+  .p05-group { flex-direction: column; align-items: stretch; width: 100%; gap: 12px; }
+  .p05 .map-frame.p05-frame { width: calc(100cqw - 24px - 2 * var(--frame, 12px)); }
+  .p05-traywrap { order: 2; width: 100%; height: auto; align-self: auto; }
+  .p05-tray { position: relative; inset: auto; min-height: 200px; }
+  .p05-tray .node-card.p05-riddle { min-height: 0; padding: 12px 12px 14px; gap: 8px; }
+  .p05-riddle-head { font-size: 14px; }
+  .p05-riddle-text { font-size: 15.5px; line-height: 1.38; }
+  .p05-riddle-text .zh { font-size: 14px; }
+  .p05-passport { width: 50px; }
+  .p05-zone { width: 46px; height: 46px; }
+  .p05-zone .q { width: 20px; height: 20px; font-size: 13px; }
+  .p05 .pin-tag { font-size: 11px; }
+  .p05 .pin-tag.p05-tag-left { margin-top: 0; transform: translate(calc(-100% - 22px), -50%); }
+
+  /* ================= P06 land use: chips, then the map, then the timeline ================= */
+  .p06 { place-items: start center; padding: 14px 12px; overflow-y: auto; }
+  .p06-group { width: 100%; gap: 12px; }
+  .p06 .map-frame.p06-frame { width: calc(100cqw - 24px - 2 * var(--frame, 12px)); }
+  .p06-legend { gap: 6px; }
+  .p06-layer { min-height: 30px; font-size: 13px; padding: 3px 10px 3px 4px; }
+  .p06-layer .ic { width: 22px; height: 22px; }
+  .p06-timeline { flex-wrap: wrap; justify-content: center; gap: 8px 10px; padding: 8px 12px 10px; }
+  .p06-timeline .p06-track { flex: 1 1 160px; }
+  .p06-compare { flex: 1 1 100%; justify-content: center; }
+  .p06-era { top: 8px; font-size: 11px; }
+  .p06-caption { font-size: 10px; }
+  .p06-clues { right: 8px; bottom: 8px; }
+}
+
+@media (orientation: portrait) {
+  /* ================= story pages (P07): one column ================= */
+  .st-hero { width: calc(100% - 32px); grid-template-columns: 1fr; min-height: 0; padding: 14px 0 70px; gap: 12px; align-items: start; }
+  .st-hero-art { order: -1; justify-self: center; width: min(100%, 360px); }
+  .st-hero-art img { max-height: 32cqh; }
+  .st-hero-text { gap: 12px; }
+  .st-vseal { font-size: 15px; padding: 8px 5px; }
+  .st-kicker-en { font-size: 12.5px; }
+  .st-title .en { font-size: clamp(26px, 8cqw, 34px); }
+  .st-title .zh { font-size: clamp(18px, 5.4cqw, 23px); }
+  .st-intro { font-size: 16.5px; }
+  .st-intro .zh { font-size: 15px; }
+  .st-plan { padding: 12px 14px 10px; }
+  .st-plan li { grid-template-columns: 30px 18px minmax(0, 1fr); }
+  .st-plan-no { width: 30px; height: 30px; font-size: 15px; }
+  .st-plan-text { font-size: 15px; }
+  .st-plan-text .zh { font-size: 13.5px; }
+  .st-start { align-self: stretch; min-height: 54px; }
+  .st-scrollhint { bottom: 16px; }
+
+  .st-head { margin-bottom: 14px; }
+  .st-step { font-size: 13px; }
+  .st-h2 .en { font-size: 26px; }
+  .st-h2 .zh { font-size: 18px; }
+  .st-help { font-size: 15px; }
+  .st-help .zh { font-size: 13.5px; }
+  .st-do .st-step { display: inline-flex; }
+  .st-do .st-help { display: none; }          /* the lock strip and the voice guide say what to do; the board fits the screen */
+
+  .st-learn { width: calc(100% - 24px); padding-top: 30px; }
+  .st-card {
+    top: calc(10px + var(--i) * 12px); height: min(620px, calc(100cqh - 24px - var(--i) * 12px));
+    grid-template-columns: 1fr; grid-template-rows: minmax(0, 40%) minmax(0, 1fr); border-radius: 20px;
+  }
+  .st-card-pic { position: relative; overflow: hidden; padding: 0; box-shadow: inset 0 -1px 0 rgba(201, 149, 46, .5); }
+  .st-card-pic img { position: absolute; left: 14px; top: 14px; width: calc(100% - 28px); height: calc(100% - 28px); }
+  .st-card-body { justify-content: flex-start; padding: 16px 18px 18px; gap: 10px; }
+  .st-card-title .en { font-size: 24px; }
+  .st-card-title .zh { font-size: 18px; }
+  .st-card-text { font-size: 16.5px; line-height: 1.5; }
+  .st-card-text .zh { font-size: 15px; line-height: 1.6; }
+  .st-word { padding: 9px 12px 9px 9px; }
+  .st-word-term .en { font-size: 17px; }
+  .st-word small { font-size: 13.5px; }
+
+  /* do: the four exhibits in a 2 × 2 grid, the meaning cards in a 2 × 2 grid below */
+  .st-do { width: calc(100% - 24px); padding: 22px 0 12px; }
+  .st-board { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; gap: 12px; }
+  .st-exhibits { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: minmax(100px, 1fr) auto minmax(100px, 1fr) auto; gap: 10px 12px; }
+  .st-ex-case { min-height: 100px; border-radius: 999px 999px 8px 8px / 60px 60px 8px 8px; }
+  .st-ex-label { padding: 8px 6px 7px; gap: 5px; }
+  .st-ex-name .en { font-size: 16px; }
+  .st-ex-name .zh { font-size: 13.5px; }
+  .st-ex-slot { min-height: 40px; }
+  .st-ex-tap { font-size: 13px; }
+  .st-ex-tap .zh { font-size: 11.5px; }
+  .st-ex-holder { font-size: 12px; padding: 4px 6px; }
+  .st-ex-holder .bi { display: block; }
+  .st-ex-holder .zh { font-size: 11px; }
+  .st-plaque { font-size: 13px; padding: 5px 14px; }
+  .st-plaque .zh { font-size: 11.5px; }
+  .st-ex-seal { width: 30px; height: 30px; font-size: 17px; }
+  .st-fan { height: auto; min-height: 0; display: flex; flex-direction: column; gap: 10px; position: relative; padding-bottom: 4px; }
+  .fan-title { position: static; transform: none; align-self: center; font-size: 15px; }
+  .fan-cards { position: relative; inset: auto; height: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .fan-card { position: relative; left: auto; bottom: auto; margin: 0; width: auto; height: 70px; transform: none; }
+  .st-do.is-matching .fan-card:not(.is-placed):hover { transform: translateY(-3px); }
+  .fan-card.is-selected { transform: translateY(-4px) scale(1.03); }
+  .fan-card.is-placed { display: none; }          /* a placed card leaves the grid, so the ones still to place move up */
+  .fan-front { font-size: 13px; line-height: 1.2; padding: 6px 12px; }
+  .fan-front .zh { font-size: 11.5px; }
+  .fan-grip { display: none; }
+  .fan-back { flex-direction: row; gap: 8px; }
+  .fan-back-seal { width: 30px; height: 30px; font-size: 17px; }
+  .fan-back-label { font-size: 10.5px; text-align: left; }
+  .fan-lock { left: 0; right: 0; top: calc(50% + 14px); bottom: auto; transform: translateY(-50%); width: auto; max-width: none; gap: 8px; padding: 7px 12px 7px 7px; border-radius: 14px; }
+  .fan-lock-text { font-size: 13.5px; }
+  .fan-lock-text .zh { font-size: 12px; }
+
+  /* badge: picture, then the badge and the words, then the two buttons */
+  .st-badge { width: calc(100% - 24px); padding: 30px 0 8px; }
+  .st-finale { grid-template-columns: 1fr; }
+  .st-finale-text { padding: 16px 16px 18px; gap: 10px; }
+  .st-medal .medal { width: 54px; height: 54px; }
+  .st-medal-name .en { font-size: 19px; }
+  .st-take-title .en { font-size: 21px; }
+  .st-take { font-size: 15.5px; }
+  .st-take .zh { font-size: 14px; }
+  .st-land-tag { font-size: 11.5px; padding: 3px 8px 3px 3px; }
+  .st-land-tag .ic { width: 22px; height: 22px; }
+  .st-nextrow { flex-direction: column; align-items: stretch; gap: 10px; }
+  .st-nextrow .btn { min-width: 0; min-height: 52px; }
+  .st-end { height: 30px; }
+}
+
+@media (orientation: portrait) {
+  /* ================= P08 community map ================= */
+  .scene.p08 { padding: 12px; place-items: start center; overflow-y: auto; }
+  /* the board always takes the full width (on a short phone the page scrolls rather than shrinking it) */
+  .p08-wrap { --head: 44px; --foot: 270px; --gap: 10px; --fr: 10px; --fw: min(100cqw - 24px - 2 * var(--fr), 1180px); height: auto; min-height: 100%; justify-content: flex-start; }
+  /* Kaohsiung: the map, with its legend card underneath (the frame is as tall as they are; the page scrolls if needed) */
+  .p08-wrap.is-map { --fw: min(100cqw - 24px - 2 * var(--fr), 520px); }
+  .p08-wrap.is-map .p08-frame { aspect-ratio: auto; }
+  .p08-wrap.is-map .p08-kview { position: relative; inset: auto; }
+  .p08-kview { grid-template-columns: 1fr; grid-template-rows: auto auto; }
+  .p08-kmap { height: auto; width: 84%; justify-self: center; box-shadow: 0 0 0 1px rgba(138, 100, 22, .35); }
+  .p08-legend { gap: 10px; padding: 12px 14px; }
+  .p08-legend-text { font-size: 14px; }
+  .p08-legend-text .zh { font-size: 12.5px; }
+  .p08-key { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 4px 12px; }
+  .btn.p08-open { min-height: 48px; flex: none; }
+  /* the board, then the place cards (3 × 2) and the route bar */
+  .p08-tray { flex-wrap: wrap; row-gap: 8px; padding: 10px; }
+  .p08-routebar { flex-wrap: nowrap; padding: 10px; }
+  .p08-tray-head { flex: 1 1 100%; flex-direction: row; align-items: center; gap: 10px; }
+  .p08-tray-intro { display: block; flex: 1; font-size: 12px; }
+  .p08-cards { flex: 1 1 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .node-card.p08-card { min-height: 66px; font-size: 12px; }
+  .node-card.p08-card .zh { font-size: 10.5px; }
+  .btn.p08-build { flex: 1 1 100%; justify-content: center; min-height: 50px; }
+  .p08-route-top { flex-wrap: wrap; row-gap: 6px; }
+  .p08-route-top .p08-tray-intro { flex: 1 1 60%; }
+  .p08-route-actions { flex: 1 1 100%; justify-content: flex-end; }
+  .p08-think { flex: 1 1 100%; }
+  .p08-head .board-title { font-size: 15px; padding: 5px 12px; }
+  .p08-head .board-title .zh { font-size: 12.5px; }
+}
+
+@media (orientation: portrait) and (max-height: 700px) {
+  .p08-kmap { width: 70%; }
+  .p08-legend { gap: 8px; padding: 10px 12px; }
+  .p08-legend .board-title { font-size: 16px; padding: 4px 14px; }
+  .p08-legend .board-title .zh { font-size: 13px; }
+  .p08-legend-text { font-size: 13px; }
+  .p08-legend-text .zh { font-size: 12px; }
+}
+
+@media (orientation: portrait) {
+  /* a culture note whose map is too small to hold it docks at the bottom of the screen */
+  .culture-note.is-docked {
+    position: absolute; z-index: 45; left: 12px; right: 12px; top: auto !important; bottom: 12px; width: auto; max-height: 62%; overflow-y: auto;
+    padding: 16px 44px 16px 16px; font-size: 14.5px; box-shadow: inset 0 4px 0 var(--gold-500), inset 0 0 0 1px rgba(201, 149, 46, .6), 0 -6px 30px rgba(58, 42, 30, .35);
+    animation: note-dock .3s var(--ease) both;
+  }
+  .culture-note.is-docked::before { display: none; }
+  .culture-note.is-docked h3 .en { font-size: 19px; }
+  @keyframes note-dock { from { transform: translateY(30px); opacity: 0; } }
+}
+
+@media (orientation: portrait) {
+  /* ================= P09 Touya and Weiya ================= */
+  .scene.p09 { place-items: start center; overflow-y: auto; padding: 12px; }
+  .p09-wrap { width: 100%; max-height: none; gap: 10px; }
+  /* the lunar year in two rows of six months */
+  .p09-cal { padding: 10px 10px 12px; }
+  .p09-cal-head { display: flex; }
+  .p09-legend { display: flex; font-size: 11px; }
+  .p09-strip { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 38px 5px; padding-top: 36px; }
+  .p09-m-name b { font-size: 14px; }
+  .p09-m-name .zh { font-size: 10.5px; }
+  .p09-month { padding: 5px 1px 7px; gap: 4px; }
+  .p09-mark { top: -35px; }
+  .p09-arc { display: none; }
+  /* the three date sheets, one under another */
+  .p09-dates { grid-template-columns: 1fr; gap: 10px; }
+  .p09-date { display: grid; grid-template-columns: 96px minmax(0, 1fr); grid-template-rows: auto auto 1fr; text-align: left; }
+  .p09-date-top { grid-column: 1 / -1; padding: 7px 12px 6px; font-size: 14px; text-align: center; }
+  .p09-date-day { grid-column: 1; grid-row: 2 / span 2; align-self: center; padding: 6px 6px 10px; text-align: center; font-size: 26px; }
+  .p09-date-day .zh { font-size: 17px; }
+  .p09-date-text { grid-column: 2; margin: 9px 12px 6px 0; font-size: 13px; }
+  .p09-date-text .zh { font-size: 12px; }
+  .p09-stamp { grid-column: 2; margin: 0 12px 10px 0; min-height: 52px; }
+  .p09-stamp-slot { padding: 6px 10px; font-size: 12px; }
+  .p09-stamp-slot .bi { display: block; }
+  .p09-stamp-seal { width: 48px; height: 48px; font-size: 17px; margin-right: 90px; }
+  .p09-stamp-name { margin-left: 50px; font-size: 16px; }
+  /* the term cards: three in a row */
+  .p09-tray { flex-wrap: wrap; gap: 8px; padding: 10px; }
+  .p09-tray-head { flex: 1 1 100%; flex-direction: row; align-items: center; gap: 10px; }
+  .p09-tray-intro { display: block; flex: 1; }
+  .p09-terms { flex: 1 1 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .node-card.p09-term { flex-direction: column; gap: 5px; min-height: 92px; padding: 8px 4px; text-align: center; font-size: 15px; }
+  .p09-term-seal { width: 38px; height: 38px; font-size: 14px; }
+  /* afterwards */
+  .p09-context { flex-direction: column; }
+  .p09-context-prompt { display: flex; flex: none; }
+  .p09-ctx { min-height: 76px; }
+  /* the story card */
+  .p09-story { grid-template-columns: 1fr; width: 94%; max-height: calc(100% - 16px); overflow-y: auto; padding: 14px; gap: 10px; }
+  .p09-story-pic { max-width: 300px; justify-self: center; }
+  .p09-story-text { padding-right: 34px; }
+}
+
+@media (orientation: portrait) {
+  /* ================= P10 Bogong in Meinong: the trip card, then the matching ================= */
+  .scene.p10 { place-items: start center; overflow-y: auto; padding: 12px; }
+  .p10-wrap { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; height: auto; max-height: none; gap: 12px; }
+  .p10-trip { display: flex; flex-direction: column; gap: 8px; padding: 12px; }
+  .p10-trip-head { display: flex; }
+  .p10-carved { flex: none; height: clamp(210px, 34cqh, 300px); min-height: 0; }
+  .p10-prompt { margin: 2px 0 0; font-size: 13px; }
+  .p10-cards-title { display: block; }
+  .p10-cards-row { gap: 8px; }
+  .p10-mcard-name { display: block; font-size: 12px; }
+  .p10-mcard-name .zh { font-size: 10.5px; }
+  .p10-match { padding: 12px; gap: 10px; }
+  .p10-match-intro { display: block; }
+  .p10-cols { grid-template-columns: minmax(0, .85fr) auto minmax(0, 1.2fr); gap: 6px; }
+  .p10-arrow { width: 16px; }
+  .p10-arrow svg { width: 16px; height: 16px; }
+  .node-card.p10-concept { min-height: 54px; gap: 7px; padding: 7px 8px; font-size: 14px; }
+  .node-card.p10-concept .ic { width: 30px; height: 30px; }
+  .p10-meaning { padding: 8px 9px 9px; gap: 6px; }
+  .p10-meaning p { font-size: 12.5px; }
+  .p10-meaning p .zh { font-size: 11.5px; }
+  .p10-after { flex-direction: column; align-items: stretch; }
+  .btn.p10-compare { justify-content: center; }
+  /* the compare card */
+  .cmp-table { grid-template-columns: minmax(84px, .62fr) 1fr 1fr; }
+  .cmp-row > span { padding: 7px 8px; font-size: 12.5px; }
+  .cmp-row > span .zh { font-size: 11.5px; }
+  .cmp-name { font-size: 15px !important; gap: 5px; }
+  .cmp-name .ic { width: 24px; height: 24px; }
+}
+
+@media (orientation: portrait) {
+  /* ================= P11 Say it in English: the sentence card first, the sentence starters under it ================= */
+  .scene.p11 { place-items: start center; overflow-x: hidden; overflow-y: auto; padding: 12px; }
+  .p11-bg { overflow: hidden; }
+  .p11-wrap { width: 100%; max-height: none; gap: 10px; }
+  .p11-card { order: 1; flex: none; overflow: visible; padding: 12px 12px 14px; gap: 10px; }
+  .p11-starters { order: 2; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 12px; }
+  .p11-starters-title, .p11-starter-chips { flex: 1 1 100%; }
+  .p11-starters-tip { display: block; flex: 1 1 100%; font-size: 12px; }
+  .p11-core { display: flex; }
+  .p11-core p { font-size: 13px; }
+  .p11-head { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  .p11-head h2 { font-size: 19px; }
+  .p11-instruction { text-align: left; }
+  .p11-tabs { gap: 6px; }
+  .p11-tab { flex-direction: column; justify-content: center; gap: 3px; min-height: 66px; padding: 6px 4px; text-align: center; font-size: 13.5px; }
+  .p11-tab .zh { font-size: 11.5px; }
+  .p11-tab b { width: 24px; height: 24px; font-size: 13px; }
+  .p11-prompt { font-size: 13px; }
+  .p11-sentence { font-size: 20px; min-height: 64px; padding: 12px 10px; gap: 8px 5px; }
+  .p11-blank-line { width: 96px; height: 34px; }
+  .p11-zh { font-size: 15px; }
+  .p11-words { gap: 7px; }
+  .p11-word { min-height: 44px; padding: 5px 12px; font-size: 14px; }
+  .p11-word .zh { font-size: 11.5px; }
+  .p11-done { grid-template-columns: minmax(0, 1fr); padding: 10px; }
+  .p11-done-line { font-size: 16px; }
+  .p11-recap { font-size: 12.5px; }
+  .p11-speak { flex-wrap: wrap; }
+  .p11-speak p { flex: 1 1 100%; font-size: 12.5px; }
+  .btn.p11-listen { flex: 1 1 auto; justify-content: center; min-height: 46px; }
+  .p11-next { display: block; }
+}
+
+@media (orientation: portrait) {
+  /* ================= P12 the journey's end: my map, my badges, my words, one under another ================= */
+  .scene.p12 { place-items: start center; overflow-y: auto; padding: 12px; }
+  .p12-wrap { width: 100%; max-height: none; gap: 10px; }
+  .p12-hero { display: flex; }
+  .p12-title { max-width: 100%; white-space: normal; text-align: center; font-size: 16px; padding: 6px 14px; }
+  .p12-title .zh { font-size: 13px; }
+  .p12-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "map" "badges" "words"; gap: 10px; }
+  .p12-card { padding: 12px; gap: 8px; }
+  .p12-sub { display: block; }
+  .p12-map.is-empty { aspect-ratio: auto; padding: 16px 14px; gap: 8px; }
+  .p12-map.is-empty p { font-size: 13.5px; }
+  .p12-empty-ic { display: grid; }
+  .p12-badge-row { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .p12-badge { padding: 7px 2px; }
+  .p12-badge .medal { width: 46px; height: 46px; }
+  .p12-badge-name { display: block; font-size: 11.5px; }
+  .p12-badge-name .zh { font-size: 10.5px; }
+  .p12-badge-info { flex-wrap: wrap; }
+  .p12-badge-info .medal.is-mini { display: inline-block; }
+  .p12-badge-info-text { flex: 1 1 180px; font-size: 12.5px; }
+  .p12-badge-info-text .bi.stack .zh { display: block; }
+  .chip.p12-badge-go { margin-left: auto; }
+  .p12-word-chips { overflow: visible; }
+  .p12-word-chips .chip { min-height: 32px; font-size: 12.5px; }
+  .p12-word-chips .chip svg { display: inline-block; }
+}
+
+@media (orientation: portrait) {
+  /* ================= the journey map ================= */
+  .jm-continue { gap: 10px; }
+  .jm-cont-text small { font-size: 11px; letter-spacing: .03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .jm-cont-text > .bi .en { font-size: 16.5px; }
+  .jm-cont-text > .bi .zh { font-size: 14px; }
+}

@@ -170,9 +170,7 @@ export function render(stage, ctx) {
     if (animate) {
       timers.push(setTimeout(() => fan.classList.remove('is-flipping'), 1400));
       clearToasts(); toast(c.matchUnlock, 'success', 4000); playClick();
-      // bring the cards into view if they are below the screen
-      const r = fan.getBoundingClientRect(), sr = story.scroller.getBoundingClientRect();
-      if (r.bottom > sr.bottom - 8) story.scroller.scrollBy({ top: r.bottom - sr.bottom + 16, behavior: reduce ? 'auto' : 'smooth' });
+      fanIntoView();
     }
     group?.destroy();
     group = createDragGroup({
@@ -182,6 +180,11 @@ export function render(stage, ctx) {
       onCorrect: (card) => match(card.dataset.id, true),
       onWrong: (card) => { playMiss(); clearToasts(); toast(c.objects[card.dataset.id].hint, 'hint'); picking(); },
     });
+  }
+  // bring the meaning cards into view if they are below the screen (on a phone the exhibits grow as plaques are fixed)
+  function fanIntoView() {
+    const r = fan.getBoundingClientRect(), sr = story.scroller.getBoundingClientRect();
+    if (r.height && r.bottom > sr.bottom - 8) story.scroller.scrollBy({ top: r.bottom - sr.bottom + 16, behavior: reduce ? 'auto' : 'smooth' });
   }
   // a meaning card is selected: the exhibits that can still take one glow softly
   function picking() { doSec.classList.toggle('is-picking', !!fan.querySelector('.fan-card.is-selected')); }
@@ -197,6 +200,7 @@ export function render(stage, ctx) {
     showPlaque(id, animate);
     layoutFan();
     picking();
+    if (animate && matched.size < ORDER.length) requestAnimationFrame(fanIntoView);
     playChime(matched.size - 1);
     clearToasts(); toast(k.goodMatch[goodI++ % k.goodMatch.length], 'success', 1800);
     progress();

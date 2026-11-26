@@ -130,6 +130,14 @@ export function render(stage, ctx) {
     primary: { text: c.again, alwaysEnabled: true, onClick: () => confirmAgain() },
     sheetLabel: c.sheetLabel,
   });
+  // arriving from "Give Feedback" (P11): open the sheet at the feedback form
+  if (ctx.state.toFeedback) {
+    delete ctx.state.toFeedback;
+    timers.push(setTimeout(() => {
+      ctx.openSheet();
+      timers.push(setTimeout(() => feedback.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }), 380));
+    }, 700));
+  }
   function confirmAgain() {
     const close = modal({
       title: c.startAgain,

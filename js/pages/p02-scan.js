@@ -143,7 +143,7 @@ export function render(stage, ctx) {
   overlay.hidden = true;
   setStatus('idle');
   stage.append(setup);
-  startBtn.focus();
+  startBtn.focus({ preventScroll: true });     // (no scrolling: on short screens that hid the card's title)
 }
 
 let cleanupSetup = null;
