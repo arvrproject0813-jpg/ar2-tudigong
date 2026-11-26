@@ -14,7 +14,9 @@ import { duckMusic, claimVoice, releaseVoice } from './sound.js';
 const DIR = `${AUDIO_DIR}guide/`;
 const audio = new Audio();
 audio.preload = 'auto';
-let token = 0, bar = null, hideTimer = null, speaking = false;
+let token = 0, bar = null, hideTimer = null, speaking = false, unwatch = null;
+// phones held upright: the bar covers more of a small screen, so it steps aside sooner (see watchScroll)
+const upright = () => matchMedia('(orientation: portrait)').matches;
 
 const setSpeaking = (v) => {
   speaking = v;
@@ -34,7 +36,21 @@ export function stopGuide() {
 export function clearGuide() {
   stopGuide();
   clearTimeout(hideTimer);
+  unwatch?.(); unwatch = null;
   bar?.remove(); bar = null;
+}
+
+/** Phones held upright: once the student scrolls the page, the words have been read: the bar hides (the voice goes on). */
+function watchScroll(stage) {
+  const shownAt = performance.now(), from = new Map();
+  const onScroll = (e) => {
+    const t = e.target;
+    if (!bar || bar.classList.contains('is-hidden') || !(t instanceof Element)) return;
+    if (performance.now() - shownAt < 1200 || !from.has(t)) { from.set(t, t.scrollTop); return; }   // (pages settle their own scroll as they open)
+    if (Math.abs(t.scrollTop - from.get(t)) > 48) bar.classList.add('is-hidden');
+  };
+  stage.addEventListener('scroll', onScroll, true);
+  return () => stage.removeEventListener('scroll', onScroll, true);
 }
 
 function playFiles(files) {
@@ -42,7 +58,7 @@ function playFiles(files) {
   claimVoice(stopGuide);                  // the narration or a P11 sentence stops: one voice at a time
   const step = (i) => {
     if (my !== token) return;
-    if (i >= files.length) { setSpeaking(false); releaseVoice(stopGuide); scheduleHide(); return; }
+    if (i >= files.length) { setSpeaking(false); releaseVoice(stopGuide); scheduleHide(upright() ? 3500 : 7000); return; }
     audio.src = files[i];
     if (bar) bar.dataset.line = /_zh\.mp3$/.test(files[i]) ? 'zh' : 'en';   // which line is being spoken (phones show just that one)
     audio.onended = () => step(i + 1);
@@ -66,6 +82,7 @@ export function playGuide(pageId, { host, lang, voiceOn }) {
   clearGuide();
   const g = CONTENT[pageId]?.guide;
   if (!g || !host) return;
+  const stage = host;
   host = host.querySelector('[data-guide-host]') || host;      // a page can offer a better spot (P02's camera setup card)
   const files = (lang === 'zh' ? ['zh'] : lang === 'en' ? ['en'] : ['en', 'zh']).map((l) => `${DIR}${pageId}_${l}.mp3`);
   const replay = el('button', { class: 'guide-btn', type: 'button', 'aria-label': plain(CONTENT.common.guideReplay), title: plain(CONTENT.common.guideReplay), html: icon('recenter') });
@@ -81,5 +98,6 @@ export function playGuide(pageId, { host, lang, voiceOn }) {
   });
   hide.addEventListener('click', (e) => { e.stopPropagation(); stopGuide(); bar.classList.add('is-hidden'); });
   host.append(bar);
-  if (voiceOn) playFiles(files); else scheduleHide(9000);
+  if (upright()) unwatch = watchScroll(stage);
+  if (voiceOn) playFiles(files); else scheduleHide(upright() ? 7000 : 9000);
 }

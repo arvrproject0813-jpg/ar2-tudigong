@@ -309,8 +309,9 @@ PAGE CHANGE: cloud curtain — painted 祥雲 roll in from both sides, a medalli
 
 PHONE UPRIGHT (portrait, css/portrait.css, loaded last; landscape untouched)
 ┌──────────────────────────┐
-│ 土地公 (7) My neighborhood │  52px: logo · stop number + title (2 lines) · 🔊 ♫ 文A
-│          map  🔊 ♫ 文A    │  (story pages: step chips, numbers only + the current step's name)
+│ 土地公 (7) My neighborhood │  52px: logo · stop number + title · 🔊 ♫ 雙語
+│          map  🔊 ♫ 雙語   │  (a long title shrinks a little, else takes 2 lines: never cut short;
+│                          │   story pages: step chips, numbers only + the current step's name)
 ├──────────────────────────┤
 │ STAGE: one column that    │
 │ scrolls — map first, then │
@@ -318,11 +319,17 @@ PHONE UPRIGHT (portrait, css/portrait.css, loaded last; landscape untouched)
 │ under it                  │
 ├──────────────────────────┤
 │ [extra actions row]       │  only when a page has them (Scan Again, Experience Again…)
-│ [Map] [📖 Story… ✓1/2] [Next: …] │  60px
+│ [Map] [📖 Story… ✓1/2] [Next stop ›] │  60px ("Next: <place>" stays the button's name)
 └──────────────────────────┘
-- The Map button moves from the top bar to the bottom bar (thumb reach).
-- Culture notes dock at the bottom of the screen (except next to pins on the big P04 3D view).
-- The app is exactly the visible screen (100dvh). Tested at 390×844, 360×640, 768×1024.
+- The Map button moves from the top bar to the bottom bar (thumb reach). The language button is just its word.
+- Voice guide: a slim strip, one spoken line at a time; it hides 3.5 s after speaking, or when the page is scrolled.
+- Culture notes dock at the bottom of the screen when the map is too small to hold them; on P04 they dock inside the
+  bottom of the 3D map, and the four places are also listed under the map as big buttons (tap = the pin).
+- P09: the term cards stay at the bottom of the screen while the dates scroll past.
+- Fingers: cards are picked up as they move; on a page that scrolls past the cards (P10) a swipe up/down scrolls,
+  sideways drags, a ¼ s press picks the card up; dragging near the top/bottom edge scrolls the page. Tap → tap works too.
+- Nothing important under 11px; tap targets ≥ 34px; text fields 16px on touch screens (no iPhone zoom).
+- The app is exactly the visible screen (100dvh). Tested at 360×740, 375×667, 390×844, 412×915, 430×932, 768×1024.
 
 SHORT LAPTOP SCREENS (e.g. 1920×1080 at 150 % scaling → about 1280×560 in the browser; the stage is ~425 px tall)
 - A map never shrinks to fit a column: on a wide stage it takes the full height and its controls stand beside it

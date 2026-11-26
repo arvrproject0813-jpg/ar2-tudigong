@@ -20,6 +20,8 @@ const zy = (y) => ZOOM.oy + (y - ZOOM.oy) * ZOOM.s;
 
 // 3D camera: starting view, zoom limits
 const VIEW = { pos: [0.62, 0.62, 0.98], target: [0, 0.04, 0], minDist: 0.45, maxDist: 2.2 };
+// a frame taller than it is wide (phones held upright): look down a little more steeply, so the neighbourhood fills the height
+const VIEW_TALL = { pos: [0.4, 0.8, 0.68], target: [0, 0.02, 0], minDist: 0.45, maxDist: 2.2 };
 
 let alive = false;
 let stop3D = null;
@@ -33,10 +35,26 @@ export function render(stage, ctx) {
   const frame = el('div', { class: 'map-frame' });
   const framed = el('div', { class: 'map-carved' }, frame);
   const pins = {};
+  // the open note: next to its pin in the frame, or (a small frame on a phone) docked at the bottom of the screen
+  const openNote = () => frame.querySelector('.culture-note') || stage.querySelector(':scope > .culture-note.is-docked');
+
+  // phones held upright: the four places are also listed under the map as big buttons (on a narrow screen the pins
+  // are small and close together). Tapping one is the same as tapping its pin. (Hidden on wider screens.)
+  const placeBtns = {};
+  const places = el('div', { class: 'p04-places', role: 'group', 'aria-label': plain(c.task) }, NODES.map((node) => {
+    const b = el('button', { class: `p04-place${node.temple ? ' is-temple' : ''}`, type: 'button', 'data-note-opener': '' },
+      el('span', { class: 'ic', 'aria-hidden': 'true', html: icon(node.icon) }),
+      bi(c.nodes[node.id].label, { layout: 'stack' }),
+      el('span', { class: 'p04-place-tick', 'aria-hidden': 'true', html: icon('check') }));
+    b.addEventListener('click', () => pins[node.id]?.click());
+    placeBtns[node.id] = b;
+    return b;
+  }));
 
   const progress = () => {
     const n = Math.min(seen.size, NEED);
     ctx.setTasks([{ text: c.task, done: seen.size >= NEED, count: `${n}/${NEED}` }]);
+    NODES.forEach((node) => placeBtns[node.id].classList.toggle('is-done', seen.has(node.id)));
   };
 
   /** Shared: build a pin + label for a node. position(pin, tag) is called by the 2D or 3D view. */
@@ -56,7 +74,8 @@ export function render(stage, ctx) {
       const open = () => {
         if (!alive) return;
         const { x, y } = getPct();
-        notePopover(frame, { xPct: x, yPct: y, title: data.label, body: data.note, onClose: () => { pin.classList.remove('is-active'); focusHook?.closed(node.id); } });
+        // (phones held upright: a tall enough map holds the note at its bottom, keeping the list of places under it free)
+        notePopover(frame, { xPct: x, yPct: y, title: data.label, body: data.note, dockInside: frame.clientHeight >= 300, onClose: () => { pin.classList.remove('is-active'); focusHook?.closed(node.id); } });
       };
       if (focusHook) focusHook.go(node.id, open); else open();
       const before = seen.size;
@@ -121,9 +140,12 @@ export function render(stage, ctx) {
     scene.add(n.root);
 
     const camera = new THREE.PerspectiveCamera(34, 1.5, 0.01, 20);
-    camera.position.set(...VIEW.pos);
+    // the whole-neighbourhood view for the frame's shape (phones held upright have a tall frame)
+    const viewNow = () => (frame.clientHeight > frame.clientWidth * 1.05 ? VIEW_TALL : VIEW);
+    const V0 = viewNow();
+    camera.position.set(...V0.pos);
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.target.set(...VIEW.target);
+    controls.target.set(...V0.target);
     Object.assign(controls, {
       enableDamping: true, dampingFactor: 0.08, enablePan: false,
       minDistance: VIEW.minDist, maxDistance: VIEW.maxDist,
@@ -163,7 +185,7 @@ export function render(stage, ctx) {
     const tools = el('div', { class: 'map3d-tools' },
       iconButton('plus', plain(CONTENT.common.zoomIn), () => { controls.autoRotate = false; dolly(0.8); }),
       iconButton('minus', plain(CONTENT.common.zoomOut), () => { controls.autoRotate = false; dolly(1.25); }),
-      iconButton('recenter', plain(CONTENT.common.resetView), () => { frame.querySelector('.culture-note')?.__close?.(); clearTimeout(backTimer); focusId = null; startFly([{ target: () => OVER_T.clone(), r: OVER_R, phi: OVER_PHI, dur: 800, toT: OVER_T.clone(), toP: new THREE.Vector3(...VIEW.pos) }]); }));
+      iconButton('recenter', plain(CONTENT.common.resetView), () => { openNote()?.__close?.(); clearTimeout(backTimer); focusId = null; const o = over(); startFly([{ target: () => o.T.clone(), r: o.r, phi: o.phi, dur: 800, toT: o.T.clone(), toP: o.P.clone() }]); }));
     view.append(tools);
 
     frame.classList.remove('is-loading');
@@ -173,9 +195,10 @@ export function render(stage, ctx) {
     /* Tapping a place flies the camera to it, so students see what they picked: it glides in close to the
        place, then the note opens. Tapping another place first pulls back to the whole neighbourhood, then
        glides in to the new one. Closing the note pulls back out again. */
-    const OVER_T = new THREE.Vector3(...VIEW.target);
-    const OVER_R = new THREE.Vector3(...VIEW.pos).sub(OVER_T).length();
-    const OVER_PHI = new THREE.Spherical().setFromVector3(new THREE.Vector3(...VIEW.pos).sub(OVER_T)).phi;
+    const over = () => {            // the overview for the frame's current shape (it can change when a phone is turned)
+      const V = viewNow(), T = new THREE.Vector3(...V.target), P = new THREE.Vector3(...V.pos), off = P.clone().sub(T);
+      return { T, P, r: off.length(), phi: new THREE.Spherical().setFromVector3(off).phi };
+    };
     const sph = new THREE.Spherical();
     const posAround = (tgt, r, phi) => {
       sph.setFromVector3(camera.position.clone().sub(controls.target));   // keep the way the map is turned
@@ -200,13 +223,13 @@ export function render(stage, ctx) {
       }
     };
     const placeOf = (id) => { const a = n.anchors[id]; return new THREE.Vector3(a.x, a.y * 0.42, a.z); };   // aim at the middle of the place, so its pin stays in view
-    const overview = (dur) => ({ target: () => OVER_T.clone(), r: OVER_R, phi: OVER_PHI, dur });
-    const closeUp = (id, dur) => ({ target: () => placeOf(id), r: Math.max(0.62, n.anchors[id].y * 2.6), phi: Math.min(1.05, Math.max(0.8, OVER_PHI - 0.15)), dur });
+    const overview = (dur) => { const o = over(); return { target: () => o.T.clone(), r: o.r, phi: o.phi, dur }; };
+    const closeUp = (id, dur) => ({ target: () => placeOf(id), r: Math.max(0.62, n.anchors[id].y * 2.6), phi: Math.min(1.05, Math.max(0.8, over().phi - 0.15)), dur });
     focusHook = {
       go(id, open) {
         clearTimeout(backTimer);
         if (reduce) { focusId = id; open(); return; }
-        if (frame.querySelector('.culture-note')) { switching = true; frame.querySelector('.culture-note').__close(); switching = false; }
+        if (openNote()) { switching = true; openNote().__close(); switching = false; }
         const legs = focusId && focusId !== id ? [overview(650), closeUp(id, 900)] : focusId === id ? [] : [closeUp(id, 950)];
         focusId = id;
         if (!legs.length) { open(); return; }
@@ -223,7 +246,7 @@ export function render(stage, ctx) {
     controls.addEventListener('start', () => {
       controls.autoRotate = false; flyBack = null; fly = null; focusId = null;
       switching = true;                              // the student is turning the map: don't pull back on close
-      frame.querySelector('.culture-note')?.__close?.();
+      openNote()?.__close?.();
       switching = false;
       clearTimeout(backTimer);
     });
@@ -241,6 +264,7 @@ export function render(stage, ctx) {
     const ro = new ResizeObserver(resize); ro.observe(view); resize();
 
     const v = new THREE.Vector3();
+    const upright = matchMedia('(orientation: portrait)');
     const toScreen = (p, w, h) => { v.copy(p).project(camera); return [(v.x * 0.5 + 0.5) * w, (-v.y * 0.5 + 0.5) * h, v.z]; };
     const t0 = performance.now();
     let raf = 0;
@@ -252,7 +276,7 @@ export function render(stage, ctx) {
       if (flyBack) {
         flyBack.t = Math.min(1, flyBack.t + 0.04);
         const k = 1 - Math.pow(1 - flyBack.t, 3);
-        camera.position.lerpVectors(flyBack.from, new THREE.Vector3(...VIEW.pos), k);
+        camera.position.lerpVectors(flyBack.from, over().P, k);
         if (flyBack.t >= 1) flyBack = null;
       }
       controls.update();
@@ -260,6 +284,7 @@ export function render(stage, ctx) {
       // move the pins with the model
       const w = view.clientWidth, h = view.clientHeight;
       const ready = reduce || t > 1.3;            // pins appear once the neighbourhood has popped up
+      const keepIn = upright.matches;             // (phones held upright: a label near the edge slides inwards, not cut off)
       items.forEach((it) => {
         const [x, y, z] = toScreen(it.top, w, h);
         const [bx, by] = toScreen(it.base, w, h);
@@ -269,6 +294,7 @@ export function render(stage, ctx) {
           node.style.left = `${x}px`; node.style.top = `${y}px`;
           node.style.visibility = show ? '' : 'hidden';
         }
+        if (keepIn) { const half = it.tag.offsetWidth / 2 + 4; it.tag.style.left = `${Math.min(w - half, Math.max(half, x))}px`; }
         // nearer pins sit on top of farther ones
         const depth = Math.round((1 - z) * 1000);
         it.pin.style.zIndex = String(10 + depth); it.tag.style.zIndex = String(9 + depth);
@@ -325,7 +351,7 @@ export function render(stage, ctx) {
   };
   drawQ();
 
-  stage.append(el('div', { class: 'map-area' }, framed), q);
+  stage.append(el('div', { class: 'map-area' }, framed, places), q);
 
   ctx.panel({
     body: [el('div', { class: 'chip-row' },

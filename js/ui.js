@@ -148,8 +148,10 @@ export function openVocab(term) {
  * Culture-note popover anchored to a point (x%, y%) inside a positioned container.
  * Returns a close() function.
  */
-export function notePopover(container, { xPct, yPct, title, body, onClose, extra = null }) {
-  container.querySelectorAll('.culture-note').forEach((n) => n.__close ? n.__close() : n.remove());
+export function notePopover(container, { xPct, yPct, title, body, onClose, extra = null, dockInside = false }) {
+  // (a note docked at the bottom of a phone screen lives in the stage, not in the container)
+  [...container.querySelectorAll('.culture-note'), ...document.querySelectorAll('#stage > .culture-note.is-docked')]
+    .forEach((n) => n.__close ? n.__close() : n.remove());
   const note = el('div', { class: 'culture-note', role: 'dialog' },
     el('h3', {}, bi(title)),
     el('p', {}, bi(body)),
@@ -165,8 +167,8 @@ export function notePopover(container, { xPct, yPct, title, body, onClose, extra
     document.removeEventListener('keydown', onKey);
     onClose && onClose();
   };
-  // Tap outside the note (but not on a pin, which opens its own note) or press Escape to close
-  const outside = (e) => { if (!note.contains(e.target) && !e.target.closest('.map-pin')) close(); };
+  // Tap outside the note (but not on a pin, or a button that stands for one, which opens its own note) or press Escape to close
+  const outside = (e) => { if (!note.contains(e.target) && !e.target.closest('.map-pin, [data-note-opener]')) close(); };
   const onKey = (e) => { if (e.key === 'Escape') close(); };
   note.__close = close;
   note.append(iconButton('close', plain(CONTENT.common.close), close, 'close'));
@@ -176,7 +178,8 @@ export function notePopover(container, { xPct, yPct, title, body, onClose, extra
   if (portrait && stage && !bigMap) {
     docked = true;
     note.classList.add('is-docked');
-    stage.append(note);
+    // (dockInside: the note docks at the bottom of the map itself, so what is under the map stays free to tap — P04)
+    if (dockInside) note.classList.add('is-docked-in'); else stage.append(note);
   }
   host().addEventListener('pointerdown', outside, true);
   document.addEventListener('keydown', onKey);

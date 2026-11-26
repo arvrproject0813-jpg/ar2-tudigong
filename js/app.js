@@ -193,7 +193,41 @@ function renderTopbar() {
     mid,
     el('div', { class: 'tb-right' }, voiceButton(), musicButton(), langBtn),
   );
+  fitTitle();
 }
+
+/* phones held upright: a long title in the top bar first shrinks a little to fit on one line; if it still does not
+   fit, it takes two lines (it is never cut short). Wider screens keep the title as it is. */
+const upright = matchMedia('(orientation: portrait)');
+const measure = document.createElement('canvas').getContext('2d');
+function fitTitle() {
+  const t = $topbar.querySelector('.tb-title-text > .bi > .en'), box = t?.closest('.tb-title');
+  const zh = $topbar.querySelector('.tb-title-text > .bi > .zh:not(.solo)');
+  if (!t) return;
+  t.style.fontSize = ''; box.classList.remove('is-long'); if (zh) zh.style.fontSize = '';
+  if (!upright.matches || !t.clientWidth) return;
+  const textW = (n) => {               // the line's natural width, exactly (scrollWidth is rounded and can hide a cut)
+    const cs = getComputedStyle(n);
+    measure.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+    return measure.measureText(n.textContent).width + (parseFloat(cs.letterSpacing) || 0) * n.textContent.length;
+  };
+  const shrink = (n, min) => {          // the font size (px) that makes this one line fit, or null if it would go below min
+    const room = n.getBoundingClientRect().width - 1, w = textW(n);      // (1 px to spare: the browser cuts at any overflow)
+    if (w <= room) return 0;
+    const fs = Math.floor(parseFloat(getComputedStyle(n).fontSize) * (room / w) * 10) / 10;
+    return fs >= min ? fs : null;
+  };
+  const fs = shrink(t, 12);
+  if (fs) t.style.fontSize = `${fs}px`;
+  if (fs === null || textW(t) > t.getBoundingClientRect().width - 1) { t.style.fontSize = ''; box.classList.add('is-long'); }
+  const zfs = zh && shrink(zh, 10);     // (the Chinese line, too, shrinks a little rather than being cut)
+  if (zfs) zh.style.fontSize = `${zfs}px`;
+}
+let fitRaf = 0;
+const refit = () => { cancelAnimationFrame(fitRaf); fitRaf = requestAnimationFrame(fitTitle); };
+window.addEventListener('resize', refit);
+document.fonts?.ready.then(refit);
+document.fonts?.addEventListener?.('loadingdone', refit);
 
 /* ---------- page context ---------- */
 function makeCtx(id) {
@@ -245,6 +279,12 @@ function makeCtx(id) {
         // Next always works: if the page isn't finished yet, a small dialog asks whether to stay or move on
         primaryBtn = button(p.text, { variant: 'primary', onClick: () => (completed || p.alwaysEnabled ? p.onClick() : askSkip(p.onClick)) });
         primaryBtn.classList.add('sheet-next');
+        if (!opts.primary && p.text !== CONTENT.common.next) {
+          // phones held upright: "Next: <place>" is too long for the bar, so it shows "Next stop ›" (the full text stays its name)
+          primaryBtn.classList.add('has-short');
+          primaryBtn.setAttribute('aria-label', state.lang === 'bi' ? `${p.text.en} ${p.text.zh}` : plain(p.text));
+          primaryBtn.append(el('span', { class: 'next-short', 'aria-hidden': 'true' }, bi(CONTENT.common.nextStopBtn), el('span', { class: 'ic', html: icon('chevRight') })));
+        }
         primaryBtn.classList.toggle('is-pending', !completed && !p.alwaysEnabled);
         bar.append(primaryBtn);
       }

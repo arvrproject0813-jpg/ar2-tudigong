@@ -131,6 +131,7 @@
 .sheet-next { margin-left: auto; min-height: calc(var(--bar-h) - 12px) !important; padding: 4px 28px !important; min-width: 0; max-width: 46%; }
 .sheet-extra + .sheet-next { margin-left: 0; }
 .sheet-next .bi { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.next-short { display: none; }           /* phones held upright show this short "Next stop ›" instead (css/portrait.css) */
 .sheet-next .en, .sheet-next .zh { overflow: hidden; text-overflow: ellipsis; }
 /* once the page is finished, the Next button glows once to say "you can go on" */
 .sheet-next.is-ready { animation: next-ready 1.6s var(--ease) 2; }

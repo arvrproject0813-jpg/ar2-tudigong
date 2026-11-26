@@ -135,6 +135,7 @@
 .p04-question { position: absolute; bottom: var(--space-3); left: max(var(--space-3), env(safe-area-inset-left, 0px)); z-index: 5; display: flex; flex-direction: column-reverse; align-items: flex-start; gap: 6px; max-width: min(420px, 80%); }
 .p04-question-text { background: var(--tex-paper), var(--color-surface); border-radius: var(--radius-md); box-shadow: inset 0 0 0 1px var(--gold-500), var(--shadow-lift); padding: 10px 14px; font-size: var(--fs-small); }
 .p04-question-text .zh { margin-top: 3px; }
+.p04-places { display: none; }           /* the list of the four places under the map: phones held upright only (css/portrait.css) */
 
 /* ---------- stub pages ---------- */
 .stub { position: absolute; inset: 0; display: grid; place-items: center; padding: var(--space-5); }
