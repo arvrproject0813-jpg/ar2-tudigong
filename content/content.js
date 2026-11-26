@@ -269,6 +269,10 @@ const CONTENT = {
     "nextStopBtn": {
       "en": "Next stop",
       "zh": "下一站"
+    },
+    "moreBelow": {
+      "en": "More below",
+      "zh": "往下還有"
     }
   },
   "p01": {
@@ -2284,7 +2288,55 @@ const CONTENT = {
     "tapBlank": {
       "en": "To change a word, tap the blank first.",
       "zh": "想換字，先點一下那個空格。"
-    }
+    },
+    "goal": {
+      "en": "Answer the core question in one English sentence, step by step.",
+      "zh": "一步一步，用一句英文回答核心提問。"
+    },
+    "stepWord": {
+      "en": "Step",
+      "zh": "步驟"
+    },
+    "steps": [
+      {
+        "title": {
+          "en": "Choose a sentence",
+          "zh": "選一個句子"
+        },
+        "hint": {
+          "en": "Tap one of the three sentences.",
+          "zh": "點選三個句子中的一個。"
+        }
+      },
+      {
+        "title": {
+          "en": "Fill in the blanks",
+          "zh": "填入空格"
+        },
+        "hint": {
+          "en": "Tap a word card to put it in the next blank. To take a word out, tap it in the sentence.",
+          "zh": "點一張字卡，放進下一個空格。想拿出來，就點句子裡的那個字。"
+        },
+        "locked": {
+          "en": "First choose a sentence in step 1.",
+          "zh": "先在步驟 1 選一個句子。"
+        }
+      },
+      {
+        "title": {
+          "en": "Listen and say it aloud",
+          "zh": "聆聽，再大聲說出來"
+        },
+        "hint": {
+          "en": "Tap Listen, then read your sentence aloud.",
+          "zh": "點「聆聽」，再把句子大聲唸出來。"
+        },
+        "locked": {
+          "en": "Finish the sentence in step 2 to open this step.",
+          "zh": "完成步驟 2 的句子，就能打開這一步。"
+        }
+      }
+    ]
   },
   "p12": {
     "guide": {

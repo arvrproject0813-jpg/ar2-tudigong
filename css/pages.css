@@ -430,7 +430,7 @@
 }
 
 /* ---------- P06 land use: Past ↔ Present on the same piece of land ---------- */
-.p06 { position: absolute; inset: 0; container-type: size; display: grid; place-items: center; padding: var(--space-3) var(--space-3) var(--space-3) max(var(--space-3), env(safe-area-inset-left, 0px)); }
+.p06 { --pad: var(--space-3); position: absolute; inset: 0; container: p06 / size; display: grid; place-items: center; padding: var(--pad) var(--pad) var(--pad) max(var(--pad), env(safe-area-inset-left, 0px)); }
 .p06-group { display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .p06 .map-frame.p06-frame {
   --t: 0;
@@ -532,7 +532,7 @@
 @keyframes p06-glow { 0%, 100% { filter: none; } 50% { filter: drop-shadow(0 0 8px rgba(240, 207, 122, .95)); } }
 
 @media (max-height: 500px) {
-  .p06 { padding: var(--space-2); }
+  .p06 { --pad: var(--space-2); padding: var(--pad); }
   .p06-group { gap: 6px; }
   .p06 .map-frame.p06-frame { width: min(calc(100cqw - 2 * var(--space-2) - 16px), calc((100cqh - 2 * var(--space-2) - 16px - 96px) * 1.5)); }
   .p06-layer { min-height: 26px; padding: 2px 9px 2px 3px; font-size: 11.5px; gap: 4px; }
@@ -555,14 +555,20 @@
   .p06-caption { font-size: 9.5px; left: 8px; bottom: 6px; white-space: nowrap; }
   .p06-caption .zh:not(.solo) { display: none; }   /* small map: one line only */
 }
-/* phones held sideways: the map takes the full height; the layer chips and the timeline sit beside it */
-@media (max-height: 500px) and (orientation: landscape) {
-  .p06-group { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: 1fr auto; grid-template-areas: "map legend" "map timeline"; gap: 8px 12px; align-items: center; }
+/* a wide stage (laptops, phones held sideways): the map takes the full height; the layer chips and the timeline
+   sit beside it, so the map is as big as the screen allows */
+@container p06 (min-aspect-ratio: 37 / 20) {
+  .p06-group { --side: clamp(220px, 27cqw, 330px); --gx: 18px; display: grid; grid-template-columns: auto var(--side); grid-template-rows: 1fr auto; grid-template-areas: "map legend" "map timeline"; gap: 12px var(--gx); align-items: center; }
   .p06-group > .map-carved { grid-area: map; }
-  .p06-legend { grid-area: legend; align-self: end; justify-content: flex-start; }
-  .p06-timeline { grid-area: timeline; align-self: start; flex-wrap: wrap; }
-  .p06-timeline .p06-track { flex: 1 1 140px; }
-  .p06 .map-frame.p06-frame { width: min(calc(100cqw - 2 * var(--space-2) - 16px - 240px), calc((100cqh - 2 * var(--space-2) - 16px) * 1.5)); }
+  .p06-legend { grid-area: legend; align-self: end; display: grid; grid-template-columns: repeat(2, max-content); justify-content: start; }
+  .p06-timeline { grid-area: timeline; align-self: start; flex-wrap: wrap; justify-content: center; row-gap: 10px; }
+  .p06-timeline .p06-track { flex: 1 1 120px; }
+  .p06-compare { flex: 1 1 100%; justify-content: center; }
+  /* (cqw/cqh are the container's inner size: its padding is already left out) */
+  .p06 .map-frame.p06-frame { width: min(calc(100cqw - 2 * var(--frame, 12px) - var(--side) - var(--gx)), calc((100cqh - 2 * var(--frame, 12px)) * 1.5)); }
+}
+@container p06 (min-aspect-ratio: 37 / 20) and (max-height: 330px) {
+  .p06-group { --side: clamp(200px, 30cqw, 270px); --gx: 12px; row-gap: 8px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .p06-in, .p06-knob.is-hinting { animation: none; }

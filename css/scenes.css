@@ -362,7 +362,7 @@ span.cb-lot .cb-lot-plus, .cb-lot.is-filled .cb-lot-plus { display: none; }
   .btn.p08-open { min-height: 44px; padding: 4px 12px; }
   .btn.p08-open .en { font-size: 14px; }
 }
-@container scene (max-height: 400px) {
+@container scene (max-height: 360px) {
   .p08-wrap { --head: 0px; --foot: 62px; --fr: 6px; }
   .chip.p08-clear { display: none; }
   .p08-cards { display: flex; }
@@ -400,13 +400,67 @@ span.cb-lot .cb-lot-plus, .cb-lot.is-filled .cb-lot-plus { display: none; }
   .btn.p08-open .en { font-size: 12px; } .btn.p08-open .zh { font-size: 10px; }
   .p08-caption { font-size: 9.5px; }
 }
+/* a wide stage (laptops, phones held sideways): the board takes the full height and the place cards (or the route)
+   stand beside it, so the board is as big as the screen allows and the cards have room. Taller than the stage? It scrolls. */
+.scene.p08 { overflow-x: hidden; overflow-y: auto; }
+@container scene (min-aspect-ratio: 9 / 5) {
+  .p08-wrap:not(.is-map) {
+    --side: clamp(230px, 24cqw, 320px); --gx: 16px;
+    --fw: min(100cqw - 2 * var(--fr) - var(--side) - var(--gx), 1180px, (100cqh - 2 * var(--fr)) * var(--ar));
+    display: grid; grid-template-columns: auto var(--side); grid-template-rows: minmax(0, 1fr) auto auto minmax(0, 1fr);
+    grid-template-areas: "board ." "board head" "board foot" "board ."; column-gap: var(--gx); justify-content: center; align-items: center;
+  }
+  .p08-wrap:not(.is-map) > .p08-carved { grid-area: board; }
+  .p08-wrap:not(.is-map) > .p08-head { grid-area: head; height: auto; margin-bottom: 8px; }
+  .p08-wrap:not(.is-map) > .p08-head .board-title { white-space: normal; text-align: center; justify-content: center; }
+  .p08-wrap:not(.is-map) > .p08-foot { grid-area: foot; width: auto; max-width: none; align-self: start; }
+  /* the place cards: what to do on top, then two columns of cards */
+  .p08-wrap:not(.is-map) .p08-tray { flex-direction: column; align-items: stretch; gap: 10px; padding: 12px; min-height: 0; }
+  .p08-wrap:not(.is-map) .p08-tray-head { flex: none; min-width: 0; display: flex; }
+  .p08-wrap:not(.is-map) .p08-tray-head .p08-tray-title { display: none; }       /* the board title above already says it */
+  .p08-wrap:not(.is-map) .p08-tray-intro { display: block; font-size: 13px; line-height: 1.3; color: var(--wood-900); font-weight: 700; }
+  .p08-wrap:not(.is-map) .p08-tray-intro .zh { font-size: 12px; color: var(--wood-600); font-weight: 600; }
+  .p08-wrap:not(.is-map) .p08-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .p08-wrap:not(.is-map) .node-card.p08-card { flex-direction: row; justify-content: flex-start; text-align: left; min-height: 50px; padding: 6px 8px; gap: 8px; font-size: 13px; line-height: 1.15; }
+  .p08-wrap:not(.is-map) .node-card.p08-card .zh { font-size: 11.5px; }
+  .p08-wrap:not(.is-map) .node-card.p08-card .ic { width: 30px; height: 30px; flex: none; }
+  .p08-wrap:not(.is-map) .node-card.p08-card .ic svg { width: 17px; height: 17px; }
+  .p08-wrap:not(.is-map) .node-card.p08-card.is-placed { display: flex; }
+  .p08-wrap:not(.is-map) .btn.p08-build { width: 100%; justify-content: center; }
+  /* the route: what to do, the stops (they wrap), then Undo · Clear · Finish */
+  .p08-wrap:not(.is-map) .p08-routebar { flex-direction: column; align-items: stretch; flex-wrap: nowrap; gap: 10px; padding: 12px; min-height: 0; }
+  .p08-wrap:not(.is-map) .p08-route-top { display: contents; }
+  .p08-wrap:not(.is-map) .p08-tray-intro, .p08-wrap:not(.is-map) .p08-route-top > .p08-tray-intro { display: block; }
+  .p08-wrap:not(.is-map) .p08-route-top > .p08-tray-intro[hidden] { display: none; }
+  .p08-wrap:not(.is-map) .p08-stops { order: 1; flex-wrap: wrap; overflow: visible; row-gap: 6px; }
+  .p08-wrap:not(.is-map) .p08-route-actions { order: 2; margin-left: 0; flex-wrap: wrap; justify-content: flex-end; }
+  .p08-wrap:not(.is-map) .btn.p08-finish { flex: 1 1 100%; justify-content: center; }
+  .p08-wrap:not(.is-map) .chip.p08-clear { display: inline-flex; }
+  .p08-wrap:not(.is-map) .p08-route-actions > [hidden] { display: none !important; }
+  .p08-wrap.is-done:not(.is-map) .p08-route-top > .p08-tray-title { display: none; }   /* the board title above says "My Cultural Route" */
+}
+/* ... and on a short one (a phone held sideways) the side column is a little tighter */
+@container scene (min-aspect-ratio: 9 / 5) and (max-height: 360px) {
+  .p08-wrap:not(.is-map) { --side: clamp(210px, 26cqw, 260px); --gx: 10px; }
+  .p08-wrap:not(.is-map) > .p08-head { display: none; }
+  .p08-wrap:not(.is-map) .p08-tray, .p08-wrap:not(.is-map) .p08-routebar { padding: 8px; gap: 6px; }
+  .p08-wrap:not(.is-map) .p08-tray-intro, .p08-wrap:not(.is-map) .p08-route-top > .p08-tray-intro { display: none; }
+  .p08-wrap:not(.is-map) .p08-route-top > .p08-tray-title { display: none; }
+  .p08-wrap:not(.is-map) .p08-cards { gap: 5px; }
+  .p08-wrap:not(.is-map) .node-card.p08-card { min-height: 40px; padding: 3px 6px; gap: 6px; font-size: 11px; }
+  .p08-wrap:not(.is-map) .node-card.p08-card .zh { font-size: 10px; }
+  .p08-wrap:not(.is-map) .node-card.p08-card .ic { width: 24px; height: 24px; }
+  .p08-wrap:not(.is-map) .node-card.p08-card .ic svg { width: 14px; height: 14px; }
+  .p08-wrap:not(.is-map) .btn.p08-build { min-height: 40px; }
+}
 @media (prefers-reduced-motion: reduce) {
   .p08-wrap *, .cboard * { animation: none !important; }
 }
 
 /* ================= P09 · Touya and Weiya: the rhythm of a lunar year ================= */
-.scene.p09 { display: grid; place-items: center; }
-.p09-wrap { position: relative; width: min(100%, 1000px); max-height: 100%; display: flex; flex-direction: column; gap: 12px; }
+/* the page scrolls when it is taller than the screen (it stays centred when it fits) */
+.scene.p09 { display: grid; place-items: start center; overflow-x: hidden; overflow-y: auto; }
+.p09-wrap { position: relative; width: min(100%, 1000px); margin: auto 0; display: flex; flex-direction: column; gap: 12px; }
 
 /* the lunar year strip */
 .p09-cal { flex: none; padding: 10px 14px 12px; }
@@ -609,12 +663,8 @@ span.cb-lot .cb-lot-plus, .cb-lot.is-filled .cb-lot-plus { display: none; }
   .p09-story-text p { font-size: 12.5px; }
   .p09-story-text p .zh { font-size: 11.5px; }
 }
-@media (orientation: landscape) and (max-height: 500px) {
-  /* a phone held sideways: when the "how ya days live on" cards appear, the page scrolls to them */
-  .scene.p09 { place-items: start center; overflow-y: auto; }
-}
-@container scene (max-height: 400px) {
-  .p09-wrap { gap: 5px; max-height: none; }
+@container scene (max-height: 360px) {
+  .p09-wrap { gap: 5px; }
   .p09-cal { padding: 4px 8px 6px; }
   .p09-cal-head { display: none; }
   .p09-strip { padding-top: 26px; gap: 3px; }
@@ -673,8 +723,9 @@ span.cb-lot .cb-lot-plus, .cb-lot.is-filled .cb-lot-plus { display: none; }
 @media (prefers-reduced-motion: reduce) { .p09-wrap *, .p09-wrap { animation: none !important; transition: none !important; } }
 
 /* ================= P10 · Bogong in Meinong ================= */
-.scene.p10 { display: grid; place-items: center; }
-.p10-wrap { width: min(100%, 1100px); height: 100%; max-height: 720px; display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1.2fr); gap: 14px; }
+/* (the page scrolls if the screen is very short; it stays centred when it fits) */
+.scene.p10 { display: grid; place-items: start center; overflow-x: hidden; overflow-y: auto; }
+.p10-wrap { width: min(100%, 1100px); height: 100%; min-height: 330px; max-height: 720px; margin: auto 0; display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1.2fr); gap: 14px; }
 /* the trip card: map from downtown to Meinong, and the farmland illustration */
 .p10-trip { position: relative; min-height: 0; display: flex; flex-direction: column; gap: 8px; padding: 12px; }
 .p10-trip > .culture-note { z-index: 10; }
@@ -859,8 +910,19 @@ span.cb-lot .cb-lot-plus, .cb-lot.is-filled .cb-lot-plus { display: none; }
   .p10-meaning p .zh { font-size: 11px; }
   .p10-slot { min-height: 28px; }
 }
-@container scene (max-height: 400px) {
-  .p10-wrap { gap: 6px; }
+/* a laptop-height stage: the map gets the trip card's full height and the three culture cards stand beside it */
+@container scene (max-height: 620px) and (min-aspect-ratio: 5 / 4) {
+  .p10-wrap { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+  .p10-trip { display: grid; grid-template-columns: minmax(0, 1fr) minmax(90px, 22%); grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: "map cards" "prompt cards"; column-gap: 10px; row-gap: 6px; }
+  .p10-trip-head { display: none; }                  /* the map's own pin label says "Meinong, Kaohsiung" */
+  .p10-carved { grid-area: map; height: auto; min-height: 0; padding: 18px 0 16px; }
+  .p10-prompt { grid-area: prompt; margin: 0; }
+  .p10-cards { grid-area: cards; align-self: center; }
+  .p10-cards-title { display: none; }
+  .p10-cards-row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+}
+@container scene (max-height: 360px) {
+  .p10-wrap { gap: 6px; min-height: 0; }
   /* a short stage (a phone held sideways): the map fills the card's height, the three culture cards stand beside it */
   .p10-trip { display: grid; grid-template-columns: minmax(0, 1fr) minmax(64px, 26%); grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: "map cards" "prompt cards"; padding: 6px; gap: 4px 6px; }
   .p10-carved { grid-area: map; height: auto; min-height: 0; padding: 22px 0 18px; }
@@ -916,12 +978,13 @@ span.cb-lot .cb-lot-plus, .cb-lot.is-filled .cb-lot-plus { display: none; }
 @media (prefers-reduced-motion: reduce) { .p10-wrap *, .km-trip { animation: none !important; } }
 
 /* ================= P11 · Introduce Tudigong and community culture in English ================= */
-.scene.p11 { display: grid; place-items: center; overflow: hidden; }
-.p11-bg { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+/* the page scrolls when it is taller than the screen; the faded map (.p11-bg, in the stage) stays put behind it */
+.scene.p11 { display: grid; place-items: start center; overflow-x: hidden; overflow-y: auto; }
+.p11-bg { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; overflow: hidden; }
 .p11-bg .cboard { width: min(120%, 165cqh); transform: rotate(-3deg) scale(1.04); opacity: .72; filter: saturate(.7) brightness(1.06) blur(.6px); }
 .p11-bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(246, 238, 223, .25), rgba(246, 238, 223, .6) 78%); }
-.p11-wrap { position: relative; width: min(100%, 860px); max-height: 100%; display: flex; flex-direction: column; gap: 10px; }
-/* sentence starters (above the card) */
+.p11-wrap { position: relative; width: min(100%, 860px); margin: auto 0; display: flex; flex-direction: column; gap: 10px; }
+/* "You can also say…": sentence starters to try with a classmate (after the card) */
 .p11-starters { flex: none; display: flex; align-items: center; gap: 10px; padding: 7px 12px; border-radius: 14px; background: var(--tex-paper), rgba(255, 251, 243, .9); box-shadow: inset 0 0 0 1.5px var(--gold-500), 0 4px 10px rgba(58, 42, 30, .16); }
 .p11-starters-title { flex: none; display: flex; align-items: center; gap: 7px; font-family: var(--font-display); font-weight: 800; font-size: 14px; line-height: 1.1; color: var(--teal-800); }
 .p11-starters-title .zh { font-family: var(--font-display-zh); font-size: 12px; color: var(--red-700); }
@@ -934,18 +997,50 @@ span.cb-lot .cb-lot-plus, .cb-lot.is-filled .cb-lot-plus { display: none; }
 .p11-starters-tip .zh { font-size: 10.5px; }
 
 /* the card */
-.p11-card { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px 18px 16px; overflow: auto; scrollbar-width: thin; }
+.p11-card { flex: none; display: flex; flex-direction: column; gap: 10px; padding: 14px 18px 16px; }
 .p11-core { display: flex; gap: 10px; align-items: flex-start; padding: 8px 12px; border-radius: 10px; background: var(--teal-50); box-shadow: inset 0 0 0 1px var(--teal-300); }
 .p11-core .seal { flex: none; width: 30px; height: 30px; border-radius: 5px; display: grid; place-items: center; font-family: var(--font-display-zh); font-weight: 800; font-size: 17px; color: var(--beige-50); background: var(--grad-vermilion); box-shadow: inset 0 0 0 2px rgba(255, 251, 243, .55); transform: rotate(-4deg); }
 .p11-core p { margin: 0; font-size: 13.5px; font-weight: 700; line-height: 1.3; color: var(--teal-800); }
 .p11-core p b { display: block; font-family: var(--font-display); font-size: 12px; letter-spacing: .06em; color: var(--red-700); }
 .p11-core p b .zh { color: var(--red-700); }
 .p11-core p .bi.stack .zh { font-size: 12.5px; color: var(--teal-600); font-weight: 600; margin-top: 2px; }
-.p11-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; }
-.p11-head h2 { margin: 0; flex: none; font-family: var(--font-display); font-size: 21px; font-weight: 800; line-height: 1.1; color: var(--teal-800); }
-.p11-head h2 .zh { font-family: var(--font-display-zh); font-size: 15px; color: var(--red-700); }
-.p11-instruction { margin: 0; font-size: 12px; font-weight: 600; line-height: 1.3; color: var(--wood-600); text-align: right; }
-.p11-instruction .zh { font-size: 11px; }
+.p11-head { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+.p11-head h2 { margin: 0; font-family: var(--font-display); font-size: 22px; font-weight: 800; line-height: 1.1; color: var(--teal-800); }
+.p11-head h2 .bi.stack .zh { font-family: var(--font-display-zh); font-size: 15px; color: var(--red-700); }
+.p11-goal { margin: 0; font-size: 13px; font-weight: 700; line-height: 1.3; color: var(--wood-600); }
+.p11-goal .zh { font-size: 12px; font-weight: 600; }
+
+/* the three steps: 1 choose a sentence · 2 fill in the blanks · 3 listen and say it. One is open at a time. */
+.p11-steps { display: flex; flex-direction: column; gap: 6px; }
+.p11-step { position: relative; display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 12px; align-items: start; padding: 10px 14px 12px 10px; border-radius: 14px; transition: background .3s var(--ease), box-shadow .3s var(--ease), opacity .3s var(--ease); }
+.p11-step::before { content: ""; position: absolute; left: 28.5px; top: 56px; bottom: -8px; width: 3px; border-radius: 2px; background: repeating-linear-gradient(180deg, rgba(201, 149, 46, .7) 0 5px, transparent 5px 10px); }
+.p11-step:last-child::before { display: none; }
+.p11-step-num { position: relative; z-index: 1; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; font-size: 19px; line-height: 1; color: var(--gold-700); background: rgba(255, 251, 243, .95); box-shadow: inset 0 0 0 2px var(--gold-500); transition: background .3s, color .3s, box-shadow .3s; }
+.p11-step-num .ic, .p11-step-num .ic svg { width: 22px; height: 22px; display: block; }
+.p11-step-main { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.p11-step-title { margin: 0; padding-top: 1px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 1px 10px; font-family: var(--font-display); font-size: 18px; font-weight: 800; line-height: 1.15; color: var(--teal-800); }
+.p11-step-title .zh { font-family: var(--font-display-zh); font-size: 14.5px; color: var(--red-700); font-weight: 700; }
+.p11-step-title small { flex: 1 1 100%; font-family: var(--font-ui); font-size: 11.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--gold-700); }
+.p11-step-title small .zh { font-family: var(--font-ui); font-size: 11px; letter-spacing: .04em; color: var(--gold-700); }
+.p11-step-hint { margin: 0; font-size: 13.5px; font-weight: 700; line-height: 1.3; color: var(--wood-900); }
+.p11-step-hint .zh { font-size: 12.5px; color: var(--wood-600); font-weight: 600; margin-top: 2px; }
+.p11-step-body { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.p11-step-locked { display: none; margin: 0; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; line-height: 1.3; color: var(--wood-600); }
+.p11-step-locked .ic, .p11-step-locked .ic svg { width: 18px; height: 18px; flex: none; color: var(--wood-400); }
+.p11-step-locked .zh { font-size: 11.5px; }
+/* the step to do now: a teal outline and a teal number */
+.p11-step.is-current { background: rgba(255, 251, 243, .97); box-shadow: inset 0 0 0 2px var(--teal-500), 0 6px 16px rgba(31, 107, 102, .16); }
+.p11-step.is-current .p11-step-num { color: var(--beige-50); background: var(--grad-lacquer); box-shadow: 0 0 0 2px var(--gold-300), 0 0 0 5px rgba(127, 189, 184, .35); animation: p11-step-pulse 2s ease-in-out 3; }
+@keyframes p11-step-pulse { 50% { box-shadow: 0 0 0 2px var(--gold-300), 0 0 0 10px rgba(127, 189, 184, .18); } }
+/* a finished step: a gold check (it stays open, so you can still change it) */
+.p11-step.is-done .p11-step-num { color: var(--teal-800); background: radial-gradient(circle at 35% 30%, #FBE9B8, var(--gold-300) 45%, var(--gold-500)); box-shadow: 0 0 0 1.5px var(--gold-700); }
+.p11-step.is-done .p11-step-hint { display: none; }
+/* a step that is not open yet: dimmed, with a short "first do …" line */
+.p11-step.is-locked { opacity: .6; }
+.p11-step.is-locked .p11-step-num { color: var(--wood-400); background: var(--beige-200); box-shadow: inset 0 0 0 2px var(--beige-300); }
+.p11-step.is-locked .p11-step-hint, .p11-step.is-locked .p11-step-body { display: none; }
+.p11-step.is-locked .p11-step-locked { display: flex; }
+
 .p11-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .p11-tab { display: flex; align-items: center; gap: 8px; min-height: 46px; padding: 5px 12px 5px 6px; border: 0; border-radius: 12px; cursor: pointer; text-align: left; font-family: var(--font-display); font-weight: 700; font-size: 15px; line-height: 1.1; color: var(--wood-900); background: rgba(255, 251, 243, .7); box-shadow: inset 0 0 0 1.5px rgba(201, 149, 46, .55); transition: background .2s, box-shadow .2s, transform .2s; }
 .p11-tab .zh { font-family: var(--font-display-zh); font-size: 12.5px; color: var(--red-700); }
@@ -985,49 +1080,59 @@ span.cb-lot .cb-lot-plus, .cb-lot.is-filled .cb-lot-plus { display: none; }
 .p11-word:active { transform: translateY(1px); }
 .p11-word.is-used { opacity: .45; box-shadow: inset 0 0 0 1.5px rgba(201, 149, 46, .5); }
 .p11-word.is-hint { animation: shake 300ms var(--ease); }
-/* finished */
-.p11-done { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px 14px; padding: 10px 12px; border-radius: 12px; background: rgba(245, 227, 179, .45); box-shadow: inset 0 0 0 1.5px var(--gold-500); animation: p08-fade-up .45s var(--ease) both; }
+/* step 3: done, Listen, a culture recap, what next */
+.p11-done { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; animation: p08-fade-up .4s var(--ease) both; }
 .p11-done p { margin: 0; }
-.p11-done-line { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 800; font-size: 17px; color: var(--green-700); }
+.p11-done-line { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 800; font-size: 17px; color: var(--green-700); }
 .p11-done-line .zh { color: var(--green-700); font-size: 14px; }
 .p11-done-line .ic, .p11-done-line .ic svg { width: 22px; height: 22px; }
-.p11-recap { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; font-weight: 700; line-height: 1.3; color: var(--wood-900); }
+.p11-recap { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; border-radius: 10px; background: rgba(245, 227, 179, .45); box-shadow: inset 0 0 0 1px rgba(201, 149, 46, .6); font-size: 13px; font-weight: 700; line-height: 1.3; color: var(--wood-900); }
 .p11-recap .zh { font-size: 12px; color: var(--wood-600); font-weight: 600; margin-top: 2px; }
 .p11-recap .ic { width: 24px; height: 24px; flex: none; border-radius: 50%; display: grid; place-items: center; color: var(--beige-50); background: var(--grad-gold); }
 .p11-recap .ic svg { width: 14px; height: 14px; }
 .p11-speak { display: flex; align-items: center; gap: 10px; }
-.p11-speak p { flex: 1; font-size: 12.5px; font-weight: 700; line-height: 1.3; color: var(--teal-800); }
-.p11-speak p .zh { font-size: 11.5px; color: var(--teal-600); }
-.btn.p11-listen { flex: none; flex-direction: row; gap: 8px; min-height: 48px; padding: 4px 18px; }
+.btn.p11-listen { flex: none; flex-direction: row; gap: 8px; min-height: 50px; padding: 4px 22px; }
 .btn.p11-listen .ic, .btn.p11-listen .ic svg { width: 20px; height: 20px; flex: none; }
 .btn.p11-listen.is-playing .ic { animation: guide-pulse 1.2s ease-in-out infinite; border-radius: 50%; }
-.p11-next { grid-column: 1 / -1; font-size: 12px; font-weight: 600; color: var(--wood-600); text-align: center; }
-.p11-next .zh { font-size: 11px; }
+.p11-next { font-size: 12.5px; font-weight: 700; color: var(--teal-800); }
+.p11-next .zh { font-size: 11.5px; color: var(--teal-600); }
 
 @container scene (max-height: 640px) {
-  .p11-wrap { gap: 6px; }
-  .p11-starters-tip { display: none; }
-  .p11-card { gap: 7px; padding: 10px 14px 12px; }
+  .p11-wrap { gap: 8px; }
+  .p11-card { gap: 8px; padding: 10px 14px 12px; }
   .p11-core { padding: 6px 10px; }
-  .p11-core p { font-size: 12px; }
-  .p11-core p .bi.stack .zh { font-size: 11px; }
-  .p11-head h2 { font-size: 18px; }
-  .p11-head h2 .zh { font-size: 13px; }
-  .p11-tab { min-height: 40px; font-size: 14px; }
-  .p11-sentence { font-size: 21px; min-height: 60px; padding: 10px 12px; }
-  .p11-blank-line { height: 32px; width: 104px; }
-  .p11-zh { font-size: 15px; }
-  .p11-word { min-height: 40px; font-size: 14px; }
+  .p11-core p { font-size: 12.5px; }
+  .p11-core p .bi.stack .zh { font-size: 11.5px; }
+  .p11-head h2 { font-size: 19px; }
+  .p11-head h2 .bi.stack .zh { font-size: 13.5px; }
+  .p11-step { padding: 8px 12px 10px 8px; }
+  .p11-step::before { left: 26.5px; top: 52px; }
+  .p11-tab { min-height: 42px; font-size: 14px; }
+  .p11-sentence { font-size: 22px; min-height: 62px; padding: 10px 12px; }
+  .p11-blank-line { height: 34px; width: 108px; }
+  .p11-zh { font-size: 15.5px; }
+  .p11-word { min-height: 42px; font-size: 14.5px; }
 }
-@container scene (max-height: 400px) {
-  .p11-starters { display: none; }
+@container scene (max-height: 360px) {
+  .p11-starters-tip { display: none; }
   .p11-card { padding: 6px 10px 8px; gap: 5px; }
   .p11-core { display: none; }
   .p11-head { display: none; }
+  .p11-steps { gap: 3px; }
+  .p11-step { grid-template-columns: 30px minmax(0, 1fr); column-gap: 8px; padding: 5px 8px 6px 5px; }
+  .p11-step::before { left: 18.5px; top: 40px; }
+  .p11-step-num { width: 30px; height: 30px; font-size: 15px; }
+  .p11-step-num .ic, .p11-step-num .ic svg { width: 17px; height: 17px; }
+  .p11-step-main { gap: 3px; }
+  .p11-step-title { font-size: 14px; }
+  .p11-step-title .zh { font-size: 12px; }
+  .p11-step-title small { display: none; }
+  .p11-step-hint { font-size: 11px; }
+  .p11-step-hint .zh { font-size: 10.5px; }
+  .p11-step-body { gap: 5px; margin-top: 2px; }
   .p11-tab { min-height: 32px; padding: 3px 8px 3px 4px; font-size: 12px; gap: 5px; }
   .p11-tab .zh { font-size: 10.5px; }
   .p11-tab b { width: 22px; height: 22px; font-size: 12px; }
-  .p11-body { gap: 5px; }
   .p11-prompt { font-size: 11.5px; gap: 6px; }
   .p11-prompt .zh { font-size: 10.5px; }
   .p11-prompt .ic { width: 20px; height: 20px; }
@@ -1036,23 +1141,24 @@ span.cb-lot .cb-lot-plus, .cb-lot.is-filled .cb-lot-plus { display: none; }
   .p11-zh { font-size: 12.5px; }
   .p11-word { min-height: 34px; padding: 3px 10px; font-size: 12px; }
   .p11-word .zh { font-size: 10px; }
-  .p11-done { padding: 6px 8px; gap: 4px 8px; }
+  .p11-done { gap: 5px; }
   .p11-done-line { font-size: 13px; }
-  .p11-recap { font-size: 10.5px; }
+  .p11-recap { font-size: 10.5px; padding: 5px 7px; }
   .p11-recap .zh { font-size: 10px; }
-  .p11-speak p { font-size: 10.5px; }
-  .p11-speak p .zh { font-size: 10px; }
-  .btn.p11-listen { min-height: 38px; padding: 3px 12px; }
+  .btn.p11-listen { min-height: 38px; padding: 3px 14px; }
   .p11-next { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .p11-wrap * { animation: none !important; } }
 
 /* ================= P12 · You completed the journey ================= */
-.scene.p12 { display: grid; place-items: center; overflow: auto; }
-.p12-wrap { width: min(100%, 1080px); max-height: 100%; display: flex; flex-direction: column; gap: 10px; }
-.p12-hero { position: relative; flex: none; display: flex; justify-content: center; }
-.p12-title { font-size: 19px; padding: 7px 20px; }
-.p12-title .zh { font-size: 15px; }
+.scene.p12 { display: grid; place-items: start center; overflow-x: hidden; overflow-y: auto; }
+.p12-wrap { width: min(100%, 1080px); margin: auto 0; display: flex; flex-direction: column; gap: 12px; }
+/* "Thank you for exploring!": a big banner that pops in with a little confetti, so nobody misses it */
+.p12-hero { position: relative; flex: none; display: flex; justify-content: center; padding-top: 2px; }
+.board-title.p12-title { gap: 16px; font-size: 30px; padding: 12px 30px; border-radius: 14px; animation: p12-hero-in .8s cubic-bezier(.2, 1.45, .4, 1) .15s both; }
+.board-title.p12-title .zh { font-size: 23px; }
+.p12-title .board-orn { width: 42px; height: 26px; }
+@keyframes p12-hero-in { 0% { opacity: 0; transform: scale(.6); } 100% { opacity: 1; transform: none; } }
 .p12-confetti { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; }
 .p12-confetti i { position: absolute; width: 8px; height: 8px; border-radius: 2px; background: var(--gold-300); opacity: 0; animation: p12-pop 1.6s cubic-bezier(.2, .8, .3, 1) .4s both; --a: calc(var(--i) * 25.7deg); }
 .p12-confetti i:nth-child(3n) { background: var(--red-500); width: 6px; height: 10px; }
@@ -1165,9 +1271,10 @@ span.cb-lot .cb-lot-plus, .cb-lot.is-filled .cb-lot-plus { display: none; }
 
 
 @container scene (max-height: 560px) {
-  .p12-wrap { gap: 6px; }
-  .p12-title { font-size: 15px; padding: 4px 14px; }
-  .p12-title .zh { font-size: 12.5px; }
+  .p12-wrap { gap: 8px; }
+  .board-title.p12-title { font-size: 25px; padding: 9px 24px; gap: 12px; }
+  .board-title.p12-title .zh { font-size: 19px; }
+  .p12-title .board-orn { width: 34px; height: 21px; }
   .p12-grid { gap: 8px; }
   .p12-card { padding: 8px 10px; gap: 5px; }
   .p12-h { font-size: 14.5px; }
@@ -1181,15 +1288,15 @@ span.cb-lot .cb-lot-plus, .cb-lot.is-filled .cb-lot-plus { display: none; }
   .p12-badge-info-text { font-size: 11px; }
   .p12-badge-info-text b { font-size: 12px; }
 }
-@container scene (max-height: 400px) {
-  .scene.p12 { place-items: start center; }
-  .p12-wrap { max-height: none; }
+@container scene (max-height: 360px) {
+  .board-title.p12-title { font-size: 18px; padding: 5px 16px; gap: 8px; }
+  .board-title.p12-title .zh { font-size: 14px; }
+  .p12-title .board-orn { width: 26px; height: 16px; }
   .p12-map.is-empty { aspect-ratio: auto; padding: 10px; gap: 6px; }
   .p12-map.is-empty p { font-size: 11.5px; }
   .p12-map.is-empty p .zh { font-size: 10.5px; }
   .p12-empty-ic { display: none; }
   .p12-badge-info .medal.is-mini { display: none; }
-  .p12-hero { display: none; }
   .p12-badge-row { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
   .p12-badge-name { display: none; }
   .p12-badge .medal { width: 32px; height: 32px; }

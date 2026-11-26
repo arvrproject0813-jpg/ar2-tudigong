@@ -320,6 +320,12 @@ PHONE UPRIGHT (portrait, css/portrait.css, loaded last; landscape untouched)
 - The Map button moves from the top bar to the bottom bar (thumb reach).
 - Culture notes dock at the bottom of the screen (except next to pins on the big P04 3D view).
 - The app is exactly the visible screen (100dvh). Tested at 390×844, 360×640, 768×1024.
+
+SHORT LAPTOP SCREENS (e.g. 1920×1080 at 150 % scaling → about 1280×560 in the browser; the stage is ~425 px tall)
+- A map never shrinks to fit a column: on a wide stage it takes the full height and its controls stand beside it
+  (P06 chips + timeline, P08 place cards in 2 columns or the route, P10 the three culture cards).
+- A page that is taller than the screen scrolls; a small "More below 往下還有" button in the bottom-right corner says so.
+- P11 is three numbered steps (choose a sentence → fill in the blanks → listen and say it); only the current step is open.
 ```
 
 ## 5. Page prompts

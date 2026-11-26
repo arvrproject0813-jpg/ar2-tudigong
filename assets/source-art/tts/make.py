@@ -1,5 +1,5 @@
-# Voice guide + P11 sentence audio with Kokoro-82M v1.1-zh (English af_sol, Mandarin zf_018, speed 0.92).
-# usage: venv/bin/python make.py guide p07 p08 …   |   venv/bin/python make.py p11
+# Voice guide, page narration and P11 sentence audio with Kokoro-82M v1.1-zh (English af_sol, Mandarin zf_018, speed 0.92).
+# usage: venv/bin/python make.py guide p07 p08 …   |   make.py narration p01 … p12   |   make.py p11
 # Setup (once, in this folder): python3 -m venv venv && . venv/bin/activate && pip install kokoro-onnx soundfile
 #   && pip install --ignore-requires-python "misaki[zh]==0.9.4" && pip install addict regex pypinyin-dict cn2an jieba ordered-set
 # Model files (not in the repo, ~380 MB): kokoro-v1.1-zh.onnx and voices-v1.1-zh.bin from
@@ -17,7 +17,8 @@ g2p = zh.ZHG2P(version='1.1')
 SPEED = 0.92
 RESPELL = [(r'\bTudigong\b', 'Too-dee-gong'), (r'\bTouya\b', 'Toe-yah'), (r'\bWeiya\b', 'Way-yah'), (r'\bBogong\b', 'Bo-gong'),
            (r'\bMeinong\b', 'May-nong'), (r'\bzuoya\b', 'dzwoh-yah'), (r'\bZuoya\b', 'Dzwoh-yah'), (r'\bfuchang\b', 'foo-chahng'),
-           (r'\bFuchang\b', 'Foo-chahng'), (r'\bKaohsiung\b', 'Gow-shyoong'), (r'\bHakka\b', 'Hah-kah')]
+           (r'\bFuchang\b', 'Foo-chahng'), (r'\bKaohsiung\b', 'Gow-shyoong'), (r'\bHakka\b', 'Hah-kah'),
+           (r'\bFude Zhengshen\b', 'Foo-duh Jung-shun'), (r"\bYong[’']an\b", 'Yong-ahn'), (r'\bAR\b', 'A R')]
 
 def content():
     s = open(os.path.join(REPO, 'content/content.js'), encoding='utf-8').read()
@@ -32,17 +33,18 @@ def en_audio(text):
     return samples, sr
 
 def zh_audio(text):
-    t = re.sub(r'[A-Za-z]+', '', text)
+    t = re.sub(r'\s*\bAR\b\s*', '擴增實境', text)          # "AR" is read as 擴增實境 (augmented reality)
+    t = re.sub(r'[A-Za-z]+', '', t)
     if t != text: print('  (removed Latin letters from Chinese line)', text)
     ph, _ = g2p(t)
     samples, sr = k.create(ph, voice='zf_018', speed=SPEED, is_phonemes=True)
     return samples, sr
 
-def write_mp3(samples, sr, path):
+def write_mp3(samples, sr, path, kbps='64k'):
     wav = os.path.join(OUT, '_tmp.wav'); sf.write(wav, samples, sr)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     af = 'adelay=250:all=1,apad=pad_dur=0.4,loudnorm=I=-18:TP=-1.5:LRA=11'
-    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', wav, '-af', af, '-ar', '24000', '-ac', '1', '-b:a', '64k', path], check=True)
+    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', wav, '-af', af, '-ar', '24000', '-ac', '1', '-b:a', kbps, path], check=True)
     d = float(subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', path], capture_output=True, text=True).stdout)
     print(f'  {os.path.relpath(path, REPO)}  {d:.1f}s')
 
@@ -65,3 +67,24 @@ elif sys.argv[1] == 'p11':
             key = f"t{t + 1}_{'_'.join(map(str, fill))}"
             print(key, text)
             s, sr = en_audio(text); write_mp3(s, sr, f'{REPO}/assets/audio/p11/{key}.mp3')
+
+elif sys.argv[1] == 'narration':
+    # the page narration (CONTENT.pXX.narration, the Listen button in "Story and words"), one sentence at a time:
+    #   assets/audio/pXX_en.mp3 (English mode), pXX_zh.mp3 (中文 mode), pXX.mp3 (雙語 mode: English, then Mandarin)
+    def sentences(text, zh=False):
+        parts = re.split(r'(?<=[。！？])' if zh else r'(?<=[.?!])\s+(?=[A-Z“"])', text.strip())
+        return [p.strip() for p in parts if p.strip()]
+    def speak(text, zh=False):
+        out, sr = [], 24000
+        for i, sent in enumerate(sentences(text, zh)):
+            a, sr = zh_audio(sent) if zh else en_audio(sent)
+            if i: out.append(np.zeros(int(sr * 0.35), dtype=np.float32))
+            out.append(a.astype(np.float32))
+        return np.concatenate(out), sr
+    for pid in sys.argv[2:]:
+        n = C[pid]['narration']
+        print(pid)
+        en, sr = speak(n['en']); write_mp3(en, sr, f'{REPO}/assets/audio/{pid}_en.mp3', '48k')
+        zh, sr2 = speak(n['zh'], zh=True); write_mp3(zh, sr2, f'{REPO}/assets/audio/{pid}_zh.mp3', '48k')
+        both = np.concatenate([en, np.zeros(int(sr * 0.9), dtype=np.float32), zh])
+        write_mp3(both, sr, f'{REPO}/assets/audio/{pid}.mp3', '48k')

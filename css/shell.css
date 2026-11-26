@@ -28,10 +28,9 @@
 .tb-map .zh { font-size: 12px; color: var(--gold-100); font-weight: 600; }
 
 .tb-title { display: inline-flex; align-items: center; gap: 10px; min-width: 0; color: var(--beige-50); }
-.tb-title.is-map { gap: 8px; }
-.tb-title.is-map .ic svg { width: 24px; height: 24px; color: var(--gold-300); }
-.tb-title.is-map .en, .tb-title-text > .bi .en { font-family: var(--font-display); font-weight: 800; font-size: 17px; }
-.tb-title.is-map .zh, .tb-title-text > .bi .zh { color: var(--gold-100); font-size: 14px; font-weight: 600; }
+.tb-num.is-icon svg { width: 17px; height: 17px; display: block; }
+.tb-title-text > .bi .en { font-family: var(--font-display); font-weight: 800; font-size: 17px; }
+.tb-title-text > .bi .zh { color: var(--gold-100); font-size: 14px; font-weight: 600; }
 .tb-num {
   flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
   background: var(--grad-gold); color: var(--teal-800); font-family: var(--font-display); font-weight: 800; font-size: 15px;
@@ -73,8 +72,8 @@
   .tb-map { height: 38px; width: 38px; padding: 0; justify-content: center; }
   .tb-map .bi { display: none; }
   .tb-title-text small { display: none; }
-  .tb-title.is-map .en, .tb-title-text > .bi .en { font-size: 15px; }
-  .tb-title.is-map .zh, .tb-title-text > .bi .zh { font-size: 12.5px; }
+  .tb-title-text > .bi .en { font-size: 15px; }
+  .tb-title-text > .bi .zh { font-size: 12.5px; }
   .tb-num { width: 26px; height: 26px; font-size: 13px; }
   .tb-step { height: 30px; padding: 0 9px 0 4px; font-size: 12.5px; }
   .tb-step > b { width: 22px; height: 22px; font-size: 12px; }
@@ -239,3 +238,24 @@
 .curtain.is-reduced .cc-medal, .curtain.is-reduced.is-closed .cc-medal { transform: translate(-50%, -50%); opacity: 1; transition: none; }
 .curtain.is-reduced .cc-seal { animation: none; transform: rotate(-8deg); opacity: 1; }
 .curtain.is-reduced.is-opening { opacity: 0; transition-duration: .22s; }
+
+/* ---------- "More below": a page taller than the screen (js/app.js watchMore) ---------- */
+.more-below {
+  position: absolute; z-index: 25; right: 14px; bottom: 12px; display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 13px 5px 5px; border: 0; border-radius: 999px; cursor: pointer; text-align: left; line-height: 1.1;
+  font-family: 'Alegreya Sans', 'Chiron Sung HK', 'Noto Sans TC', system-ui, sans-serif; color: var(--beige-50);
+  background: var(--tex-paper), var(--grad-lacquer); box-shadow: inset 0 0 0 1.5px var(--gold-300), 0 6px 14px rgba(18, 63, 60, .35);
+  opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity .25s var(--ease), transform .25s var(--ease);
+}
+.more-below.is-on { opacity: 1; transform: none; pointer-events: auto; }
+.more-below .ic { width: 28px; height: 28px; flex: none; border-radius: 50%; display: grid; place-items: center; color: var(--teal-800); background: var(--grad-gold); animation: more-bob 1.6s ease-in-out infinite; }
+.more-below .ic svg { width: 17px; height: 17px; }
+.more-below .en { font-size: 13px; font-weight: 800; }
+.more-below .zh { font-family: 'Chiron Sung HK', 'Noto Serif TC', serif; font-size: 11.5px; font-weight: 600; color: var(--gold-100); }
+@keyframes more-bob { 50% { transform: translateY(3px); } }
+@media (hover: hover) { .more-below.is-on:hover { filter: brightness(1.08); } }
+.more-below:focus-visible { outline: 3px solid var(--gold-300); outline-offset: 2px; }
+/* the voice guide's words sit at the bottom too: the button waits until they are gone */
+#stage:has(.guide-bar:not(.is-hidden)) .more-below { opacity: 0; pointer-events: none; }
+@media (max-height: 500px) { .more-below { right: 10px; bottom: 8px; padding: 3px 10px 3px 3px; } .more-below .ic { width: 24px; height: 24px; } .more-below .en { font-size: 12px; } .more-below .zh { font-size: 10.5px; } }
+@media (prefers-reduced-motion: reduce) { .more-below .ic { animation: none; } .more-below { transition: none; } }

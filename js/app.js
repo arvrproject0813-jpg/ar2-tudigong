@@ -46,7 +46,7 @@ async function go(id) {
   catch (e) { console.error('Could not load page', page.file, e); if (curtain) curtainOpen(); return; }
   if (token !== navToken) return;              // a newer navigation started meanwhile
   if (current?.mod?.destroy) { try { current.mod.destroy(); } catch (e) { console.error(e); } }
-  clearToasts(); closeModal(); stopNarration(); clearGuide();
+  clearToasts(); closeModal(); stopNarration(); clearGuide(); clearMore();
   current = { id, mod };
   state.page = id;
   steps = null;
@@ -58,6 +58,7 @@ async function go(id) {
   document.body.dataset.page = id;
   mod.render($stage, makeCtx(id));
   if (curtain) curtainOpen();
+  requestAnimationFrame(() => { if (token === navToken) watchMore(); });
   // the voice guide (the welcome page starts its own; the map speaks only on the first visit)
   if (id !== 'p01' && !(mod.guideOnce && state.seen[id]?.guided)) {
     state.seen[id] = { ...(state.seen[id] || {}), guided: true };
@@ -91,6 +92,30 @@ function firstTouch() {
 }
 document.addEventListener('pointerdown', firstTouch, true);
 const musicIfOn = () => { if (state.music) startMusic(); };
+
+/* ---------- "More below": when a page is taller than the screen, a small button at the bottom says so ----------
+   (tapping it scrolls down; it goes away near the bottom. The story page, P07, has its own "Scroll down".) */
+let more = null;
+function clearMore() {
+  if (!more) return;
+  more.ro.disconnect(); more.sc.removeEventListener('scroll', more.upd); more.btn.remove(); more = null;
+}
+function watchMore() {
+  clearMore();
+  const sc = [...$stage.querySelectorAll(':scope > *, :scope > * > *')]
+    .find((n) => /(auto|scroll)/.test(getComputedStyle(n).overflowY) && n.clientHeight > 120);
+  if (!sc || sc.classList.contains('story') || current?.id === 'map') return;      // (the journey map has its own Continue button)
+  const btn = el('button', { class: 'more-below', type: 'button', 'aria-label': plain(CONTENT.common.moreBelow) },
+    el('span', { class: 'ic', html: icon('chevDown') }), bi(CONTENT.common.moreBelow, { layout: 'stack' }));
+  btn.addEventListener('click', () => sc.scrollBy({ top: Math.round(sc.clientHeight * 0.7), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }));
+  const upd = () => btn.classList.toggle('is-on', sc.scrollHeight - sc.clientHeight - sc.scrollTop > 40);
+  const ro = new ResizeObserver(upd);
+  ro.observe(sc); [...sc.children].forEach((n) => ro.observe(n));
+  sc.addEventListener('scroll', upd, { passive: true });
+  $stage.append(btn);
+  more = { btn, sc, ro, upd };
+  upd();
+}
 
 /* ---------- voice guide ---------- */
 function startGuide(id = current?.id) { if (id) playGuide(id, { host: $stage, lang: state.lang, voiceOn: state.voice !== false }); }
@@ -137,7 +162,9 @@ function renderTopbar() {
   const mid = el('div', { class: 'tb-mid' });
   if (id === 'map') {
     const n = STOP_IDS.filter((s) => state.done[s]).length;
-    mid.append(el('span', { class: 'tb-title is-map' }, el('span', { class: 'ic', html: icon('map') }), bi(J.title, { layout: 'inline' })),
+    // the same shape as every stop's title: a round gold medallion (here with the map icon) and two lines of text
+    mid.append(el('span', { class: 'tb-title is-map' }, el('b', { class: 'tb-num is-icon', 'aria-hidden': 'true', html: icon('map') }),
+      el('span', { class: 'tb-title-text' }, el('small', {}, bi(J.mapKicker, { layout: 'inline' })), bi(J.title, { layout: 'inline' }))),
       el('span', { class: 'tb-meter', title: `${n} / ${STOP_IDS.length}` }, el('i', { style: { width: `${(n / STOP_IDS.length) * 100}%` } })),
       el('span', { class: 'tb-count' }, `${n}/${STOP_IDS.length}`));
   } else {
