@@ -35,6 +35,7 @@ export const ICONS = {
   info: s('<circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.5v.5"/>'),
   speaker: s('<path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor" fill-opacity=".2"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>'),
   speakerOff: s('<path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor" fill-opacity=".2"/><path d="M16 9.5l5 5M21 9.5l-5 5"/>'),
+  play: s('<path d="M8.2 5.3v13.4a.8.8 0 0 0 1.22.68l10.3-6.7a.8.8 0 0 0 0-1.36L9.42 4.62a.8.8 0 0 0-1.22.68z" fill="currentColor"/>'),
   pause: s('<rect x="6.5" y="5" width="3.6" height="14" rx="1" fill="currentColor"/><rect x="13.9" y="5" width="3.6" height="14" rx="1" fill="currentColor"/>'),
   expand: s('<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>'),
   sidebar: s('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/><path d="M18 9l-1.5 3 1.5 3" stroke-width="1.8"/>'),

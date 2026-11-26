@@ -6,7 +6,7 @@ import CONTENT from '../content/content.js';
 import { AUDIO_DIR } from './config.js';
 import { el, bi } from './ui.js';
 import { icon } from './icons.js';
-import { duckMusic } from './sound.js';
+import { duckMusic, claimVoice, releaseVoice } from './sound.js';
 
 const audio = new Audio();
 audio.preload = 'none';
@@ -39,9 +39,11 @@ function sync() {
   views.forEach((v) => v.update());
 }
 ['play', 'pause', 'ended', 'timeupdate', 'loadedmetadata', 'error'].forEach((ev) => audio.addEventListener(ev, sync));
+// one voice at a time (starting the narration stops the voice guide, and the other way round);
 // background music goes quiet while narration plays
-audio.addEventListener('play', () => duckMusic(true));
-['pause', 'ended', 'error', 'emptied'].forEach((ev) => audio.addEventListener(ev, () => duckMusic(false)));
+const pauseNarration = () => audio.pause();
+audio.addEventListener('play', () => { claimVoice(pauseNarration); duckMusic(true, 'narration'); });
+['pause', 'ended', 'error', 'emptied'].forEach((ev) => audio.addEventListener(ev, () => { duckMusic(false, 'narration'); releaseVoice(pauseNarration); }));
 
 export function stopNarration() {
   audio.pause();
@@ -63,7 +65,7 @@ function toggle(url) {
 export function narrationControl(pageId, lang, variant = 'full') {
   const C = CONTENT.common;
   const btn = el('button', { class: `narr-btn narr-${variant} is-checking`, type: 'button', disabled: true });
-  const ic = el('span', { class: 'narr-ic', 'aria-hidden': 'true', html: icon('speaker') });
+  const ic = el('span', { class: 'narr-ic', 'aria-hidden': 'true', html: icon(variant === 'mini' ? 'play' : 'speaker') });
   const label = el('span', { class: 'narr-label' });
   const bar = el('span', { class: 'narr-bar' }, el('i'));
   const time = el('span', { class: 'narr-time' });
@@ -76,7 +78,7 @@ export function narrationControl(pageId, lang, variant = 'full') {
       const mine = url && currentUrl === url;
       const playing = mine && !audio.paused;
       btn.classList.toggle('is-playing', playing);
-      ic.innerHTML = icon(playing ? 'pause' : 'speaker');
+      ic.innerHTML = icon(playing ? 'pause' : variant === 'mini' ? 'play' : 'speaker');   // mini: ▶, so it never looks like the voice-guide speaker beside it
       if (variant === 'full') {
         label.replaceChildren(bi(url ? (playing ? C.pause : C.listen) : C.audioSoon, { layout: 'inline' }));
         const d = mine ? audio.duration : NaN, t = mine ? audio.currentTime : 0;

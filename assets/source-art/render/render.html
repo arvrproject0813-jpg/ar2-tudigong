@@ -9,6 +9,7 @@
 <script type="module">
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';   // the app's GLBs are meshopt-compressed
 import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
 import { buildNeighborhood, loadKit } from './js/ar-diorama.js';
 import * as SCENES from './assets/source-art/render/scenes.js';
@@ -34,7 +35,7 @@ const prep = (scene) => {
 };
 window.ready = loadKit(THREE, GLTFLoader, { timeout: 120000 }).then(async (k) => {
   kit = k || {};
-  const L = new GLTFLoader();
+  const L = new GLTFLoader(); L.setMeshoptDecoder(MeshoptDecoder);
   await Promise.all(Object.entries(SCENES.TEAM || {}).map(async ([name, url]) => { kit[name] = prep((await L.loadAsync(url)).scene); }));
   return !!k;
 });

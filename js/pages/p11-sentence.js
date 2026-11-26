@@ -12,8 +12,7 @@
 //   voice if a file is missing). Sentences are kept in state.p11Sentences for P12. Badge: Culture Introducer.
 import { el, bi, chip, toast, clearToasts, plain, button, modal } from '../ui.js';
 import { icon } from '../icons.js';
-import { playChime, playMiss, playFlourish, playClick, duckMusic } from '../sound.js';
-import { stopGuide } from '../guide.js';
+import { playChime, playMiss, playFlourish, playClick, duckMusic, claimVoice, releaseVoice } from '../sound.js';
 import { earnBadge } from '../badges.js';
 import { communityBoard, NODE_IDS } from '../community-board.js';
 import { AUDIO_DIR } from '../config.js';
@@ -21,6 +20,7 @@ import { AUDIO_DIR } from '../config.js';
 const BLANK_EN = '___', BLANK_ZH = '＿＿';
 const audio = new Audio();
 let timers = [];
+let stopSentence = null, sentenceToken = 0;
 
 /** The sentence's audio file: t1_<a>_<b>, t2_<a>, t3_<a> (option numbers). */
 const audioKey = (tab, fill) => `t${tab + 1}_${fill.join('_')}`;
@@ -221,11 +221,17 @@ export function render(stage, ctx) {
   function speak() {
     const f = frame(), fill = fills[tab];
     if (!isFull()) return;
-    stopGuide();
     const text = f.en.split(BLANK_EN).reduce((acc, p, i, arr) => acc + p + (i < arr.length - 1 ? f.options[fill[i]].en : ''), '');
+    const my = ++sentenceToken;
+    const end = () => {
+      if (my !== sentenceToken) return;                      // a newer Listen (or leaving the page) took over
+      listenBtn.classList.remove('is-playing'); duckMusic(false, 'sentence'); releaseVoice(stopSentence);
+    };
+    const stop = () => { audio.pause(); if ('speechSynthesis' in window) speechSynthesis.cancel(); end(); };
+    claimVoice(stop);                                        // the voice guide or narration stops: one voice at a time
+    stopSentence = stop;
     listenBtn.classList.add('is-playing');
-    const end = () => { listenBtn.classList.remove('is-playing'); duckMusic(false); };
-    duckMusic(true);
+    duckMusic(true, 'sentence');
     let fell = false;
     const fallback = () => {                                 // no recording: the browser's own English voice
       if (fell) return; fell = true;
@@ -252,5 +258,8 @@ export function destroy() {
   timers.forEach(clearTimeout); timers = [];
   audio.pause(); audio.onended = null; audio.onerror = null;
   if ('speechSynthesis' in window) speechSynthesis.cancel();
-  duckMusic(false);
+  sentenceToken++;
+  duckMusic(false, 'sentence');
+  if (stopSentence) releaseVoice(stopSentence);
+  stopSentence = null;
 }

@@ -12,6 +12,12 @@ make its audio again with `assets/source-art/tts/make.py narration p06` (setup n
 To use a recording of a real person instead, replace the files with the same names
 (MP3, mono, 48–128 kbps, so each file stays under about 1 MB).
 
+English is turned into sounds by `assets/source-art/tts/en_g2p.py` (it fixes words the voice model would clip, such as
+"culture", "corners" and "lunar", and holds the pronunciation of names like Tudigong, Kaohsiung and zuoya).
+Mandarin files only need making again when the Chinese text changes.
+
+The voice guide, the narration and the P11 sentences never play at the same time: starting one stops the other.
+
 Other folders:
 
 - `guide/` the short voice guide that speaks when a page opens (`make.py guide p06`)

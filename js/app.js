@@ -53,7 +53,7 @@ async function go(id) {
   save();
   renderTopbar();
   $stage.replaceChildren(); $panel.replaceChildren(); $panel.className = 'panel sheet is-none';
-  $stage.scrollTop = 0;
+  $stage.scrollTop = 0; $stage.scrollLeft = 0;      // (older browsers without overflow: clip could leave it shifted)
   document.body.classList.toggle('is-fullbleed', mod.chrome === false);
   document.body.dataset.page = id;
   mod.render($stage, makeCtx(id));
@@ -146,6 +146,7 @@ function musicButton(cls = '') {
 
 function cycleLang() {
   state.lang = LANG_ORDER[(LANG_ORDER.indexOf(state.lang) + 1) % LANG_ORDER.length];
+  state.relang = current?.id;                       // the welcome page then shows its finished state instead of replaying
   setLang(state.lang); save(); rerender();
 }
 

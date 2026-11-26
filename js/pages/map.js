@@ -153,8 +153,11 @@ export function render(stage, ctx) {
   const focusId = fresh[0] || nextId || order[order.length - 1];
   requestAnimationFrame(() => {
     drawPath();
-    const r = stopEls[focusId].getBoundingClientRect(), sr = scroller.getBoundingClientRect();
-    scroller.scrollTop += r.top - sr.top - sr.height * 0.42;
+    const st = stopEls[focusId], r = st.getBoundingClientRect(), sr = scroller.getBoundingClientRect();
+    // the stop a little above the middle, but never so high that its "Start here" flag goes under the top edge
+    const flag = st.querySelector('.jm-start')?.getBoundingClientRect();
+    const room = flag ? Math.max(0, r.top - flag.top) + 12 : 12;
+    scroller.scrollTop += r.top - sr.top - Math.max(room, sr.height * 0.42 > room ? Math.min(sr.height * 0.42, sr.height - r.height - 12) : room);
   });
   fresh.forEach((id, n) => timers.push(setTimeout(() => {
     const st = stopEls[id];

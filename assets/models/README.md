@@ -1,10 +1,10 @@
 # Your own 3D model
 
-Upload **`tudigong-neighborhood.glb`** to this folder and the app uses it automatically:
+Upload **`tudigong-neighborhood.glb`** to this folder, then set `neighborhoodModel: true` in `OPTIONAL_FILES` in `js/config.js`, and the app uses it:
 - **P02**: it rises out of the culture card in AR.
 - **P04**: it appears in the 3D view students can turn and zoom.
 
-When there is no file here, the built-in model is used. If the file fails to load, the built-in model is used too, and the browser console says why.
+When the switch is off, the built-in model is used (the app never asks the server for a file that may not be there). If the file fails to load, the built-in model is used too, and the browser console says why.
 
 See `assets/source-art/tudigong_3d_reference_sheet.png` for the layout plan, palette and look.
 `assets/source-art/tudigong-neighborhood-starter.glb` is today's built-in model as a starting point (open it in Blender: File → Import → glTF 2.0).
@@ -14,7 +14,7 @@ See `assets/source-art/tudigong_3d_reference_sheet.png` for the layout plan, pal
 | | |
 |---|---|
 | Format | one `.glb` (glTF 2.0 binary), named `tudigong-neighborhood.glb` |
-| File size | under 5 MB, ideally 2–3 MB; Draco compression is supported |
+| File size | under 5 MB, ideally 2–3 MB; meshopt (`gltf-transform meshopt in.glb out.glb --level high`, like every other model in the app) or Draco compression is supported |
 | Triangles | under 60,000 in total |
 | Textures | 1024 px (2048 max), JPG for colour, at most 8, embedded |
 | Materials | Principled BSDF only (bake procedural textures); roughness 0.7–0.85; metallic 0 except gold trim (0.5 / roughness 0.35) |

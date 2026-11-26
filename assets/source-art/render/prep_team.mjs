@@ -3,8 +3,10 @@
 // node prep_team.mjs in.glb out.glb <rotYdeg> <size> [axis: xz|y|max]
 import { NodeIO, getBounds } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
+import { MeshoptDecoder, MeshoptEncoder } from 'meshoptimizer';     // (installed with @gltf-transform/cli) so meshopt-compressed models can be read too
 const [,, inp, out, rotDeg = '0', sizeStr = '0.4', axis = 'xz'] = process.argv;
-const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
+await MeshoptDecoder.ready; await MeshoptEncoder.ready;
+const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({ 'meshopt.decoder': MeshoptDecoder, 'meshopt.encoder': MeshoptEncoder });
 const doc = await io.read(inp);
 const scene = doc.getRoot().getDefaultScene() || doc.getRoot().listScenes()[0];
 const b = getBounds(scene);

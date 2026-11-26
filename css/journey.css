@@ -6,10 +6,10 @@
 .jmap {
   position: absolute; inset: 0; z-index: 1; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
   scrollbar-width: thin; scrollbar-color: var(--gold-500) transparent;
-  --font-display: 'Alegreya', 'Chiron Sung HK', 'Noto Serif TC', Georgia, serif;
-  --font-display-zh: 'Chiron Sung HK', 'Noto Serif TC', 'Songti TC', serif;
-  --font-ui: 'Alegreya Sans', 'Chiron Sung HK', 'Noto Sans TC', system-ui, sans-serif;
-  --font-zh: 'Chiron Sung HK', 'Noto Serif TC', 'PMingLiU', serif;
+  --font-display: 'Alegreya', 'Noto Serif TC', Georgia, serif;
+  --font-display-zh: 'Noto Serif TC', 'Songti TC', serif;
+  --font-ui: 'Alegreya Sans', 'Noto Serif TC', 'Noto Sans TC', system-ui, sans-serif;
+  --font-zh: 'Noto Serif TC', 'PMingLiU', serif;
   --amp: clamp(56px, 9vw, 96px);           /* how far the trail swings left and right */
   --stop: 84px;
   font-family: var(--font-ui);
@@ -207,7 +207,7 @@
 .jm-continue {
   position: absolute; z-index: 8; left: 50%; bottom: max(16px, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
   display: flex; align-items: center; gap: 12px; max-width: calc(100% - 32px); padding: 8px 10px 8px 8px; border: 0; border-radius: var(--radius-pill); cursor: pointer; text-align: left;
-  font-family: 'Alegreya Sans', 'Chiron Sung HK', sans-serif;
+  font-family: 'Alegreya Sans', 'Noto Serif TC', sans-serif;
   background: linear-gradient(180deg, #2C7E79, #155450 55%, var(--teal-800)); color: var(--beige-50);
   box-shadow: inset 0 0 0 2px var(--gold-300), inset 0 0 0 4px var(--teal-800), 0 6px 0 #0D2E2C, 0 14px 26px rgba(18, 63, 60, .35);
   transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);

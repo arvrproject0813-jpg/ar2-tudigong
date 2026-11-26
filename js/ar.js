@@ -34,10 +34,11 @@ export function arBlocker() {
   return null;
 }
 
+// HEAD only: the card file is 0.7 MB and MindAR downloads it right after this check.
 async function targetExists() {
   try {
-    const r = await fetch(ASSETS.target, { method: 'GET', cache: 'no-store' });
-    return r.ok;
+    const r = await fetch(ASSETS.target, { method: 'HEAD' });
+    return r.ok || r.status === 405;   // 405 = this server does not answer HEAD requests: let MindAR try
   } catch (e) { return false; }
 }
 

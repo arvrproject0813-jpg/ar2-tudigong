@@ -135,7 +135,12 @@ export function render(stage, ctx) {
     delete ctx.state.toFeedback;
     timers.push(setTimeout(() => {
       ctx.openSheet();
-      timers.push(setTimeout(() => feedback.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }), 380));
+      // scroll only the sheet's own list (scrollIntoView would also push the whole app up off the screen)
+      timers.push(setTimeout(() => {
+        const sc = feedback.closest('.panel-inner'); if (!sc) return;
+        const top = sc.scrollTop + feedback.getBoundingClientRect().top - sc.getBoundingClientRect().top - 6;
+        sc.scrollTo({ top, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      }, 380));
     }, 700));
   }
   function confirmAgain() {

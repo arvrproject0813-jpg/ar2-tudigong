@@ -8,6 +8,8 @@
 import sys, os, re, json, subprocess, numpy as np, soundfile as sf
 from kokoro_onnx import Kokoro
 from misaki import zh
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from en_g2p import phonemes as en_phonemes      # English words -> phonemes this model knows (see en_g2p.py)
 D = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(D, '../../..'))   # the repo root (this file is assets/source-art/tts/make.py)
 OUT = os.path.join(D, 'out')
@@ -15,10 +17,7 @@ os.makedirs(OUT, exist_ok=True)
 k = Kokoro(os.path.join(D, 'kokoro-v1.1-zh.onnx'), os.path.join(D, 'voices-v1.1-zh.bin'), vocab_config=os.path.join(D, 'config.json'))
 g2p = zh.ZHG2P(version='1.1')
 SPEED = 0.92
-RESPELL = [(r'\bTudigong\b', 'Too-dee-gong'), (r'\bTouya\b', 'Toe-yah'), (r'\bWeiya\b', 'Way-yah'), (r'\bBogong\b', 'Bo-gong'),
-           (r'\bMeinong\b', 'May-nong'), (r'\bzuoya\b', 'dzwoh-yah'), (r'\bZuoya\b', 'Dzwoh-yah'), (r'\bfuchang\b', 'foo-chahng'),
-           (r'\bFuchang\b', 'Foo-chahng'), (r'\bKaohsiung\b', 'Gow-shyoong'), (r'\bHakka\b', 'Hah-kah'),
-           (r'\bFude Zhengshen\b', 'Foo-duh Jung-shun'), (r"\bYong[’']an\b", 'Yong-ahn'), (r'\bAR\b', 'A R')]
+# Names and Chinese terms (Tudigong, Kaohsiung, zuoya …) have fixed pronunciations in en_g2p.py.
 
 def content():
     s = open(os.path.join(REPO, 'content/content.js'), encoding='utf-8').read()
@@ -26,10 +25,7 @@ def content():
     return json.loads(s[i + len('const CONTENT = '):j])
 
 def en_audio(text):
-    t = text
-    for a, b in RESPELL: t = re.sub(a, b, t)
-    t = t.replace('’', "'")
-    samples, sr = k.create(t, voice='af_sol', speed=SPEED, lang='en-us')
+    samples, sr = k.create(en_phonemes(text, diph=True), voice='af_sol', speed=SPEED, is_phonemes=True)
     return samples, sr
 
 def zh_audio(text):

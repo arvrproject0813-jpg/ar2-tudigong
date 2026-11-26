@@ -31,6 +31,18 @@ export const ASSETS = {
 // Narration audio: assets/audio/p01.mp3 … p12.mp3 (optional p01_zh.mp3 / p01_en.mp3 per language)
 export const AUDIO_DIR = 'assets/audio/';
 
+// Optional files: set one to true after adding the file, and the app uses it instead of its built-in version.
+// (Listing them here means the app never asks the server for a file that is not there.)
+export const OPTIONAL_FILES = {
+  music: true,               // assets/audio/bgm.mp3: replaces the generated background music
+  click: false,              // assets/audio/click.mp3: replaces the generated button sound
+  neighborhoodModel: false,  // assets/models/tudigong-neighborhood.glb: replaces the built-in neighbourhood (P02 AR, P04 3D)
+};
+
+// The 3D models (assets/models/**/*.glb) are compressed with meshopt (gltf-transform meshopt --level high):
+// about half the download, same look. Three.js uses three/addons/libs/meshopt_decoder.module.js; <model-viewer> this file.
+export const MESHOPT_DECODER_URL = 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.21.0/meshopt_decoder.js';
+
 // Pinned versions — do not change without telling the team.
 export const AR_SCRIPTS = [
   'https://cdn.jsdelivr.net/npm/aframe@1.5.0/dist/aframe-v1.5.0.min.js',

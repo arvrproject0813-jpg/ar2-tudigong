@@ -12,6 +12,7 @@
 // loaded from the CDN the first time it is needed.
 import { el, bi, plain } from './ui.js';
 import { icon } from './icons.js';
+import { MESHOPT_DECODER_URL } from './config.js';
 import CONTENT from '../content/content.js';
 
 const MV_URL = 'https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js';
@@ -24,7 +25,11 @@ export function loadModelViewer() {
     mvReady = customElements.get('model-viewer') ? Promise.resolve() : new Promise((resolve, reject) => {
       const s = document.createElement('script');
       s.type = 'module'; s.src = MV_URL;
-      s.onload = () => customElements.whenDefined('model-viewer').then(resolve);
+      // the models are meshopt-compressed (see config.js): tell <model-viewer> where its (pinned) decoder is
+      s.onload = () => customElements.whenDefined('model-viewer').then(() => {
+        try { customElements.get('model-viewer').meshoptDecoderLocation = MESHOPT_DECODER_URL; } catch (e) { /* uses its own default */ }
+        resolve();
+      });
       s.onerror = () => { mvReady = null; reject(new Error('model-viewer failed to load')); };
       document.head.append(s);
     });

@@ -9,7 +9,7 @@ import CONTENT from '../content/content.js';
 import { AUDIO_DIR } from './config.js';
 import { el, bi, plain } from './ui.js';
 import { icon } from './icons.js';
-import { duckMusic } from './sound.js';
+import { duckMusic, claimVoice, releaseVoice } from './sound.js';
 
 const DIR = `${AUDIO_DIR}guide/`;
 const audio = new Audio();
@@ -18,7 +18,7 @@ let token = 0, bar = null, hideTimer = null, speaking = false;
 
 const setSpeaking = (v) => {
   speaking = v;
-  duckMusic(v);
+  duckMusic(v, 'guide');
   bar?.classList.toggle('is-speaking', v);
 };
 
@@ -26,6 +26,7 @@ const setSpeaking = (v) => {
 export function stopGuide() {
   token++;
   audio.pause();
+  releaseVoice(stopGuide);
   if (speaking) setSpeaking(false);
 }
 
@@ -38,9 +39,10 @@ export function clearGuide() {
 
 function playFiles(files) {
   const my = ++token;
+  claimVoice(stopGuide);                  // the narration or a P11 sentence stops: one voice at a time
   const step = (i) => {
     if (my !== token) return;
-    if (i >= files.length) { setSpeaking(false); scheduleHide(); return; }
+    if (i >= files.length) { setSpeaking(false); releaseVoice(stopGuide); scheduleHide(); return; }
     audio.src = files[i];
     if (bar) bar.dataset.line = /_zh\.mp3$/.test(files[i]) ? 'zh' : 'en';   // which line is being spoken (phones show just that one)
     audio.onended = () => step(i + 1);

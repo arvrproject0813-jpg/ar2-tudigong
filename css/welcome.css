@@ -187,7 +187,7 @@ body.is-fullbleed #toast-layer { right: 0; top: var(--space-4); }
 @keyframes w-gate-in { from { opacity: 0; transform: translate(-50%, calc(-50% + 12px)); } to { opacity: 1; transform: translate(-50%, -50%); } }
 .w-gate .bi { padding: 5px 14px; border-radius: var(--radius-pill); background: rgba(18, 63, 60, .6); box-shadow: inset 0 0 0 1px rgba(240, 207, 122, .6); text-align: center; line-height: 1.25; }
 .w-gate .en { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-label); color: var(--beige-50); }
-.w-gate .zh { font-family: var(--font-display-zh); font-size: var(--fs-zh-label); color: var(--gold-100); letter-spacing: .1em; }
+.w-gate .zh { font-family: var(--font-display-zh); font-size: var(--fs-zh-label); font-weight: 600; color: var(--gold-100); letter-spacing: .1em; }
 .w-gate:hover .w-gate-ring { filter: brightness(1.1); }
 .w-gate:active .w-gate-ring { transform: scale(.96); }
 

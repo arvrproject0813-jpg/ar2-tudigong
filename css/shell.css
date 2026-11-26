@@ -6,10 +6,10 @@
 
 /* the frame uses the same typefaces as the cards: Alegreya for titles, Alegreya Sans for text, 昭源宋體 for Chinese */
 .topbar, #panel.sheet, .curtain {
-  --font-display: 'Alegreya', 'Chiron Sung HK', 'Noto Serif TC', Georgia, serif;
-  --font-display-zh: 'Chiron Sung HK', 'Noto Serif TC', 'Songti TC', serif;
-  --font-ui: 'Alegreya Sans', 'Chiron Sung HK', 'Noto Sans TC', system-ui, sans-serif;
-  --font-zh: 'Chiron Sung HK', 'Noto Serif TC', 'PMingLiU', serif;
+  --font-display: 'Alegreya', 'Noto Serif TC', Georgia, serif;
+  --font-display-zh: 'Noto Serif TC', 'Songti TC', serif;
+  --font-ui: 'Alegreya Sans', 'Noto Serif TC', 'Noto Sans TC', system-ui, sans-serif;
+  --font-zh: 'Noto Serif TC', 'PMingLiU', serif;
   font-family: var(--font-ui);
 }
 
@@ -243,7 +243,7 @@
 .more-below {
   position: absolute; z-index: 25; right: 14px; bottom: 12px; display: inline-flex; align-items: center; gap: 7px;
   padding: 5px 13px 5px 5px; border: 0; border-radius: 999px; cursor: pointer; text-align: left; line-height: 1.1;
-  font-family: 'Alegreya Sans', 'Chiron Sung HK', 'Noto Sans TC', system-ui, sans-serif; color: var(--beige-50);
+  font-family: 'Alegreya Sans', 'Noto Serif TC', 'Noto Sans TC', system-ui, sans-serif; color: var(--beige-50);
   background: var(--tex-paper), var(--grad-lacquer); box-shadow: inset 0 0 0 1.5px var(--gold-300), 0 6px 14px rgba(18, 63, 60, .35);
   opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity .25s var(--ease), transform .25s var(--ease);
 }
@@ -251,7 +251,7 @@
 .more-below .ic { width: 28px; height: 28px; flex: none; border-radius: 50%; display: grid; place-items: center; color: var(--teal-800); background: var(--grad-gold); animation: more-bob 1.6s ease-in-out infinite; }
 .more-below .ic svg { width: 17px; height: 17px; }
 .more-below .en { font-size: 13px; font-weight: 800; }
-.more-below .zh { font-family: 'Chiron Sung HK', 'Noto Serif TC', serif; font-size: 11.5px; font-weight: 600; color: var(--gold-100); }
+.more-below .zh { font-family: 'Noto Serif TC', serif; font-size: 11.5px; font-weight: 600; color: var(--gold-100); }
 @keyframes more-bob { 50% { transform: translateY(3px); } }
 @media (hover: hover) { .more-below.is-on:hover { filter: brightness(1.08); } }
 .more-below:focus-visible { outline: 3px solid var(--gold-300); outline-offset: 2px; }

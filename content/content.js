@@ -409,8 +409,8 @@ const CONTENT = {
       "zh": "此裝置或瀏覽器無法在這裡使用相機。請用手機或平板開啟 HTTPS 連結，或不使用 AR 繼續。"
     },
     "targetMissing": {
-      "en": "The AR card file is missing (assets/targets/tudigong-card.mind). Ask Person B to add it, or continue without AR.",
-      "zh": "缺少 AR 卡片檔案（assets/targets/tudigong-card.mind）。請負責 AR 的組員加入，或不使用 AR 繼續。"
+      "en": "The AR card data could not be loaded. Check your internet connection and tap Scan Again, or continue without AR.",
+      "zh": "AR 卡片資料無法載入。請確認網路連線後點選「重新掃描」，或不使用 AR 繼續。"
     },
     "noARdone": {
       "en": "You can continue without AR. Later pages work as normal screens.",
@@ -509,8 +509,8 @@ const CONTENT = {
       }
     },
     "hintSlow": {
-      "en": "Hold the card flat, in good light, 20–30 cm from the camera.",
-      "zh": "將卡片平放、光線充足，距離鏡頭 20–30 公分。"
+      "en": "Move a little closer (about 30 cm), hold the card flat and find good light.",
+      "zh": "再靠近一點（大約 30 公分），把卡片平放，並找光線充足的地方。"
     },
     "cameraError": {
       "en": "Camera is not available. Allow camera access in your browser settings, then tap Scan Again.",
@@ -701,7 +701,7 @@ const CONTENT = {
       }
     ],
     "narration": {
-      "en": "As we explore Kaohsiung’s neighborhoods, fields, markets, and settlements, we find many cultural traces of Tudigong. Also known as Fude Zhengshen, Tudigong is a common local guardian in Taiwanese folk belief. His small temples and the cultural landscapes around them also record how people use the land, build communities, and create local memory.",
+      "en": "As we explore Kaohsiung's neighborhoods, fields, markets, and settlements, we find many cultural traces of Tudigong. Also known as Fude Zhengshen, Tudigong is a common local guardian in Taiwanese folk belief. His small temples and the cultural landscapes around them also record how people use the land, build communities, and create local memory.",
       "zh": "走訪高雄的街坊、田野、市場與聚落，我們可以發現許多土地公的文化痕跡。土地公又稱福德正神，是臺灣民間信仰中常見的地方守護神。土地公廟與周圍的文化地景，也記錄了人們如何利用土地、建立社區，並創造地方記憶。"
     }
   },
@@ -789,7 +789,7 @@ const CONTENT = {
     "riddles": {
       "residential": {
         "en": "Rows of windows and laundry on the balconies. Families live here. What am I?",
-        "zh": "一排排窗戶，陽台上曬著衣服，許多家庭住在這裡。我是什麼？"
+        "zh": "一排排窗戶，陽臺上曬著衣服，許多家庭住在這裡。我是什麼？"
       },
       "road": {
         "en": "Scooters and cars travel along me every day and link every place. What am I?",
@@ -858,8 +858,8 @@ const CONTENT = {
     },
     "arFacts": {
       "temple": {
-        "en": "This small Tudigong temple stands where the homes, the street and the market meet. Neighbors stop here to pray, chat and meet friends, so it is a landmark and a meeting point.",
-        "zh": "這座土地公小廟就在住家、街道和市場交會的地方。鄰居們會在這裡拜拜、聊天、和朋友碰面，所以它是地標，也是聚集點。"
+        "en": "This small Tudigong temple stands where the homes, the street and the market meet. Neighbors stop here to chat and meet friends, so it is a landmark and a meeting point.",
+        "zh": "這座土地公小廟就在住家、街道和市場交會的地方。鄰居們會在這裡聊天、和朋友碰面，所以它是地標，也是聚集點。"
       },
       "residential": {
         "en": "Rows of houses where families live. Every day, many neighbors walk past the small temple on their way to school, work or the market.",
@@ -1574,7 +1574,7 @@ const CONTENT = {
       "zh": "完成 3 個詞彙配對"
     },
     "narration": {
-      "en": "In traditional Taiwanese folk culture, zuoya is observed on the second and sixteenth days of each lunar month. The second day of the second lunar month is called Touya, and the sixteenth day of the twelfth lunar month is called Weiya. Over time, Weiya has also become the everyday word for a company’s year-end dinner.",
+      "en": "In traditional Taiwanese folk culture, zuoya is observed on the second and sixteenth days of each lunar month. The second day of the second lunar month is called Touya, and the sixteenth day of the twelfth lunar month is called Weiya. Over time, Weiya has also become the everyday word for a company's year-end dinner.",
       "zh": "在臺灣傳統民間文化中，每個農曆月的初二與十六都有「做牙」的習俗。農曆二月初二稱為「頭牙」，十二月十六則稱為「尾牙」。隨著時間演變，「尾牙」也成為公司年終聚餐的常見說法。"
     },
     "calendarTitle": {
@@ -1818,7 +1818,7 @@ const CONTENT = {
       "zh": "資料來源：高雄市立歷史博物館"
     },
     "narration": {
-      "en": "In Hakka communities such as Meinong in Kaohsiung, Tudigong is often called Bogong. Local language, history, and community life have given Bogong traditions their own local style. In the Yong’an area of Meinong, a fuchang is a special space or structure for a local festival. It is not just another name for a Tudigong temple.",
+      "en": "In Hakka communities such as Meinong in Kaohsiung, Tudigong is often called Bogong. Local language, history, and community life have given Bogong traditions their own local style. In the Yong'an area of Meinong, a fuchang is a special space or structure for a local festival. It is not just another name for a Tudigong temple.",
       "zh": "在高雄美濃等客家社區，土地公常被稱為「伯公」。在地的語言、歷史與社區生活，讓伯公傳統有了自己的在地特色。在美濃永安地區，「福廠」是當地節慶使用的特別空間或結構，並不是土地公廟的另一個名稱。"
     },
     "chips": [
@@ -2436,7 +2436,7 @@ const CONTENT = {
       }
     },
     "narration": {
-      "en": "You have completed a bilingual AR journey through Tudigong belief, life on the land, local communities, cultural landscapes, zuoya culture, and Bogong culture in Meinong. Now let’s return to the first question: why is Tudigong so often found close to everyday life? One answer is that the belief has become connected with land use, community relationships, and local memory.",
+      "en": "You have completed a bilingual AR journey through Tudigong belief, life on the land, local communities, cultural landscapes, zuoya culture, and Bogong culture in Meinong. Now let's return to the first question: why is Tudigong so often found close to everyday life? One answer is that the belief has become connected with land use, community relationships, and local memory.",
       "zh": "你已完成一段雙語 AR 旅程，認識了土地公信仰、土地上的生活、地方社區、文化地景、做牙文化，以及美濃的伯公文化。現在回到最初的問題：為什麼土地公常出現在日常生活附近？其中一個答案是：這份信仰逐漸與土地利用、社區關係和地方記憶連結在一起。"
     },
     "arrival": {
@@ -2718,7 +2718,7 @@ const CONTENT = {
       "ex": "In Meinong, Tudigong is often called Bogong."
     },
     {
-      "en": "Fuchang",
+      "en": "fuchang",
       "zh": "福廠",
       "level": "Culture-specific",
       "def": "A culture-specific festival space or structure in particular local ritual contexts, such as the Yong'an case in Meinong.",
@@ -3039,8 +3039,8 @@ const CONTENT = {
           "zh": "用英文介紹"
         },
         "blurb": {
-          "en": "Build an English sentence about your neighborhood.",
-          "zh": "組出一句介紹街坊的英文句子。"
+          "en": "Build an English sentence about Tudigong culture.",
+          "zh": "組出一句介紹土地公文化的英文句子。"
         }
       },
       "p12": {

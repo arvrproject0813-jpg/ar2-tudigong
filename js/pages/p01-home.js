@@ -62,7 +62,7 @@ export function render(stage, ctx) {
     c.narration ? narrationControl('p01', lang, 'mini') : null,
     el('span', { class: 'w-voice' }, ctx.voiceButton('w-round')),
     el('span', { class: 'w-music' }, ctx.musicButton('w-round')),
-    el('button', { class: 'w-lang', type: 'button', onclick: (e) => { e.stopPropagation(); ctx.cycleLang(); }, html: icon('lang') },
+    el('button', { class: 'w-lang', type: 'button', 'aria-label': `Language 語言: ${{ bi: '雙語', en: 'English', zh: '中文' }[lang]}`, onclick: (e) => { e.stopPropagation(); ctx.cycleLang(); }, html: icon('lang') },
       { bi: '雙語', en: 'EN', zh: '中文' }[lang]));
 
   const skip = el('button', { class: 'w-skip', type: 'button' }, bi(CONTENT.common.skip, { layout: 'inline' }));
@@ -70,7 +70,8 @@ export function render(stage, ctx) {
   // First visit: the browser only allows sound after a tap, so the scene waits with a "Touch the earth" button
   // and the shrine rises (with its sound) when it is tapped. Coming back later (sound already allowed), it plays at once.
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const waitForTouch = !soundUnlocked() && !reduce;
+  const relang = ctx.state.relang === 'p01'; delete ctx.state.relang;   // only the language was switched: no replay of the opening
+  const waitForTouch = !soundUnlocked() && !reduce && !relang;
   const gate = waitForTouch
     ? el('button', { class: 'w-gate', type: 'button', 'data-no-click-sound': '' },
         el('span', { class: 'w-gate-ring', 'aria-hidden': 'true', lang: 'zh-Hant' }, '土'),
@@ -99,7 +100,7 @@ export function render(stage, ctx) {
     if (root.classList.contains('is-waiting')) begin(); else finish();
   });
   if (!waitForTouch) {
-    if (reduce) { root.classList.remove('is-playing'); root.classList.add('is-done'); ctx.guide(); }
+    if (reduce || relang) { root.classList.remove('is-playing', 'is-waiting'); root.classList.add('is-done'); gate?.remove(); ctx.guide(); }
     else begin();
   }
   // keep the corner music button in sync when it is toggled

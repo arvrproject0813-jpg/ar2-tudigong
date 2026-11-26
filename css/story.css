@@ -5,10 +5,10 @@
 .story {
   position: absolute; inset: 0; z-index: 1; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; outline: none;
   scrollbar-width: thin; scrollbar-color: var(--gold-500) transparent;
-  --font-display: 'Alegreya', 'Chiron Sung HK', 'Noto Serif TC', Georgia, serif;
-  --font-display-zh: 'Chiron Sung HK', 'Noto Serif TC', 'Songti TC', serif;
-  --font-ui: 'Alegreya Sans', 'Chiron Sung HK', 'Noto Sans TC', system-ui, sans-serif;
-  --font-zh: 'Chiron Sung HK', 'Noto Serif TC', 'PMingLiU', serif;
+  --font-display: 'Alegreya', 'Noto Serif TC', Georgia, serif;
+  --font-display-zh: 'Noto Serif TC', 'Songti TC', serif;
+  --font-ui: 'Alegreya Sans', 'Noto Serif TC', 'Noto Sans TC', system-ui, sans-serif;
+  --font-zh: 'Noto Serif TC', 'PMingLiU', serif;
   font-family: var(--font-ui); color: var(--wood-900);
   --frame: inset 0 0 0 1.5px var(--gold-500), inset 0 0 0 5px var(--beige-50), inset 0 0 0 6px rgba(201, 149, 46, .45);
 }

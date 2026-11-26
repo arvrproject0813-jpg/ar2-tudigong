@@ -10,7 +10,7 @@
 // To use your own files instead, upload them to assets/audio/:
 //   bgm.mp3    → replaces the generated music (looped)
 //   click.mp3  → replaces the generated button sound
-import { AUDIO_DIR } from './config.js';
+import { AUDIO_DIR, OPTIONAL_FILES } from './config.js';
 
 const BPM = 76;
 const BEAT = 60 / BPM;
@@ -335,12 +335,10 @@ function ensureCtx() {
   return ctx;
 }
 
-const exists = (url) => fetch(url, { method: 'HEAD', cache: 'no-cache' })
-  .then((r) => r.ok && !(r.headers.get('content-type') || '').includes('text/html')).catch(() => false);
-
 function checkFiles() {
   if (!filesChecked) {
-    filesChecked = Promise.all([exists(`${AUDIO_DIR}bgm.mp3`), exists(`${AUDIO_DIR}click.mp3`)]).then(async ([bgm, click]) => {
+    // which music / button-sound files exist is set in config.js (OPTIONAL_FILES), so nothing is asked for in vain
+    filesChecked = Promise.resolve([!!OPTIONAL_FILES.music, !!OPTIONAL_FILES.click]).then(async ([bgm, click]) => {
       if (bgm) {
         fileMusic = new Audio(`${AUDIO_DIR}bgm.mp3`); fileMusic.loop = true; fileMusic.preload = 'auto';
         if (ensureCtx()) {                               // fade and duck it with a gain node, so it also works on iPad/iPhone
@@ -416,12 +414,25 @@ function fadeFile(target, done) {
   requestAnimationFrame(step);
 }
 
-/** Lower the music while narration plays. */
-export function duckMusic(on) {
-  ducked = on;
+/** Lower the music while a voice plays. Each source has its own key (guide, narration, sentence, rise),
+ *  and the music comes back up only when none of them is playing. */
+const duckers = new Set();
+export function duckMusic(on, key = 'voice') {
+  if (on) duckers.add(key); else duckers.delete(key);
+  if (ducked === duckers.size > 0) return;
+  ducked = duckers.size > 0;
   if (fileMusic && wanted) fadeFile(level() * 2.5);
   if (ctx && wanted) { musicGain.gain.cancelScheduledValues(ctx.currentTime); musicGain.gain.setTargetAtTime(level(), ctx.currentTime, 0.3); }
 }
+
+/** One voice at a time: the voice guide, the page narration and the P11 Listen button each call
+ *  claimVoice(theirStop) when they start, which stops whichever other voice was speaking. */
+let voiceStop = null;
+export function claimVoice(stop) {
+  if (voiceStop && voiceStop !== stop) { const s = voiceStop; voiceStop = null; try { s(); } catch (e) { /* ignore */ } }
+  voiceStop = stop;
+}
+export function releaseVoice(stop) { if (voiceStop === stop) voiceStop = null; }
 
 /** The button sound. */
 export function playClick() {
@@ -457,9 +468,9 @@ export function playRise() {
   const rb = makeBus(ctx);                      // its own reverb so it works with the music off
   g.connect(ctx.destination); g.connect(rb.input); rb.output.connect(ctx.destination);
   scheduleRise(ctx, g, ctx.currentTime + 0.05);
-  duckMusic(true);                              // if the music is already playing, let the earth be heard
-  const unduck = setTimeout(() => duckMusic(false), 5600);
-  return () => { clearTimeout(unduck); duckMusic(false); g.gain.cancelScheduledValues(ctx.currentTime); g.gain.setTargetAtTime(0, ctx.currentTime, 0.12); rb.output.gain.setTargetAtTime(0, ctx.currentTime, 0.12); };
+  duckMusic(true, 'rise');                      // if the music is already playing, let the earth be heard
+  const unduck = setTimeout(() => duckMusic(false, 'rise'), 5600);
+  return () => { clearTimeout(unduck); duckMusic(false, 'rise'); g.gain.cancelScheduledValues(ctx.currentTime); g.gain.setTargetAtTime(0, ctx.currentTime, 0.12); rb.output.gain.setTargetAtTime(0, ctx.currentTime, 0.12); };
 }
 
 /* ---------- task sounds (same instruments as the music and the opening) ---------- */

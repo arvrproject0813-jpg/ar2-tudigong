@@ -8,6 +8,8 @@
 // one side: background elements only, never tappable or highlighted (storyboard Object Usage Rules).
 // No smoke, no light rays, no miracle effects.
 
+import { OPTIONAL_FILES } from './config.js';
+
 const COL = {
   paper: '#F6EEDF', paperD: '#EADCC2', wood: '#6B4A32', woodD: '#3A2A1E',
   teal: '#2F8C88', tealD: '#1F6B66', tealDD: '#123F3C', green: '#6E9F4E', greenD: '#3F6A2B', greenL: '#A9C98C',
@@ -887,9 +889,13 @@ export const KIT_FILES = {
   roadStraight: 'assets/models/kit/road-straight.glb', roadCorner: 'assets/models/kit/road-corner.glb',
 };
 const kits = new WeakMap();
+// the models are meshopt-compressed: every GLTFLoader gets the decoder (one small file, loaded once)
+let meshopt = null;
+const meshoptDecoder = () => (meshopt ??= import('three/addons/libs/meshopt_decoder.module.js').then((m) => m.MeshoptDecoder));
 export function loadKit(THREE, GLTFLoader, { timeout = 60000, onProgress } = {}) {
   if (kits.has(THREE)) return kits.get(THREE);
   const loader = new GLTFLoader();
+  const ready = meshoptDecoder().then((d) => { loader.setMeshoptDecoder(d); });
   const prep = (scene) => {                                     // centre it, stand it on y = 0, soften metal (no environment map in AR)
     scene.updateMatrixWorld(true);
     const box = new THREE.Box3().setFromObject(scene), size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
@@ -906,7 +912,7 @@ export function loadKit(THREE, GLTFLoader, { timeout = 60000, onProgress } = {})
   };
   const entries = Object.entries(KIT_FILES);
   let done = 0;
-  const one = (url) => loader.loadAsync(url).catch(() => loader.loadAsync(url));   // a slow or dropped download gets a second try
+  const one = (url) => ready.then(() => loader.loadAsync(url)).catch(() => loader.loadAsync(url));   // a slow or dropped download gets a second try
   const all = Promise.all(entries.map(([k, url]) => one(url).then((gl) => { done++; onProgress?.(done / entries.length); return [k, prep(gl.scene)]; })))
     .then(Object.fromEntries);
   const p = Promise.race([all, new Promise((_, no) => setTimeout(() => no(new Error('model kit timed out')), timeout))])
@@ -922,14 +928,9 @@ export function loadKit(THREE, GLTFLoader, { timeout = 60000, onProgress } = {})
    pin_temple, pin_fields, pin_market, pin_corner place the P04 info pins. Animation clips in the file loop. */
 export const MODEL_URL = 'assets/models/tudigong-neighborhood.glb';
 const FOOTPRINT = { x: 0.92, z: 0.62 };
-let modelCheck = null;
+/** Whether the team's own model is there: set OPTIONAL_FILES.neighborhoodModel in config.js after adding the file. */
 export function customModelExists() {
-  if (!modelCheck) {
-    modelCheck = fetch(MODEL_URL, { method: 'HEAD', cache: 'no-cache' })
-      .then((r) => r.ok && !(r.headers.get('content-type') || '').includes('text/html'))
-      .catch(() => false);
-  }
-  return modelCheck;
+  return Promise.resolve(!!OPTIONAL_FILES.neighborhoodModel);
 }
 
 function addLights(THREE, root, shadows) {
@@ -948,6 +949,7 @@ function addLights(THREE, root, shadows) {
  */
 export async function loadNeighborhoodGLB(THREE, GLTFLoader, DRACOLoader, { shadows = false } = {}) {
   const loader = new GLTFLoader();
+  try { loader.setMeshoptDecoder(await meshoptDecoder()); } catch (e) { /* a model without meshopt still loads */ }
   if (DRACOLoader) {
     const draco = new DRACOLoader();
     draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');
