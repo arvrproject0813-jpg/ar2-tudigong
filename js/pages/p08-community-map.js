@@ -60,7 +60,7 @@ export function render(stage, ctx) {
   const locator = el('div', { class: 'p08-locator', 'aria-hidden': 'true' }, kaohsiungMap({ uid: 'p08loc', mountains: false, love: false }).svg, (() => {
     const [x, y] = km.pct(...KMAP.hood); return el('i', { style: { left: `${x}%`, top: `${y}%` } });
   })());
-  const boardCaption = el('span', { class: 'p08-board-caption' }, bi(k.simpleMap, { layout: 'inline' }));
+  const boardCaption = el('span', { class: 'p08-board-caption' }, bi(k.conceptualMap, { layout: 'inline' }));
   const bview = el('div', { class: 'p08-bview' }, board.root, locator, boardCaption);
   const frameInner = el('div', { class: 'p08-frame' }, kview, bview);
 

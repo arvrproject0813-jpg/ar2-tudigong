@@ -1051,12 +1051,12 @@ const CONTENT = {
           "zh": "地方地標與社區節點"
         },
         "note": {
-          "en": "Look at the curved tile roof and the ridge ends that sweep up like a swallow's tail. Many small temples have only one room and stand right beside a lane, a field or a street corner.",
-          "zh": "看看彎彎的瓦片屋頂，屋脊兩端像燕子尾巴一樣往上翹。許多小廟只有一個房間，就蓋在巷口、田邊或街角。"
+          "en": "Many Tudigong temples are small, one-room buildings with curved tile roofs. They stand beside lanes, street corners, or fields, close to where people live.",
+          "zh": "許多土地公廟是只有一個房間的小建築，屋頂是彎曲的瓦片。它們位在巷口、街角或田邊，就在人們生活的地方旁邊。"
         },
         "hint": {
-          "en": "Hint: Which one helps neighbors find their way and meet each other?",
-          "zh": "提示：哪一個能讓街坊認路、彼此相聚？"
+          "en": "Hint: Which object helps people find their way in a neighborhood?",
+          "zh": "提示：哪個物件能幫人在街坊中認路？"
         }
       },
       "table": {
@@ -1073,12 +1073,12 @@ const CONTENT = {
           "zh": "呈現地方生活與節慶準備"
         },
         "note": {
-          "en": "This dark wooden table stands in front of the shrine. On festival days, neighbors get it ready together with fruit, tea and snacks. Here we only observe it: notice the table skirt embroidered with dragons.",
-          "zh": "這張深色木桌放在小廟前。節慶時，街坊鄰居會一起擺上水果、茶和點心，把它準備好。在這裡我們只觀察：看看繡著龍的桌裙。"
+          "en": "The offering table stands in front of the shrine. Before festivals, neighbors get it ready together, so it tells us about local life and festival preparation.",
+          "zh": "供桌放在神龕前方。節慶前，街坊會一起準備，因此它能讓我們認識地方生活與節慶準備。"
         },
         "hint": {
-          "en": "Hint: Which one do neighbors get ready together on festival days?",
-          "zh": "提示：節慶時，街坊會一起準備哪一個？"
+          "en": "Hint: Which object is used when people get ready for a festival?",
+          "zh": "提示：哪個物件和節慶準備有關？"
         }
       },
       "lions": {
@@ -1095,12 +1095,12 @@ const CONTENT = {
           "zh": "與廟宇建築相關的象徵"
         },
         "note": {
-          "en": "A pair of stone lions guards the door, one on each side. With curly manes and round eyes, they look friendly. Many wear a red ribbon around the neck.",
-          "zh": "一對石獅守在門的兩側。捲捲的鬃毛、圓圓的眼睛，看起來很親切。許多石獅的脖子上還繫著紅色的彩帶。"
+          "en": "Stone lions often sit in pairs at a temple entrance. One usually rests a paw on a ball, and the other holds a small cub. They are part of temple architecture.",
+          "zh": "石獅常成對坐在廟門口。通常一隻腳踩著繡球，另一隻護著小獅子。它們是廟宇建築的一部分。"
         },
         "hint": {
-          "en": "Hint: Which one is carved from stone and stands at the temple door?",
-          "zh": "提示：哪一個是石頭雕成、站在廟門口的？"
+          "en": "Hint: Which object is part of the temple building?",
+          "zh": "提示：哪個物件是廟宇建築的一部分？"
         }
       },
       "tree": {
@@ -1113,16 +1113,16 @@ const CONTENT = {
           "zh": "觀察老樹"
         },
         "meaning": {
-          "en": "Part of the cultural landscape and local memory",
-          "zh": "文化地景與地方記憶的一部分"
+          "en": "Part of the cultural landscape and cultural memory",
+          "zh": "文化地景與文化記憶的一部分"
         },
         "note": {
-          "en": "An old banyan often grows beside a small temple. Its wide shade is a place where neighbors rest, chat and drink tea. Not every old tree is linked to Tudigong, but many are part of local memory.",
-          "zh": "小廟旁常長著一棵老榕樹。寬大的樹蔭是街坊休息、聊天、泡茶的地方。不是每棵老樹都和土地公有關，但許多老樹都是地方記憶的一部分。"
+          "en": "Big banyan trees often give shade beside small temples, and neighbors chat and rest under them. Not every old tree is linked to Tudigong, but many are local landmarks.",
+          "zh": "大榕樹常在小廟旁帶來樹蔭，街坊會在樹下聊天、休息。不是每棵老樹都和土地公有關，但許多老樹是地方地標。"
         },
         "hint": {
-          "en": "Hint: Which one is alive and has grown here for many years?",
-          "zh": "提示：哪一個是活的，在這裡生長了很多年？"
+          "en": "Hint: Which one is part of nature and gives shade?",
+          "zh": "提示：哪個是大自然的一部分，還能遮陽？"
         }
       }
     },
@@ -1286,8 +1286,8 @@ const CONTENT = {
       "zh": "仔細看，再配對"
     },
     "doIntro": {
-      "en": "Tap each object to look closely. After three, the meaning cards turn over: drag each one onto its object.",
-      "zh": "點一點每個物件，仔細看一看。看完三個，意義卡就會翻開：把每張卡拖到對應的物件上。"
+      "en": "Tap each object to learn what it shows. After three, the meaning cards turn over: drag each one onto its object.",
+      "zh": "點選每個物件，看看它代表什麼。看完三個，意義卡就會翻開：把每張卡拖到對應的物件上。"
     },
     "cardBack": {
       "en": "Meaning card",
@@ -1394,8 +1394,8 @@ const CONTENT = {
       "zh": "這是高雄。打開地圖，放大來看一個街坊。"
     },
     "placePrompt": {
-      "en": "Drag a place card onto an empty lot, or tap a card and then a lot.",
-      "zh": "把地點卡拖到空地上，或先點卡片、再點空地。"
+      "en": "Drag a place card to an empty spot on the map, or tap a card and then a spot.",
+      "zh": "把地點卡片拖到地圖上的空位，或先點卡片再點空位。"
     },
     "emptyLot": {
       "en": "Empty lot",
@@ -1403,28 +1403,28 @@ const CONTENT = {
     },
     "nodeNotes": {
       "school": {
-        "en": "A school is where neighborhood children meet every day. It is a good place to start a culture walk.",
-        "zh": "學校是街坊孩子每天相聚的地方，也是文化走讀的好起點。"
+        "en": "Schools bring children and families together every day.",
+        "zh": "學校每天把孩子和家庭聚在一起。"
       },
       "homes": {
-        "en": "Homes are where daily life begins. Neighbors meet in the lane outside.",
-        "zh": "家是日常生活的起點，鄰居們常在門外的巷子相遇。"
+        "en": "Homes are where neighbors live side by side.",
+        "zh": "住家是街坊鄰居比鄰而居的地方。"
       },
       "market": {
-        "en": "A morning market connects farmers, shops and neighbors.",
-        "zh": "早市把農民、商家和鄰居連結在一起。"
+        "en": "Markets are where neighbors shop, talk, and share news.",
+        "zh": "市場是街坊買東西、聊天、交換消息的地方。"
       },
       "park": {
-        "en": "An old tree in the park gives shade and keeps local memory.",
-        "zh": "公園裡的老樹提供樹蔭，也保存了地方記憶。"
+        "en": "People rest and meet in the shade of old trees.",
+        "zh": "人們在老樹的樹蔭下休息、相聚。"
       },
       "temple": {
-        "en": "A small local temple is a landmark where neighbors meet and festivals happen.",
-        "zh": "地方小廟是街坊相聚、舉辦節慶的地標。"
+        "en": "A small temple can be a landmark and a meeting place.",
+        "zh": "小廟可以是地標，也是聚集的地方。"
       },
       "oldStreet": {
-        "en": "An old street keeps shop houses and stories from the past.",
-        "zh": "老街保留了老店屋和過去的故事。"
+        "en": "Old streets keep shops and stories from the past.",
+        "zh": "老街保留了過去的商店與故事。"
       }
     },
     "canRoute": {
@@ -1436,27 +1436,27 @@ const CONTENT = {
       "zh": "六個地點都放上地圖了！"
     },
     "routeIntro": {
-      "en": "Tap the places in the order you would visit them. Use at least 4 stops.",
-      "zh": "依照你想走訪的順序點選地點，至少要有 4 站。"
+      "en": "Tap the places in the order you want to visit them.",
+      "zh": "依照你想走訪的順序點選地點。"
     },
     "routeNeedMore": {
-      "en": "Add at least 4 stops before you finish.",
-      "zh": "完成前，至少要有 4 站。"
+      "en": "Connect at least 4 places to finish your route.",
+      "zh": "至少連接 4 個地點才能完成路線。"
     },
     "routeAlready": {
       "en": "This place is already on your route.",
       "zh": "這個地點已經在路線上了。"
     },
     "complete": {
-      "en": "Cultural Route Complete",
-      "zh": "文化路線完成"
+      "en": "Route Complete!",
+      "zh": "路線完成！"
     },
     "myRoute": {
       "en": "My Cultural Route",
       "zh": "我的文化路線"
     },
     "reflectLabel": {
-      "en": "Think about it",
+      "en": "Think About It",
       "zh": "想一想"
     },
     "chips": [
@@ -1515,7 +1515,7 @@ const CONTENT = {
         },
         "answer": {
           "en": "The 2nd and 16th days of each lunar month",
-          "zh": "每月農曆初二、十六"
+          "zh": "每個農曆月的初二與十六"
         }
       },
       "touya": {
@@ -1542,7 +1542,7 @@ const CONTENT = {
           "zh": "認識尾牙"
         },
         "answer": {
-          "en": "The 16th day of the 12th lunar month, now also a year-end company meal",
+          "en": "The 16th day of the 12th lunar month, now also a year-end company dinner",
           "zh": "農曆十二月十六，現在也指公司年終聚餐"
         }
       }
@@ -1578,8 +1578,8 @@ const CONTENT = {
       "zh": "在臺灣傳統民間文化中，每個農曆月的初二與十六都有「做牙」的習俗。農曆二月初二稱為「頭牙」，十二月十六則稱為「尾牙」。隨著時間演變，「尾牙」也成為公司年終聚餐的常見說法。"
     },
     "calendarTitle": {
-      "en": "One Lunar Year",
-      "zh": "農曆一年"
+      "en": "Match the Calendar",
+      "zh": "配對日期"
     },
     "months": [
       {
@@ -1656,8 +1656,8 @@ const CONTENT = {
       "zh": "日期與意義"
     },
     "matchIntro": {
-      "en": "Drag each term card to its date. You can also tap a term, then tap a date.",
-      "zh": "把每張詞彙卡拖到對應的日期；也可以先點詞彙，再點日期。"
+      "en": "Tap a word, then tap the date or meaning that matches it.",
+      "zh": "先點詞彙，再點相配的日期或意義。"
     },
     "hints": {
       "zuoya": {
@@ -1665,26 +1665,26 @@ const CONTENT = {
         "zh": "提示：做牙每個月有兩次。"
       },
       "touya": {
-        "en": "Hint: Touya is the first ya day of the year.",
-        "zh": "提示：頭牙是一年中的第一個牙日。"
+        "en": "Hint: \"Tou\" means \"head\" or \"first.\"",
+        "zh": "提示：「頭」就是第一個。"
       },
       "weiya": {
-        "en": "Hint: Weiya is the last ya day of the year.",
-        "zh": "提示：尾牙是一年中的最後一個牙日。"
+        "en": "Hint: \"Wei\" means \"tail\" or \"last.\"",
+        "zh": "提示：「尾」就是最後一個。"
       }
     },
     "notes": {
       "zuoya": {
-        "en": "In traditional folk culture, the 2nd and 16th days of every lunar month are ya days. Many family shops still keep them, so every month has two.",
-        "zh": "在傳統民間文化中，每個農曆月的初二和十六是「牙」日。許多家庭商店至今仍記得這些日子，所以每個月都有兩個牙日。"
+        "en": "Zuoya happens twice every lunar month, on the 2nd and the 16th. It is part of Taiwan's traditional calendar.",
+        "zh": "做牙每個農曆月有兩次：初二與十六。它是臺灣傳統曆法的一部分。"
       },
       "touya": {
-        "en": "Touya is the first ya day of the year, on the 2nd day of the 2nd lunar month. It is also known as Tudigong's birthday, and some companies treat their staff to a meal.",
-        "zh": "頭牙是一年中的第一個牙日，在農曆二月初二，也被視為土地公的生日。有些公司會在這天請員工吃飯。"
+        "en": "Touya is the first zuoya of the year. Some shops and companies share a meal with their staff around this time.",
+        "zh": "頭牙是一年中的第一個做牙，有些商家和公司會在這時候和員工一起聚餐。"
       },
       "weiya": {
-        "en": "Weiya is the last ya day of the year, on the 16th day of the 12th lunar month. Today it also means a company's year-end party, where bosses thank their staff with a big meal.",
-        "zh": "尾牙是一年中的最後一個牙日，在農曆十二月十六。現在它也指公司的年終聚餐，老闆會用一頓大餐感謝員工。"
+        "en": "Weiya is the last zuoya of the year. Today, many people use the word for a company's year-end dinner.",
+        "zh": "尾牙是一年中最後一個做牙。現在，許多人用這個詞指公司的年終聚餐。"
       }
     },
     "captions": {
@@ -1866,8 +1866,8 @@ const CONTENT = {
       "zh": "以美濃田園為靈感的插畫"
     },
     "matchIntro": {
-      "en": "Tap a concept card, then tap the meaning that matches it. You can also drag the card.",
-      "zh": "先點一張概念卡，再點出相符的意思；也可以直接拖曳卡片。"
+      "en": "Tap a concept card, then tap the meaning that matches it.",
+      "zh": "先點概念卡，再點相配的意思。"
     },
     "conceptsTitle": {
       "en": "Concepts",
@@ -1879,16 +1879,16 @@ const CONTENT = {
     },
     "notes": {
       "tudigong": {
-        "en": "That's right! Tudigong is the name used in many places across Taiwan. His formal title is Fude Zhengshen. 土地 means \"land,\" and 公 is a respectful word for an older man.",
-        "zh": "答對了！臺灣許多地方都稱祂為「土地公」，正式名稱是「福德正神」。名稱裡的「公」，是對年長男性的尊稱。"
+        "en": "Tudigong is the name used in many places across Taiwan. His formal title is Fude Zhengshen. 土地 means \"land,\" and 公 is a respectful word for an older man.",
+        "zh": "臺灣許多地方都稱祂為「土地公」，正式名稱是「福德正神」。名稱裡的「公」，是對年長男性的尊稱。"
       },
       "bogong": {
-        "en": "Well done! In Hakka, Bogong is also a family word for a great-uncle. Calling Tudigong \"Bogong\" makes him feel like an elder in the family. One study counted about 380 Bogong shrines in Meinong!",
-        "zh": "做得好！在客家話裡，「伯公」也是對家族長輩（爸爸的伯父）的稱呼。把土地公叫作伯公，就像把祂當成家中的長輩。有研究統計，美濃約有 380 座伯公！"
+        "en": "In Hakka, Bogong is also a family word for a great-uncle. Calling Tudigong \"Bogong\" makes him feel like an elder in the family. One study counted about 380 Bogong shrines in Meinong.",
+        "zh": "在客家話裡，「伯公」也是對家族長輩（爸爸的伯父）的稱呼。把土地公叫作伯公，就像把祂當成家中的長輩。有研究統計，美濃約有 380 座伯公。"
       },
       "fuchang": {
-        "en": "Correct! A fuchang is a festival space that people in Yong'an, Meinong, build together every year. It is a space for a festival, not a temple, so Tudigong temples are not called \"fuchang.\"",
-        "zh": "答對了！福廠是美濃永安的居民每年一起搭建的節慶空間。它是節慶用的場地，不是廟，所以土地公廟並不叫「福廠」。"
+        "en": "A fuchang is a festival space that people in Yong'an, Meinong, build together every year. It is a space for a festival, not a temple, so Tudigong temples are not called \"fuchang.\"",
+        "zh": "福廠是美濃永安的居民每年一起搭建的節慶空間。它是節慶用的場地，不是廟，所以土地公廟並不叫「福廠」。"
       }
     },
     "hints": {
@@ -2472,8 +2472,8 @@ const CONTENT = {
       "zh": "我的徽章"
     },
     "badgeCount": {
-      "en": "{n} of 7 earned",
-      "zh": "已獲得 {n}／7"
+      "en": "Badges earned: {n}/7",
+      "zh": "已獲得徽章：{n}/7"
     },
     "locked": {
       "en": "Not earned yet. You can go back and try!",
